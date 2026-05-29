@@ -1,19 +1,21 @@
 # MCU FFT Baseline
 
-This project is a Verilog-2001 baseline for the MCU course design FFT task. It implements a small instruction-driven MCU and runs an 8-point fixed-point complex FFT entirely through assembly instructions.
+本工程是数字电路课程设计 MCU 赛题的 8 点 FFT baseline。工程使用 Verilog-2001 实现一个轻量级 MCU，并通过汇编程序完成 8 点定点复数 FFT 运算。
 
-## Directory
+本工程的重点是“FFT 由 MCU 指令执行完成”，不是独立 FFT 专用硬件。
 
-- `rtl/`: synthesizable MCU RTL and simulation instruction ROM.
-- `asm/`: FFT assembly and standard instruction test assembly.
-- `scripts/`: assembler, fixed-point FFT reference model, test-vector generator, checker, and COE converter.
-- `mem/`: generated instruction and test-vector `.mem/.coe` files.
-- `tb/`: Verilog testbenches.
-- `results/`: generated reference and simulation output files.
+## 目录结构
 
-## Top-Level Interface
+- `rtl/`：MCU RTL 源码，以及用于仿真的指令 ROM。
+- `asm/`：FFT 汇编程序和标准指令测试程序。
+- `scripts/`：汇编器、定点 FFT 参考模型、测试向量生成器、输出检查器和 COE 转换脚本。
+- `mem/`：已生成的指令和测试向量 `.mem/.coe` 文件。
+- `tb/`：Verilog 仿真 testbench。
+- `results/`：参考输出和仿真输出文件。
 
-The top module is `rtl/mcu_top.v`.
+## 顶层接口
+
+顶层模块为 `rtl/mcu_top.v`。
 
 ```verilog
 module mcu_top(
@@ -29,17 +31,27 @@ module mcu_top(
 );
 ```
 
-External memory mapping:
+外部接口说明：
 
-- `0x1000` to `0x100F`: external `test_ROM`, output signal `test_vector_in`.
-- `0x2000` to `0x200F`: external `verify_RAM`, input signal `verify_vector_out`.
-- `0x0000` to `0x00FF`: internal data RAM.
+- `test_rom_addr`：外部 `test_ROM` 地址。
+- `test_vector_in`：外部 `test_ROM` 输出数据。
+- `verify_addr`：外部 `verify_RAM` 写地址。
+- `verify_vector_out`：写入外部 `verify_RAM` 的数据。
+- `verify_we`：外部 `verify_RAM` 写使能。
+- `cnt_test`：20 bit 独立计数器。
+- `done`：程序执行完成标志。
 
-`cnt_test` starts when the MCU first reads `test_ROM[0]` and stops after writing `verify_RAM[15]`.
+## 内存映射
 
-## ISA
+- `0x0000` 到 `0x00FF`：MCU 内部 data RAM。
+- `0x1000` 到 `0x100F`：外部 `test_ROM`，对应输入信号 `test_vector_in`。
+- `0x2000` 到 `0x200F`：外部 `verify_RAM`，对应输出信号 `verify_vector_out`。
 
-Instructions are fixed 32-bit words:
+`cnt_test` 在 MCU 第一次读取 `test_ROM[0]` 时开始计数，在写完 `verify_RAM[15]` 后停止。
+
+## 指令集
+
+指令宽度固定为 32 bit。
 
 ```text
 [31:28] opcode
@@ -49,56 +61,69 @@ Instructions are fixed 32-bit words:
 [15:0]  imm16
 ```
 
-Supported instructions:
+当前支持以下指令：
 
 ```text
 NOP, ADD, SUB, AND, OR, MOVI, MOVR, LDR, STR,
 B, BL, CMP, BEQ, BNE, MUL, HALT
 ```
 
-`MUL` is a Q15 multiply:
+其中 `MUL` 被定义为 Q15 定点乘法：
 
 ```text
 Rd = (Rs1 * Rs2) >>> 15
 ```
 
-## FFT Format
+这样可以在不增加移位指令的情况下完成 FFT 中的旋转因子乘法。
 
-Input is 8 complex samples stored as 16 signed 16-bit words:
+## FFT 数据格式
+
+输入为 8 个复数采样点，共 16 个 signed 16-bit word：
 
 ```text
 x0_real, x0_imag, x1_real, x1_imag, ..., x7_real, x7_imag
 ```
 
-Output is also 16 signed 16-bit words:
+输出同样为 16 个 signed 16-bit word：
 
 ```text
 X0_real, X0_imag, X1_real, X1_imag, ..., X7_real, X7_imag
 ```
 
-The assembly program uses 8-point radix-2 DIF FFT and writes results back in natural order after bit-reversal reordering.
+FFT 汇编程序采用 8 点 radix-2 DIF FFT。DIF FFT 内部结果为 bit-reversed order，写出到 `verify_RAM` 前已按自然顺序重排。
 
-## Generate Test Vector
+## 生成测试向量
+
+在工程根目录执行：
 
 ```sh
 python3 scripts/gen_test_vector.py --seed 0 --out mem/test_vector.mem --coe mem/test_vector.coe
 ```
 
-## Assemble Programs
+该命令会生成：
 
-FFT program:
+- `mem/test_vector.mem`
+- `mem/test_vector.coe`
+
+默认随机数范围较小，便于 baseline 验证。
+
+## 汇编程序
+
+生成 FFT 指令 ROM 初始化文件：
 
 ```sh
 python3 scripts/assembler.py asm/fft8_baseline.asm -o mem/instr_fft8.mem --coe mem/instr_fft8.coe
 ```
 
-Standard instruction test:
+生成标准指令测试初始化文件：
 
 ```sh
 python3 scripts/assembler.py asm/standard_instruction_test.asm -o mem/instr_standard.mem --coe mem/instr_standard.coe
 ```
 
-## Run FFT Simulation With Icarus Verilog
+## 运行 FFT 仿真
+
+使用 Icarus Verilog：
 
 ```sh
 mkdir -p build
@@ -110,26 +135,33 @@ iverilog -g2005 -I rtl -I tb -o build/tb_mcu_fft8.vvp \
 vvp build/tb_mcu_fft8.vvp
 ```
 
-The simulation writes:
+仿真结束后会生成：
 
 ```text
 results/verify_output.txt
 ```
 
-## Check FFT Output
+## 检查 FFT 输出
+
+生成 Python 参考结果：
 
 ```sh
 python3 scripts/fft_fixed_ref.py --input mem/test_vector.mem --out results/expected_fft_output.txt
+```
+
+对比 MCU 仿真输出：
+
+```sh
 python3 scripts/check_fft_output.py --input mem/test_vector.mem --got results/verify_output.txt
 ```
 
-Expected result:
+期望输出：
 
 ```text
 Overall: PASS
 ```
 
-## Run Standard Instruction Test
+## 运行标准指令测试
 
 ```sh
 mkdir -p build
@@ -141,19 +173,31 @@ iverilog -g2005 -I rtl -I tb -o build/tb_standard_instruction.vvp \
 vvp build/tb_standard_instruction.vvp +INSTR_MEM=mem/instr_standard.mem
 ```
 
-## Vivado Notes
+## Vivado 上板说明
 
-- Use `rtl/mcu_top.v` as the top module.
-- Connect `test_rom_addr` to the address port of external `test_ROM`.
-- Connect external `test_ROM` data output to `test_vector_in`.
-- Connect `verify_addr`, `verify_vector_out`, and `verify_we` to external `verify_RAM`.
-- Add `test_vector_in`, `verify_vector_out`, `verify_we`, `verify_addr`, and `cnt_test` to ILA.
-- Load `mem/test_vector.coe` into `test_ROM`.
-- Load `mem/instr_fft8.coe` into instruction ROM or replace `rtl/instr_rom.v` with a Vivado ROM IP initialized by that COE.
+使用 Vivado 工程时：
 
-## Baseline Limits
+1. 以 `rtl/mcu_top.v` 作为顶层模块。
+2. 将 `test_rom_addr` 连接到外部 `test_ROM` 的地址端口。
+3. 将外部 `test_ROM` 的数据输出连接到 `test_vector_in`。
+4. 将 `verify_addr`、`verify_vector_out`、`verify_we` 连接到外部 `verify_RAM`。
+5. 将 `test_vector_in`、`verify_vector_out`、`verify_we`、`verify_addr`、`cnt_test` 加入 ILA。
+6. 使用 `mem/test_vector.coe` 初始化外部 `test_ROM`。
+7. 使用 `mem/instr_fft8.coe` 初始化指令 ROM，或将 `rtl/instr_rom.v` 替换为 Vivado ROM IP。
 
-- The MCU is intentionally simple and instruction-driven.
-- FFT is not implemented as a dedicated hardware FFT core.
-- No pipeline, cache, branch prediction, or operating system support is included.
-- `MUL` is specialized for Q15 fixed-point multiplication to keep the instruction set compact.
+上板验收时重点观察：
+
+- `test_vector_in`
+- `verify_vector_out`
+- `verify_we`
+- `verify_addr`
+- `cnt_test`
+- `done`
+
+## 当前 baseline 限制
+
+- MCU 结构保持简单，重点用于功能验证。
+- FFT 运算由汇编指令完成，没有实现专用 FFT IP。
+- 没有实现流水线、Cache、分支预测或操作系统。
+- `MUL` 为 Q15 专用乘法，牺牲了一点通用性，但能减少指令集复杂度。
+- 当前版本更偏向可读、可验收的 baseline，后续可以继续优化指令数、周期数和资源占用。
