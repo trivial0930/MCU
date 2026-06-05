@@ -1,4 +1,6 @@
-module instr_rom(
+module instr_rom #(
+    parameter INIT_FILE = "mem/instr_fft8.mem"
+)(
     input  wire [15:0] addr,
     output wire [31:0] instr
 );
@@ -12,14 +14,14 @@ module instr_rom(
         for (i = 0; i < 1024; i = i + 1)
             rom[i] = 32'h00000000;
 
-        mem_file = "mem/instr_fft8.mem";
+        mem_file = INIT_FILE;
         if ($value$plusargs("INSTR_MEM=%s", mem_file))
             $display("Loading instruction memory: %0s", mem_file);
         else
             $display("Loading instruction memory: %0s", mem_file);
 
 `ifdef SYNTHESIS
-        $readmemh(mem_file, rom);
+        $readmemh(INIT_FILE, rom);
 `else
         fd = $fopen(mem_file, "r");
         if (fd == 0) begin

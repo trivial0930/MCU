@@ -12,10 +12,12 @@
 - `mem/`：已生成的指令和测试向量 `.mem/.coe` 文件。
 - `tb/`：Verilog 仿真 testbench。
 - `results/`：参考输出和仿真输出文件。
+- `constraints/`：K7EDAEVAL 上板约束文件。
+- `vivado/`：Vivado 添加源码和创建 ILA IP 的辅助 Tcl 脚本。
 
 ## 顶层接口
 
-顶层模块为 `rtl/mcu_top.v`。
+仿真和 MCU 逻辑顶层为 `rtl/mcu_top.v`。
 
 ```verilog
 module mcu_top(
@@ -48,6 +50,41 @@ module mcu_top(
 - `0x2000` 到 `0x200F`：外部 `verify_RAM`，对应输出信号 `verify_vector_out`。
 
 `cnt_test` 在 MCU 第一次读取 `test_ROM[0]` 时开始计数，在写完 `verify_RAM[15]` 后停止。
+
+## 上板顶层
+
+上板顶层为 `rtl/board_top.v`。
+
+```verilog
+module board_top(
+    input  wire CLK_50M,
+    input  wire KEY1,
+    output wire LED1,
+    output wire LED2,
+    output wire LED3,
+    output wire LED4,
+    output wire LED5,
+    output wire LED6,
+    output wire LED7,
+    output wire LED8
+);
+```
+
+板级连接：
+
+- `CLK_50M`：K7EDAEVAL 主时钟，50 MHz。
+- `KEY1`：低有效复位按钮，`board_top.v` 内部转换为高有效 `rst`。
+- `LED1`：`done`。
+- `LED2`：`verify_we`。
+- `LED3` 到 `LED7`：`cnt_test` 的若干分频位，便于肉眼观察运行。
+- `LED8`：当前 `verify_RAM` debug 数据异或值。
+
+`board_top.v` 内部已经实例化：
+
+- `test_ROM`：测试向量 ROM，初始化文件为 `mem/test_vector.mem`。
+- `mcu_top`：MCU FFT 核心。
+- `verify_RAM`：验收输出 RAM。
+- `ila_probe`：ILA 接入封装。默认不启用；综合时定义 `ENABLE_ILA` 并生成 `ila_0` IP 后启用。
 
 ## 指令集
 
@@ -177,13 +214,13 @@ vvp build/tb_standard_instruction.vvp +INSTR_MEM=mem/instr_standard.mem
 
 使用 Vivado 工程时：
 
-1. 以 `rtl/mcu_top.v` 作为顶层模块。
-2. 将 `test_rom_addr` 连接到外部 `test_ROM` 的地址端口。
-3. 将外部 `test_ROM` 的数据输出连接到 `test_vector_in`。
-4. 将 `verify_addr`、`verify_vector_out`、`verify_we` 连接到外部 `verify_RAM`。
-5. 将 `test_vector_in`、`verify_vector_out`、`verify_we`、`verify_addr`、`cnt_test` 加入 ILA。
-6. 使用 `mem/test_vector.coe` 初始化外部 `test_ROM`。
-7. 使用 `mem/instr_fft8.coe` 初始化指令 ROM，或将 `rtl/instr_rom.v` 替换为 Vivado ROM IP。
+1. 以 `rtl/board_top.v` 作为上板顶层模块。
+2. 添加 `rtl/*.v`、`mem/*.mem`、`mem/*.coe` 和 `constraints/top.xdc`。
+3. `instr_rom.v` 默认读取 `mem/instr_fft8.mem`，这是指令 ROM 初始化处理。
+4. `test_ROM` 默认读取 `mem/test_vector.mem`，也可以在 Vivado 中替换为 distributed memory ROM IP。
+5. `verify_RAM` 是 16 x 16-bit 写 RAM，用于保存 FFT 输出。
+6. 如需 ILA，先运行 `source vivado/create_ila_0.tcl` 生成 `ila_0`，并在综合宏中定义 `ENABLE_ILA`。
+7. 可用 `source vivado/add_sources.tcl` 将工程源码、约束和初始化文件加入当前 Vivado project。
 
 上板验收时重点观察：
 
@@ -193,6 +230,29 @@ vvp build/tb_standard_instruction.vvp +INSTR_MEM=mem/instr_standard.mem
 - `verify_addr`
 - `cnt_test`
 - `done`
+
+推荐的 ILA probe 宽度：
+
+- `probe0`：`test_vector_in[15:0]`
+- `probe1`：`verify_vector_out[15:0]`
+- `probe2`：`verify_we`
+- `probe3`：`verify_addr[4:0]`
+- `probe4`：`cnt_test[19:0]`
+- `probe5`：`done`
+
+## 约束文件
+
+`constraints/top.xdc` 来自 `K7EDAEVAL_PIN定义.xlsx`：
+
+- `CLK_50M`：`G22`
+- `KEY1`：`AF5`
+- `LED1` 到 `LED8`：`G9 F8 G10 E10 D9 B9 C9 A8`
+
+如果你使用的板卡按钮电平与本工程假设不同，只需要修改 `rtl/board_top.v` 中的：
+
+```verilog
+assign rst = ~KEY1;
+```
 
 ## 当前 baseline 限制
 
