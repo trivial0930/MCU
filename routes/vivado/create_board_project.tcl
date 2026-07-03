@@ -1,12 +1,12 @@
 # Run from a route project root, for example:
 #   cd routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
-#   set PART_NAME xc7k325tffg900-2
+#   set PART_NAME xc7k325tffg676-2
 #   set TARGET_PERIOD_NS 20.000
 #   set ENABLE_ILA 1
 #   source ../../vivado/create_board_project.tcl
 
 if {![info exists PART_NAME]} {
-    set PART_NAME "xc7k325tffg900-2"
+    set PART_NAME "xc7k325tffg676-2"
 }
 
 if {![info exists TARGET_PERIOD_NS]} {
@@ -18,7 +18,10 @@ if {![info exists ENABLE_ILA]} {
 }
 
 set root_dir [file normalize [pwd]]
-set out_dir [file join $root_dir build vivado_board]
+if {![info exists OUT_DIR]} {
+    set OUT_DIR [file join $root_dir build vivado_board]
+}
+set out_dir [file normalize $OUT_DIR]
 set proj_name "mcu_fft_board"
 file mkdir $out_dir
 
@@ -54,6 +57,19 @@ set_property include_dirs [file join $root_dir rtl] [current_fileset]
 set_property strategy Flow_PerfOptimized_high [get_runs synth_1]
 set_property strategy Performance_Explore [get_runs impl_1]
 set_property STEPS.PHYS_OPT_DESIGN.IS_ENABLED true [get_runs impl_1]
+
+set synth_pre_tcl [file join $out_dir synth_pre_cd.tcl]
+set init_files [concat \
+    [glob -nocomplain [file join $root_dir mem *.mem]] \
+    [glob -nocomplain [file join $root_dir mem *.coe]]]
+set fd [open $synth_pre_tcl w]
+puts $fd "file mkdir mem"
+puts $fd "foreach f {$init_files} {"
+puts $fd "    file copy -force \$f mem"
+puts $fd "}"
+close $fd
+set_property STEPS.SYNTH_DESIGN.TCL.PRE $synth_pre_tcl [get_runs synth_1]
+
 update_compile_order -fileset sources_1
 
 puts "Created board project at $out_dir"

@@ -10,9 +10,9 @@
 - 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
 - `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
 
-本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），并用已安装的 `xc7k160tffg676-2` 跑通四条路线的综合冒烟；结果见 `routes/speed_v8_route_a_vivado_matrix/results/synth_smoke_preboard_matrix.csv`。Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。
+本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已在 `xc7k325tffg676-2` 下完成综合、实现、DRC 和 bitstream。
 
-当前唯一阻塞项是 Vivado 安装缺少目标板卡默认器件 `xc7k325tffg900-2`。本机 `get_parts xc7k325tffg900-2` 返回 0，安装日志显示当前只安装了 `xc7k70t`、`xc7k160t`、`xc7k160ti` 等 Kintex-7 器件。需要用管理员权限打开 `Add Design Tools or Devices 2025.2` 补齐 Kintex-7 7K325 器件支持后，才能完成 K7EDAEVAL 的 post-route 时序矩阵、DRC 和 bitstream。
+重要更新：课程资料中的 K7EDAEVAL 引脚表与 `xc7k325tffg676-2` 匹配，不匹配此前文档中的 `xc7k325tffg900-2`。仓库脚本默认 part 已改为 `xc7k325tffg676-2`，并修正了 KEY1 所在 HP Bank 的 IOSTANDARD。上板前仍建议核对板卡 FPGA 丝印；若实物确为其他 package，需要重新核对引脚表。
 
 ## 推荐阅读顺序
 
@@ -52,7 +52,7 @@ py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\rout
 
 比较时先看 `WNS >= 0` 的最高目标频率，再比较 `LUT`、`FF`、`DSP`、`BRAM`。最终成绩建议使用关闭 ILA 的实现结果。
 
-补齐 `xc7k325tffg900-2` 后，单条推荐路线可以直接跑到 bitstream：
+单条推荐路线可以直接跑到 bitstream：
 
 ```powershell
 cd routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
@@ -73,10 +73,16 @@ vivado
 Vivado Tcl Console 中执行：
 
 ```tcl
-set PART_NAME xc7k325tffg900-2
+set PART_NAME xc7k325tffg676-2
 set TARGET_PERIOD_NS 20.000
 set ENABLE_ILA 1
 source ../../vivado/create_board_project.tcl
 ```
 
 首次上板重点观察：`done` 是否拉高、`verify_we` 是否产生 16 次写入、最后写地址是否为 15、`cnt_test` 是否接近 157、输出序列是否与 `mem/FFT_output.coe` 一致。
+
+已生成的首板调试文件位于：
+
+- `routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.bit`
+- `routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.ltx`
+- `routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_no_ila.bit`

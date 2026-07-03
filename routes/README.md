@@ -14,20 +14,26 @@
 | `speed_v7_q7_narrow_mul/` | 路线 A1：保持 v6 行为，把 ALU Q7 乘法收窄为 data x 8-bit coefficient。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 推荐第一个上板版本。 |
 | `speed_v7b_c91_shift_add/` | 路线 A2 备选：把 FFT 程序用到的常数 91 乘法专门化为 `64 + 16 + 8 + 2 + 1` 移位加。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 比较 LUT/时序时使用。 |
 | `speed_v7c_c91_shift_sub/` | 路线 A2 备选：把常数 91 写成 `128 - 32 - 4 - 1` 移位减。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 比较 LUT/时序时使用。 |
-| `speed_v8_high_freq_sweep/` | 路线 A3/A4：基于 v7 窄乘法 RTL 的单路线高频 sweep。 | 本机未安装 Vivado，脚本已补充预检和报告输出。 | 只看推荐路线的频率边界。 |
-| `speed_v8_route_a_vivado_matrix/` | 路线 A3/A4：对 v6、v7、v7b、v7c 做目标频率和 Vivado strategy 矩阵比较。 | 已用 Vivado 2025.2 + `xc7k160tffg676-2` 跑综合冒烟；四条路线均综合通过。当前 Vivado 缺少 `xc7k325tffg900-2`，尚不能生成最终板卡 post-route 矩阵。 | 决定最终速度路线。 |
+| `speed_v8_high_freq_sweep/` | 路线 A3/A4：基于 v7 窄乘法 RTL 的单路线高频 sweep。 | Vivado 脚本默认 part 已更新为 `xc7k325tffg676-2`。 | 只看推荐路线的频率边界。 |
+| `speed_v8_route_a_vivado_matrix/` | 路线 A3/A4：对 v6、v7、v7b、v7c 做目标频率和 Vivado strategy 矩阵比较。 | 已用 Vivado 2025.2 完成前期综合冒烟；最终首板路线已优先收敛到 `speed_v7_q7_narrow_mul`。 | 决定最终速度路线。 |
 
 ## 本机调试结论
 
-当前 Windows 环境可用 `py`，Vivado 位于 `D:\vivado\2025.2\Vivado\bin\vivado.bat`，但未检测到：
+当前 Windows 环境可用 `py`、`iverilog`、`vvp` 和 Vivado 2025.2。Vivado 位于：
 
-- `iverilog`
-- `vvp`
+```text
+D:\vivado\2025.2\Vivado\bin\vivado.bat
+```
 
-Vivado 2025.2 已完成综合冒烟，结果见
-`speed_v8_route_a_vivado_matrix/results/synth_smoke_matrix.csv`。当前 Vivado
-安装缺少目标板卡默认器件 `xc7k325tffg900-2`，因此还不能生成最终
-K7EDAEVAL post-route 时序矩阵。
+目标器件和 license 已可用。根据课程资料引脚表和 Vivado 封装检查，当前上板 part 使用 `xc7k325tffg676-2`，不是旧文档中假设的 `xc7k325tffg900-2`。
+
+推荐首板路线 `speed_v7_q7_narrow_mul` 已完成：
+
+- 综合：PASS
+- 实现：PASS
+- DRC：0 Error
+- bitstream：PASS
+- ILA 调试文件：已生成 `.bit` 和 `.ltx`
 
 ## 重新跑本地功能回归
 
@@ -64,7 +70,7 @@ py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\rout
 
 - 目标频率：95、100、110、120、130 MHz。
 - 实现策略：`Performance_Explore`、`Performance_ExplorePostRoutePhysOpt`。
-- 器件：`xc7k325tffg900-2`。
+- 器件：`xc7k325tffg676-2`。
 
 如果板卡或 Vivado 工程使用不同器件，可在 Vivado Tcl 中先设置：
 

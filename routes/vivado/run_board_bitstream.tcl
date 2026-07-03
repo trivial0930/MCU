@@ -3,13 +3,13 @@
 #   vivado -mode batch -source ../../vivado/run_board_bitstream.tcl
 #
 # Optional overrides before sourcing:
-#   set PART_NAME xc7k325tffg900-2
+#   set PART_NAME xc7k325tffg676-2
 #   set TARGET_PERIOD_NS 20.000
 #   set ENABLE_ILA 1
 #   set JOBS 4
 
 if {![info exists PART_NAME]} {
-    set PART_NAME "xc7k325tffg900-2"
+    set PART_NAME "xc7k325tffg676-2"
 }
 if {![info exists TARGET_PERIOD_NS]} {
     set TARGET_PERIOD_NS "20.000"
@@ -76,8 +76,8 @@ report_utilization -file [file join $results_dir board_utilization.rpt]
 report_drc -file [file join $results_dir board_drc.rpt]
 report_methodology -file [file join $results_dir board_methodology.rpt]
 
-set bit_files [glob -nocomplain [file join $root_dir build vivado_board mcu_fft_board.runs impl_1 *.bit]]
-set ltx_files [glob -nocomplain [file join $root_dir build vivado_board mcu_fft_board.runs impl_1 *.ltx]]
+set bit_files [glob -nocomplain [file join $out_dir mcu_fft_board.runs impl_1 *.bit]]
+set ltx_files [glob -nocomplain [file join $out_dir mcu_fft_board.runs impl_1 *.ltx]]
 write_board_status $status_file ok "part=$PART_NAME target_period_ns=$TARGET_PERIOD_NS enable_ila=$ENABLE_ILA synth_status=$synth_status impl_status=$impl_status bit_files=$bit_files ltx_files=$ltx_files"
 
 puts "Board build complete."

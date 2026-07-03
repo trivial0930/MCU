@@ -3,11 +3,11 @@
 #   vivado -mode batch -source vivado/run_high_freq_sweep.tcl
 #
 # Optional overrides before sourcing:
-#   set PART_NAME xc7k325tffg900-2
+#   set PART_NAME xc7k325tffg676-2
 #   set JOBS 4
 
 if {![info exists PART_NAME]} {
-    set PART_NAME "xc7k325tffg900-2"
+    set PART_NAME "xc7k325tffg676-2"
 }
 if {![info exists JOBS]} {
     set JOBS 4

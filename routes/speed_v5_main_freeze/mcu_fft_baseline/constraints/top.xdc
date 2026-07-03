@@ -7,7 +7,7 @@ create_clock -period 20.000 -name clk_50m [get_ports CLK_50M]
 
 ## KEY1 is used as active-low reset in board_top.v.
 set_property PACKAGE_PIN AF5 [get_ports KEY1]
-set_property IOSTANDARD LVCMOS33 [get_ports KEY1]
+set_property IOSTANDARD LVCMOS18 [get_ports KEY1]
 
 set_property PACKAGE_PIN G9 [get_ports LED1]
 set_property IOSTANDARD LVCMOS33 [get_ports LED1]
