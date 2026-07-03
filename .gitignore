@@ -1,0 +1,5 @@
+external/
+build/
+__pycache__/
+*.pyc
+*.vcd
