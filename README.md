@@ -10,7 +10,9 @@
 - 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
 - `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
 
-本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），并用已安装的 `xc7k160tffg676-2` 跑通四条路线的综合冒烟；结果见 `routes/speed_v8_route_a_vivado_matrix/results/synth_smoke_matrix.csv`。当前 Vivado 安装缺少目标板卡默认器件 `xc7k325tffg900-2`，因此最终 K7EDAEVAL post-route 时序矩阵仍需补齐器件支持后再跑。系统仍未检测到 `iverilog`、`vvp`，本地 Verilog 回归脚本会提前预检并清楚报错。
+本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），并用已安装的 `xc7k160tffg676-2` 跑通四条路线的综合冒烟；结果见 `routes/speed_v8_route_a_vivado_matrix/results/synth_smoke_preboard_matrix.csv`。Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。
+
+当前唯一阻塞项是 Vivado 安装缺少目标板卡默认器件 `xc7k325tffg900-2`。本机 `get_parts xc7k325tffg900-2` 返回 0，安装日志显示当前只安装了 `xc7k70t`、`xc7k160t`、`xc7k160ti` 等 Kintex-7 器件。需要用管理员权限打开 `Add Design Tools or Devices 2025.2` 补齐 Kintex-7 7K325 器件支持后，才能完成 K7EDAEVAL 的 post-route 时序矩阵、DRC 和 bitstream。
 
 ## 推荐阅读顺序
 
@@ -18,7 +20,8 @@
 2. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
 3. `routes/ROUTE_A_BOARD_BRINGUP_GUIDE.md`：按步骤完成 Vivado 建工程、综合实现、上板和 ILA 观察。
 4. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
-5. `docs/后续操作与上板指南.md`：从当前综合冒烟结果继续到最终实现矩阵和上板验收的完整中文指南。
+5. `docs/README.md`：文档入口，指向当前状态报告、上板前检查记录和后续上板指南。
+6. `docs/后续操作与上板指南.md`：从当前综合冒烟结果继续到最终实现矩阵和上板验收的完整中文指南。
 
 ## 快速功能回归
 
@@ -48,6 +51,15 @@ py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\rout
 ```
 
 比较时先看 `WNS >= 0` 的最高目标频率，再比较 `LUT`、`FF`、`DSP`、`BRAM`。最终成绩建议使用关闭 ILA 的实现结果。
+
+补齐 `xc7k325tffg900-2` 后，单条推荐路线可以直接跑到 bitstream：
+
+```powershell
+cd routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
+vivado -mode batch -source ../../vivado/run_board_bitstream.tcl
+```
+
+该脚本会运行综合、实现、DRC 和 `write_bitstream`，并把报告写入 `results/vivado_board/`。
 
 ## 上板入口
 

@@ -1,0 +1,2 @@
+status=blocked
+notes=part=xc7k325tffg900-2 is not installed in this Vivado device database

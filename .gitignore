@@ -1,6 +1,7 @@
 external/
 build/
 __pycache__/
+.DS_Store
 *.pyc
 *.vcd
 .Xil/
@@ -9,3 +10,4 @@ vivado.log
 vivado.jou
 vivado_*.backup.log
 vivado_*.backup.jou
+docs/上板前检查执行记录.pdf
