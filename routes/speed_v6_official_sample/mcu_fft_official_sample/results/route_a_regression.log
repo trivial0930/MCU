@@ -1,4 +1,4 @@
-wrote asm/fft8_official_sample.asm
+wrote asm\fft8_official_sample.asm
 official model emit PASS
 assembled 162 instructions
 Loading instruction memory: mem/instr_fft8.mem
@@ -385,59 +385,7 @@ Index  Expected  Got      Status
 15     1806      1806     PASS
 Overall: PASS
 random seed 2041 generated
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/gen_fft8_official_asm.py
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py emit --input-coe mem/FFT_input.coe --expected-coe mem/FFT_output.coe --mem mem/FFT_input.mem --expected results/expected_fft_output.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/assembler.py asm/fft8_official_sample.asm -o mem/instr_fft8.mem --coe mem/instr_fft8.coe
-+ iverilog -g2005 -I rtl -I tb -o build/tb_mcu_fft8.vvp tb/tb_mcu_fft8.v rtl/mcu_top.v rtl/mcu_core.v rtl/instr_rom.v rtl/data_ram.v rtl/ext_test_rom_if.v rtl/verify_ram_if.v rtl/cnt_test.v rtl/decoder.v rtl/control_unit.v rtl/reg_file.v rtl/alu.v
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=mem/FFT_input.mem +OUT_FILE=results/verify_output.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/expected_fft_output.txt --got results/verify_output.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2026 --mem build/random_000.mem --expected results/random_000_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_000.mem +OUT_FILE=results/random_000_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_000_expected.txt --got results/random_000_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2027 --mem build/random_001.mem --expected results/random_001_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_001.mem +OUT_FILE=results/random_001_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_001_expected.txt --got results/random_001_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2028 --mem build/random_002.mem --expected results/random_002_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_002.mem +OUT_FILE=results/random_002_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_002_expected.txt --got results/random_002_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2029 --mem build/random_003.mem --expected results/random_003_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_003.mem +OUT_FILE=results/random_003_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_003_expected.txt --got results/random_003_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2030 --mem build/random_004.mem --expected results/random_004_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_004.mem +OUT_FILE=results/random_004_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_004_expected.txt --got results/random_004_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2031 --mem build/random_005.mem --expected results/random_005_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_005.mem +OUT_FILE=results/random_005_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_005_expected.txt --got results/random_005_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2032 --mem build/random_006.mem --expected results/random_006_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_006.mem +OUT_FILE=results/random_006_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_006_expected.txt --got results/random_006_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2033 --mem build/random_007.mem --expected results/random_007_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_007.mem +OUT_FILE=results/random_007_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_007_expected.txt --got results/random_007_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2034 --mem build/random_008.mem --expected results/random_008_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_008.mem +OUT_FILE=results/random_008_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_008_expected.txt --got results/random_008_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2035 --mem build/random_009.mem --expected results/random_009_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_009.mem +OUT_FILE=results/random_009_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_009_expected.txt --got results/random_009_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2036 --mem build/random_010.mem --expected results/random_010_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_010.mem +OUT_FILE=results/random_010_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_010_expected.txt --got results/random_010_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2037 --mem build/random_011.mem --expected results/random_011_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_011.mem +OUT_FILE=results/random_011_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_011_expected.txt --got results/random_011_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2038 --mem build/random_012.mem --expected results/random_012_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_012.mem +OUT_FILE=results/random_012_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_012_expected.txt --got results/random_012_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2039 --mem build/random_013.mem --expected results/random_013_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_013.mem +OUT_FILE=results/random_013_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_013_expected.txt --got results/random_013_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2040 --mem build/random_014.mem --expected results/random_014_expected.txt
-+ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_014.mem +OUT_FILE=results/random_014_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_014_expected.txt --got results/random_014_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2041 --mem build/random_015.mem --expected results/random_015_expected.txt
-+ Loading instruction memory: mem/instr_fft8.mem
+Loading instruction memory: mem/instr_fft8.mem
 Loading test memory: build/random_015.mem
 Writing verify output: results/random_015_got.txt
 done cycles=162 cnt_test=157
@@ -556,18 +504,70 @@ Index  Expected  Got      Status
 14     -1408     -1408    PASS
 15     -498      -498     PASS
 Overall: PASS
-vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_015.mem +OUT_FILE=results/random_015_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_015_expected.txt --got results/random_015_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2042 --mem build/random_016.mem --expected results/random_016_expected.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/gen_fft8_official_asm.py
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py emit --input-coe mem/FFT_input.coe --expected-coe mem/FFT_output.coe --mem mem/FFT_input.mem --expected results/expected_fft_output.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/assembler.py asm/fft8_official_sample.asm -o mem/instr_fft8.mem --coe mem/instr_fft8.coe
++ iverilog -g2005 -I rtl -I tb -o build/tb_mcu_fft8.vvp tb/tb_mcu_fft8.v rtl/mcu_top.v rtl/mcu_core.v rtl/instr_rom.v rtl/data_ram.v rtl/ext_test_rom_if.v rtl/verify_ram_if.v rtl/cnt_test.v rtl/decoder.v rtl/control_unit.v rtl/reg_file.v rtl/alu.v
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=mem/FFT_input.mem +OUT_FILE=results/verify_output.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/expected_fft_output.txt --got results/verify_output.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2026 --mem build/random_000.mem --expected results/random_000_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_000.mem +OUT_FILE=results/random_000_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_000_expected.txt --got results/random_000_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2027 --mem build/random_001.mem --expected results/random_001_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_001.mem +OUT_FILE=results/random_001_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_001_expected.txt --got results/random_001_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2028 --mem build/random_002.mem --expected results/random_002_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_002.mem +OUT_FILE=results/random_002_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_002_expected.txt --got results/random_002_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2029 --mem build/random_003.mem --expected results/random_003_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_003.mem +OUT_FILE=results/random_003_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_003_expected.txt --got results/random_003_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2030 --mem build/random_004.mem --expected results/random_004_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_004.mem +OUT_FILE=results/random_004_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_004_expected.txt --got results/random_004_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2031 --mem build/random_005.mem --expected results/random_005_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_005.mem +OUT_FILE=results/random_005_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_005_expected.txt --got results/random_005_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2032 --mem build/random_006.mem --expected results/random_006_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_006.mem +OUT_FILE=results/random_006_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_006_expected.txt --got results/random_006_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2033 --mem build/random_007.mem --expected results/random_007_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_007.mem +OUT_FILE=results/random_007_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_007_expected.txt --got results/random_007_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2034 --mem build/random_008.mem --expected results/random_008_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_008.mem +OUT_FILE=results/random_008_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_008_expected.txt --got results/random_008_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2035 --mem build/random_009.mem --expected results/random_009_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_009.mem +OUT_FILE=results/random_009_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_009_expected.txt --got results/random_009_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2036 --mem build/random_010.mem --expected results/random_010_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_010.mem +OUT_FILE=results/random_010_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_010_expected.txt --got results/random_010_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2037 --mem build/random_011.mem --expected results/random_011_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_011.mem +OUT_FILE=results/random_011_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_011_expected.txt --got results/random_011_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2038 --mem build/random_012.mem --expected results/random_012_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_012.mem +OUT_FILE=results/random_012_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_012_expected.txt --got results/random_012_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2039 --mem build/random_013.mem --expected results/random_013_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_013.mem +OUT_FILE=results/random_013_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_013_expected.txt --got results/random_013_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2040 --mem build/random_014.mem --expected results/random_014_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_014.mem +OUT_FILE=results/random_014_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_014_expected.txt --got results/random_014_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2041 --mem build/random_015.mem --expected results/random_015_expected.txt
++ vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_015.mem +OUT_FILE=results/random_015_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_015_expected.txt --got results/random_015_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2042 --mem build/random_016.mem --expected results/random_016_expected.txt
 + vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_016.mem +OUT_FILE=results/random_016_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_016_expected.txt --got results/random_016_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2043 --mem build/random_017.mem --expected results/random_017_expected.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_016_expected.txt --got results/random_016_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2043 --mem build/random_017.mem --expected results/random_017_expected.txt
 + vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_017.mem +OUT_FILE=results/random_017_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_017_expected.txt --got results/random_017_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2044 --mem build/random_018.mem --expected results/random_018_expected.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_017_expected.txt --got results/random_017_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2044 --mem build/random_018.mem --expected results/random_018_expected.txt
 + vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_018.mem +OUT_FILE=results/random_018_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_018_expected.txt --got results/random_018_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2045 --mem build/random_019.mem --expected results/random_019_expected.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_018_expected.txt --got results/random_018_got.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py random --template-coe mem/FFT_input.coe --seed 2045 --mem build/random_019.mem --expected results/random_019_expected.txt
 + vvp build/tb_mcu_fft8.vvp +TEST_MEM=build/random_019.mem +OUT_FILE=results/random_019_got.txt
-+ /Library/Developer/CommandLineTools/usr/bin/python3 scripts/official_fft_model.py check --expected results/random_019_expected.txt --got results/random_019_got.txt
-wrote /Users/rongzechen/ËµÑÊñô/Êï∞ÁîµÂÆûÈ™å/MCU/routes/speed_v6_official_sample/mcu_fft_official_sample/results/regression_summary.txt
++ C:\Users\»÷‘Ò≥Ω\AppData\Local\Programs\Python\Python39\python.exe scripts/official_fft_model.py check --expected results/random_019_expected.txt --got results/random_019_got.txt
+wrote C:\Users\»÷‘Ò≥Ω\OneDrive\Œƒµµ\ ˝µÁ µ—È\MCU\routes\speed_v6_official_sample\mcu_fft_official_sample\results\regression_summary.txt
