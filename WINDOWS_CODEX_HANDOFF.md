@@ -51,7 +51,7 @@ vivado
 Vivado Tcl Console：
 
 ```tcl
-set PART_NAME xc7k325tffg900-2
+set PART_NAME xc7k325tffg676-2
 set TARGET_PERIOD_NS 20.000
 set ENABLE_ILA 1
 source ../../vivado/create_board_project.tcl
@@ -71,29 +71,31 @@ report_utilization
 
 首次上板建议 `ENABLE_ILA 1`，最终资源和频率比较建议 `ENABLE_ILA 0`。
 
-## 5. 路线 A 综合冒烟
+## 5. 推荐重新生成 bitstream
 
-如果当前 Vivado 没有安装 `xc7k325tffg900-2`，可先用已安装的
-`xc7k160tffg676-2` 跑不加载板级 XDC 的综合冒烟。该步骤只能确认 HDL
-和 ROM 初始化可综合，并给出资源趋势，不能作为最终板卡时序成绩。
-
-推荐先映射短路径，避免中文路径和长路径影响 Vivado：
+推荐先映射短路径，避免中文路径、OneDrive 和长路径影响 Vivado：
 
 ```powershell
 subst M: C:\Users\戎择辰\OneDrive\文档\数电实验\MCU
-cd M:\routes\speed_v8_route_a_vivado_matrix
-vivado -mode batch -source vivado\run_route_a_synth_smoke.tcl
+cd M:\routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
 ```
 
-本机已跑出的综合冒烟结果在：
+带 ILA 调试版建议使用 OneDrive 外的输出目录：
 
-```text
-routes\speed_v8_route_a_vivado_matrix\results\synth_smoke_matrix.csv
+```powershell
+@'
+set ENABLE_ILA 1
+set TARGET_PERIOD_NS 20.000
+set PART_NAME xc7k325tffg676-2
+set JOBS 4
+set OUT_DIR D:/vivado_work/mcu_q7_ila
+source ../../vivado/run_board_bitstream.tcl
+'@ | D:\vivado\2025.2\Vivado\bin\vivado.bat -mode tcl -nolog -nojournal
 ```
 
 ## 6. 路线 A 高频矩阵
 
-在安装了目标器件支持和有效 license 的 Vivado 机器上运行：
+如需继续比较 v6/v7/v7b/v7c 的高频余量，运行：
 
 ```powershell
 cd routes\speed_v8_route_a_vivado_matrix
@@ -129,3 +131,5 @@ assign clk = CLK_50M;
 - 最终路线的 timing/utilization report
 - 选择最终路线的理由：频率、WNS、资源、是否带 ILA
 - 若修改 RTL，需要重新跑功能回归并更新对应路线说明
+
+当前已完成的首板交付物和上板步骤见 `docs/上板与交接指南.md`。

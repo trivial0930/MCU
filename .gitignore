@@ -10,4 +10,5 @@ vivado.log
 vivado.jou
 vivado_*.backup.log
 vivado_*.backup.jou
+docs/*.pdf
 docs/上板前检查执行记录.pdf

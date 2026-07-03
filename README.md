@@ -18,10 +18,9 @@
 
 1. `materials/README.md`：确认资料来源、官方输入输出样例和板卡引脚表。
 2. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
-3. `routes/ROUTE_A_BOARD_BRINGUP_GUIDE.md`：按步骤完成 Vivado 建工程、综合实现、上板和 ILA 观察。
+3. `docs/上板与交接指南.md`：最新上板状态、bit/ltx 位置、报告摘要、重新生成命令和 ILA 观察步骤。
 4. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
-5. `docs/README.md`：文档入口，指向当前状态报告、上板前检查记录和后续上板指南。
-6. `docs/后续操作与上板指南.md`：从当前综合冒烟结果继续到最终实现矩阵和上板验收的完整中文指南。
+5. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
 
 ## 快速功能回归
 
