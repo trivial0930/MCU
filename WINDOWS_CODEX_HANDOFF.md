@@ -1,9 +1,8 @@
-# Windows Codex + Vivado Handoff
+# Windows Codex + Vivado 继续调试清单
 
-Use this guide when opening the GitHub repository on a Windows machine with
-Vivado installed.
+这份文档用于在 Windows 机器上接着完成 MCU FFT 路线 A 的仿真、Vivado 实现、上板和结果回填。建议把仓库根目录直接作为 Codex 工作区打开。
 
-## 1. Clone Or Update
+## 1. 拉取仓库
 
 ```powershell
 git clone https://github.com/trivial0930/MCU.git
@@ -11,42 +10,45 @@ cd MCU
 git pull origin main
 ```
 
-The route A work is already merged into `main`.
-
-## 2. What To Feed Codex
-
-Open the repository root `MCU` in Codex on Windows. The important entry points
-are:
-
-- `materials/README.md`: course documents and official sample data.
-- `routes/README.md`: route inventory and local regression command.
-- `routes/ROUTE_A_BOARD_BRINGUP_GUIDE.md`: K7EDAEVAL bring-up guide.
-- `routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul`: recommended first
-  hardware route.
-- `routes/speed_v8_route_a_vivado_matrix`: Vivado comparison scripts for all
-  route A multiplier candidates.
-
-## 3. Local Functional Regression
-
-If Python and Icarus Verilog are available on Windows:
+如果已经在本地有仓库，先确认没有未保存改动：
 
 ```powershell
-python routes/scripts/run_route_a_local_regressions.py --random-cases 20 --seed 2026
+git status --short --branch
 ```
 
-If Icarus is not available, skip this step and use Vivado simulation or go
-straight to implementation after confirming the committed result files.
-
-## 4. First Vivado Board Project
-
-Start with the narrow Q7 multiplier route:
+## 2. 工具链检查
 
 ```powershell
-cd routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
+py --version
+where vivado
+where iverilog
+where vvp
+```
+
+- 只做 Vivado 实现：必须能找到 `vivado`。
+- 做本地 Verilog 回归：必须能找到 `iverilog` 和 `vvp`。
+- 当前脚本已加入预检，缺工具时会提前退出并说明原因。
+
+## 3. 功能回归
+
+从仓库根目录运行四条路线的统一回归：
+
+```powershell
+py routes\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
+```
+
+缺少 Icarus Verilog 时可以跳过此步，但上板前至少应确认仓库中已有的 `results/regression_summary.txt` 与 `results/route_a_regression.log` 是通过版本。
+
+## 4. 推荐上板路线
+
+优先从 `speed_v7_q7_narrow_mul` 开始，因为它保持 Q7 乘法语义，同时减少乘法器宽度，风险低于常数 91 专用路线。
+
+```powershell
+cd routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
 vivado
 ```
 
-In Vivado Tcl Console:
+Vivado Tcl Console：
 
 ```tcl
 set PART_NAME xc7k325tffg900-2
@@ -55,7 +57,7 @@ set ENABLE_ILA 1
 source ../../vivado/create_board_project.tcl
 ```
 
-Then run:
+然后执行：
 
 ```tcl
 launch_runs synth_1 -jobs 4
@@ -67,30 +69,63 @@ report_timing_summary
 report_utilization
 ```
 
-Use `ENABLE_ILA 1` for first bring-up and `ENABLE_ILA 0` for final resource
-comparison.
+首次上板建议 `ENABLE_ILA 1`，最终资源和频率比较建议 `ENABLE_ILA 0`。
 
-## 5. Route A Timing Matrix
+## 5. 路线 A 综合冒烟
 
-To compare all route A multiplier implementations:
+如果当前 Vivado 没有安装 `xc7k325tffg900-2`，可先用已安装的
+`xc7k160tffg676-2` 跑不加载板级 XDC 的综合冒烟。该步骤只能确认 HDL
+和 ROM 初始化可综合，并给出资源趋势，不能作为最终板卡时序成绩。
+
+推荐先映射短路径，避免中文路径和长路径影响 Vivado：
 
 ```powershell
-cd routes/speed_v8_route_a_vivado_matrix
-vivado -mode batch -source vivado/run_route_a_matrix.tcl
-python scripts/parse_vivado_reports.py --root build/vivado_matrix --out results/route_a_matrix.csv
+subst M: C:\Users\戎择辰\OneDrive\文档\数电实验\MCU
+cd M:\routes\speed_v8_route_a_vivado_matrix
+vivado -mode batch -source vivado\run_route_a_synth_smoke.tcl
 ```
 
-Send the generated `results/route_a_matrix.csv` and any failing
-`*_timing_summary.rpt` files back into Codex for analysis.
+本机已跑出的综合冒烟结果在：
 
-## 6. Important Clock Note
+```text
+routes\speed_v8_route_a_vivado_matrix\results\synth_smoke_matrix.csv
+```
 
-The current board top uses the board `CLK_50M` directly:
+## 6. 路线 A 高频矩阵
+
+在安装了目标器件支持和有效 license 的 Vivado 机器上运行：
+
+```powershell
+cd routes\speed_v8_route_a_vivado_matrix
+vivado -mode batch -source vivado\run_route_a_matrix.tcl
+py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_a_matrix.csv
+```
+
+脚本会为每个组合生成：
+
+- `*_timing_summary.rpt`
+- `*_utilization.rpt`
+- `*_design_analysis_timing.rpt`
+- `*_routed.dcp`
+- `run_status.txt`
+
+把 `results/route_a_matrix.csv` 和失败组合的 timing report 交给 Codex，即可继续分析瓶颈。
+
+## 7. 重要时钟说明
+
+当前 `rtl/board_top.v` 直接使用板载 50 MHz：
 
 ```verilog
 assign clk = CLK_50M;
 ```
 
-The 95/100/110/120/130 MHz scripts are timing-target sweeps. True high-frequency
-operation on hardware requires adding a PLL/MMCM or another valid high-frequency
-clock source, then updating `board_top.v` and constraints.
+95/100/110/120/130 MHz 脚本是时序目标 sweep，用于判断 RTL 在该目标下是否能收敛。若需要板上真实运行到 95 MHz 以上，需要额外加入 PLL/MMCM 或外部高频时钟，并同步更新 `board_top.v` 和约束。
+
+## 8. 推荐交付物
+
+完成 Vivado 调试后，建议回填：
+
+- `routes/speed_v8_route_a_vivado_matrix/results/route_a_matrix.csv`
+- 最终路线的 timing/utilization report
+- 选择最终路线的理由：频率、WNS、资源、是否带 ILA
+- 若修改 RTL，需要重新跑功能回归并更新对应路线说明

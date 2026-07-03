@@ -1,10 +1,70 @@
-电子科技大学英才实验学院数字电路实验代码
+# MCU FFT 路线 A 实验仓库
 
-## MCU FFT Route A
+本仓库用于电子科技大学英才实验学院数字电路 MCU 实验中的 8 点定点复数 FFT 任务。项目核心不是直接例化 FFT IP，而是用一个轻量 MCU 执行汇编程序完成 FFT 计算，并围绕官方 2026 测试样例做功能验证、上板调试和速度路线比较。
 
-The Route A FFT optimization work, course materials, official samples, and
-Windows/Vivado handoff notes are now included in the repository:
+## 当前状态
 
-- `materials/`: course documents and official test samples.
-- `routes/`: isolated route folders, regression scripts, and Vivado scripts.
-- `WINDOWS_CODEX_HANDOFF.md`: recommended workflow for Windows Codex + Vivado.
+- `Baseline/` 保存基础 MCU FFT 工程。
+- `materials/` 保存课程资料、K7EDAEVAL 引脚表和官方测试样例。
+- `routes/` 保存路线 A 的多个独立候选版本，便于保留可用版本并隔离失败实验。
+- 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
+- `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
+
+本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），并用已安装的 `xc7k160tffg676-2` 跑通四条路线的综合冒烟；结果见 `routes/speed_v8_route_a_vivado_matrix/results/synth_smoke_matrix.csv`。当前 Vivado 安装缺少目标板卡默认器件 `xc7k325tffg900-2`，因此最终 K7EDAEVAL post-route 时序矩阵仍需补齐器件支持后再跑。系统仍未检测到 `iverilog`、`vvp`，本地 Verilog 回归脚本会提前预检并清楚报错。
+
+## 推荐阅读顺序
+
+1. `materials/README.md`：确认资料来源、官方输入输出样例和板卡引脚表。
+2. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
+3. `routes/ROUTE_A_BOARD_BRINGUP_GUIDE.md`：按步骤完成 Vivado 建工程、综合实现、上板和 ILA 观察。
+4. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
+5. `docs/后续操作与上板指南.md`：从当前综合冒烟结果继续到最终实现矩阵和上板验收的完整中文指南。
+
+## 快速功能回归
+
+需要安装 Python 与 Icarus Verilog，并确保 `iverilog`、`vvp` 在 PATH 中：
+
+```powershell
+py routes\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
+```
+
+该命令会依次检查四条路线：
+
+- `speed_v6_official_sample`
+- `speed_v7_q7_narrow_mul`
+- `speed_v7b_c91_shift_add`
+- `speed_v7c_c91_shift_sub`
+
+如果缺少 Icarus Verilog，脚本会在运行前退出，不会刷新各路线下的 `results/route_a_regression.log`。
+
+## Vivado 路线比较
+
+在安装 Vivado 的 Windows 机器上运行：
+
+```powershell
+cd routes\speed_v8_route_a_vivado_matrix
+vivado -mode batch -source vivado\run_route_a_matrix.tcl
+py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_a_matrix.csv
+```
+
+比较时先看 `WNS >= 0` 的最高目标频率，再比较 `LUT`、`FF`、`DSP`、`BRAM`。最终成绩建议使用关闭 ILA 的实现结果。
+
+## 上板入口
+
+推荐先使用稳定的窄乘法路线：
+
+```powershell
+cd routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
+vivado
+```
+
+Vivado Tcl Console 中执行：
+
+```tcl
+set PART_NAME xc7k325tffg900-2
+set TARGET_PERIOD_NS 20.000
+set ENABLE_ILA 1
+source ../../vivado/create_board_project.tcl
+```
+
+首次上板重点观察：`done` 是否拉高、`verify_we` 是否产生 16 次写入、最后写地址是否为 15、`cnt_test` 是否接近 157、输出序列是否与 `mem/FFT_output.coe` 一致。

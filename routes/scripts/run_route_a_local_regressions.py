@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -20,6 +21,15 @@ def main():
     parser.add_argument("--random-cases", type=int, default=20)
     parser.add_argument("--seed", type=int, default=2026)
     args = parser.parse_args()
+
+    missing = [tool for tool in ("iverilog", "vvp") if shutil.which(tool) is None]
+    if missing:
+        raise SystemExit(
+            "missing simulation tool(s): "
+            + ", ".join(missing)
+            + "\nInstall Icarus Verilog or run this regression on a machine where "
+              "`iverilog` and `vvp` are available in PATH. No route logs were updated."
+        )
 
     failed = []
     for name, path in ROUTES:

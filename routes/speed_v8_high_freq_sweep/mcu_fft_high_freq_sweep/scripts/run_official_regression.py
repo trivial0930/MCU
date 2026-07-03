@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def require_tool(name):
+    if shutil.which(name) is None:
+        raise SystemExit(
+            f"missing required tool: {name}\n"
+            "Install Icarus Verilog or add it to PATH before running this regression."
+        )
 
 
 def run(cmd, **kwargs):
@@ -18,6 +27,9 @@ def main():
     parser.add_argument("--random-cases", type=int, default=20)
     parser.add_argument("--seed", type=int, default=2026)
     args = parser.parse_args()
+
+    require_tool("iverilog")
+    require_tool("vvp")
 
     (ROOT / "build").mkdir(exist_ok=True)
     (ROOT / "results").mkdir(exist_ok=True)

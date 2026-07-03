@@ -3,3 +3,9 @@ build/
 __pycache__/
 *.pyc
 *.vcd
+.Xil/
+dfx_runtime.txt
+vivado.log
+vivado.jou
+vivado_*.backup.log
+vivado_*.backup.jou
