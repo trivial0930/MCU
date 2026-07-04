@@ -1,0 +1,2 @@
+freq_mhz,period_ns,pll_mult,pll_divide,regression,cnt_test,theoretical_time_us,wns_ns,tns_ns,whs_ns,ths_ns,lut,ff,dsp,bram,drc,bitstream,status,notes
+300,3.333,30,5,PASS,72,0.240,0.089,0.000,0.065,0.000,5002,3718,0,0,"0 Error","D:/vivado_work/routes_ultra/mcu_fft_v53_quad_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit",PASS,"high-to-low sweep stopped at the first and highest target because 300MHz met timing"

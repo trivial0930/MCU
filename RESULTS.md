@@ -1,5 +1,9 @@
 # 当前结果速览
 
+## 2026-07-05 V53 更新
+
+`routes_ultra/V53_quad_output_owner_300/mcu_fft_v53_quad_output_owner_300` 已完成四核输出归属路线的功能回归和 300MHz no-ILA 实现。当前结果为 `cnt_test=72`，300MHz 理论时间 `0.240 us`，WNS/TNS 为 `+0.089 ns / 0.000 ns`，WHS/THS 为 `+0.065 ns / 0.000 ns`，LUT/FF/DSP/BRAM 为 `5002 / 3718 / 0 / 0`。官方样例 + 20 组随机输入 PASS，DRC 0 Error，bitstream 已生成。该路线目前是最快 no-ILA 合规候选，但还未完成实物上板验证；已上板最快备份仍为 V45。
+
 更新时间：2026-07-05
 
 ## 统一口径

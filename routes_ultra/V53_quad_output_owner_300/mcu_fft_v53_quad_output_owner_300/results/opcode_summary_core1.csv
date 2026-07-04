@@ -1,0 +1,9 @@
+opcode,count
+ADD,4
+HALT,1
+LDR,8
+MOVI,2
+NOP,91
+STR,8
+SUB,4
+TOTAL,118

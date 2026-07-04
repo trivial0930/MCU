@@ -1,5 +1,9 @@
 # MCU FFT 实验仓库
 
+## 2026-07-05 最新状态
+
+新增 `routes_ultra/V53_quad_output_owner_300/mcu_fft_v53_quad_output_owner_300` 四核输出归属路线。V53 已通过官方样例 + 20 组随机回归，`cnt_test=72`，300MHz 理论时间 `0.240 us`，no-ILA 300MHz WNS/TNS 为 `+0.089 ns / 0.000 ns`，DSP=0，bitstream 已生成。V53 是当前最快 no-ILA 合规候选；V45 仍是当前最快已上板备份路线。
+
 本仓库用于电子科技大学英才实验学院数字电路 MCU 实验中的 8 点定点复数 FFT 任务。当前设计目标是在不直接例化 FFT IP、DSP IP、DMA、协处理器或专用 FFT 加速器的前提下，用自研轻量 MCU 执行普通指令完成 FFT 计算，并完成仿真、综合、实现、bitstream 生成和上板验证资料整理。
 
 ## 当前结论

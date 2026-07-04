@@ -1,0 +1,17 @@
+cycle,verify_addr,verify_data,writer_core,is_last_write
+104,3,fea2,Core3,0
+105,11,1f8c,Core3,0
+106,7,fa5e,Core3,0
+107,15,d874,Core3,0
+115,1,e80a,Core1,0
+116,9,317c,Core1,0
+117,5,16f6,Core1,0
+118,13,0c84,Core1,0
+120,2,1a80,Core2,0
+121,10,2c00,Core2,0
+122,6,e680,Core2,0
+123,0,f280,Core0,0
+123,14,1600,Core2,0
+124,8,e900,Core0,0
+125,4,e080,Core0,0
+126,12,0b00,Core0,1

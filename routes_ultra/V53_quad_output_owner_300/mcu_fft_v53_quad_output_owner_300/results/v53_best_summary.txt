@@ -1,0 +1,6 @@
+cnt_test=72
+core1_stage2_wait=68
+core1_stage3_wait=23
+core2_stage3_wait=108
+core3_stage3_wait=92
+conclusion=PASS_BEATS_V45

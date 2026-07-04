@@ -1,5 +1,9 @@
 # routes_ultra：300 MHz 极限优化路线
 
+## 2026-07-05 V53 更新
+
+新增 `V53_quad_output_owner_300/mcu_fft_v53_quad_output_owner_300`。该路线从 V45 复制，改为四个完整 MCU core 的输出归属拆分，并通过 verify RAM bank 化、关闭 Core2/Core3 shared RAM 写口、aligned-base memory offset 快路径收敛 300MHz 时序。最终官方样例 + 20 组随机 PASS，`cnt_test=72`，300MHz no-ILA WNS/TNS 为 `+0.089 ns / 0.000 ns`，LUT/FF/DSP/BRAM 为 `5002 / 3718 / 0 / 0`。V53 现在是最快 no-ILA 候选路线；V45 仍是最快已上板路线。
+
 本目录保存 MCU FFT 在 K7 目标板 `xc7k160tffg676-2` 上的高频路线。正式统计均使用 no-ILA bitstream、`flatten_hierarchy=none`、`max_dsp=0`，并以 post-implementation 报告为准。
 
 ## 统一口径
