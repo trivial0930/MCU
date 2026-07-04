@@ -1,0 +1,4 @@
+﻿route,rtl_change,target_mhz,cnt_test,total_time_us,regression,wns_ns,tns_ns,lut,ff,dsp,bram,drc,bitstream
+V10_width_reduce,width-reduced RF and ALU,150,157,1.047,PASS,-0.664,-169.132,904,448,0,0,"0 Error; CFGBVS warning",D:/vivado_work/routes_ultra/mcu_fft_v10_width_reduce/mcu_fft_board.runs/impl_1/board_top.bit
+V11_2stage_core,V10 plus instruction fetch register,200,157,0.785,PASS,-1.319,-427.209,902,481,0,0,"0 Error; CFGBVS warning",D:/vivado_work/routes_ultra/mcu_fft_v11_2stage_core/mcu_fft_board.runs/impl_1/board_top.bit
+V12_alu_pipe_300,V10 plus two-cycle MUL writeback,300,161,0.537,PASS,-4.099,-3121.943,1139,484,0,0,"0 Error; CFGBVS warning",D:/vivado_work/routes_ultra/mcu_fft_v12_alu_pipe_300/mcu_fft_board.runs/impl_1/board_top.bit
