@@ -18,6 +18,7 @@
 | 排名 | 路线 | 状态 | `cnt_test` | 理论时间 | WNS | LUT | FF | DSP | 结论 |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | 1 | `V45_stage2_wait_reduce_300` | PASS，已上板验证 | 85 | 0.283 us | +0.091 ns | 2228 | 1619 | 0 | 当前最快 no-ILA 合规实现和最快已上板路线 |
+| 1 | `V46_stage1_split_dual_mcu_300` | PASS，无速度收益 | 85 | 0.283 us | +0.029 ns | 2231 | 1629 | 0 | Core1 迁移 Stage1 下半支路，但合法停表仍不快于 V45 |
 | 2 | `V42_v34_board_verified_300` | PASS，已上板证据固化 | 88 | 0.293 us | +0.056 ns | 2228 | 1615 | 0 | 稳定回退路线，V34 实物验证证据固化版本 |
 | 2 | `V37_dual_mcu_v34_stable_300` | PASS，未上板 | 88 | 0.293 us | +0.056 ns | 2226 | 1618 | 0 | V34 等价复现和实现策略实验 |
 | 4 | `V33_dual_mcu_compute_split_300` | PASS，未上板 | 135 | 0.450 us | +0.034 ns | 2228 | 1616 | 0 | Core1 真实参与 Stage2 中间计算 |
@@ -50,6 +51,15 @@ V45：
 - ILA 比对结果：`write_count=16`、`unique_addr_count=16`、`last_write_addr=15`、`final_done_cnt_test=85`、`compare_status=PASS`。
 - ILA 版由于调试核引入额外负载，WNS 为 -0.068 ns，只作为功能抓波证据；正式成绩仍以 no-ILA timing-clean 报告为准。
 - 上板验证结束后已重新下载 no-ILA bitstream。
+
+V46：
+
+- 从 V45 复制，尝试 Core1 更早参与 Stage1。
+- Core0 通过普通 `STR` 把 `x1/x5/x3/x7` 原始输入转交到 `RAM20..27`。
+- Core1 用普通 `LDR/SUB/ADD/MUL/STR` 计算 `(1,5,W1)` 与 `(3,7,W3)` 下半支路。
+- 扫描证明 `final_addr15_delay < 21` 时 addr15 会提前写，属于假停表；最低合规点为 `final_addr15_delay=21`。
+- 官方样例 + 20 随机 PASS，300 MHz WNS `+0.029 ns`，DSP 0。
+- 合法 `cnt_test=85`，没有超过 V45，因此作为负结果保留，不建议替代主线。
 
 V42：
 

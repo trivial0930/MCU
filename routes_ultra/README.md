@@ -13,6 +13,7 @@
 ## 最新结论
 
 - 当前最快合规且已上板路线：`V45_stage2_wait_reduce_300`，`cnt_test=85`，300 MHz，WNS `+0.091 ns`，DSP 0。
+- V46 Stage1 最小迁移结论：`V46_stage1_split_dual_mcu_300` 功能 PASS 且 300 MHz timing-clean，但合法最优仍为 `cnt_test=85`，没有超过 V45，不建议替代主线。
 - 稳定回退上板路线：`V42_v34_board_verified_300`，`cnt_test=88`，300 MHz，WNS `+0.056 ns`，DSP 0。
 - 高频扫频结论：`V43_high_freq_sweep_320_350` 证明 320 MHz 以上当前结构时序不闭合，300 MHz 是可信展示频点。
 - 稳定化结论：`V44_v34_retime_stable_300` 最优 WNS `+0.069 ns`，小幅优于 V42，但不足以替代 V45。
@@ -40,6 +41,7 @@
 | V43 | `V43_high_freq_sweep_320_350/mcu_fft_v43_high_freq_sweep_320_350` | 在 V42 基础上扫 320/333.333/340/350/360 MHz | 320 MHz 以上时序失败或 PLL VCO 越界 |
 | V44 | `V44_v34_retime_stable_300/mcu_fft_v44_v34_retime_stable_300` | post-route physopt、netdelay high、retiming 稳定化尝试 | 最优 WNS `+0.069 ns` |
 | V45 | `V45_stage2_wait_reduce_300/mcu_fft_v45_stage2_wait_reduce_300` | 将 V38 的 Stage2 wait reduce 最快点正式化，并完成上板验证 | `cnt_test=85`，当前最快已上板路线 |
+| V46 | `V46_stage1_split_dual_mcu_300/mcu_fft_v46_stage1_split_dual_mcu_300` | Core1 迁移 Stage1 下半支路，普通 shared RAM 转交 raw 输入 | `cnt_test=85`，无速度收益，负结果保留 |
 | V49 | `V49_final_board_evidence_package` | 汇总 V45/V42/V43/V44 的最终答辩证据包 | 用于展示和交接，不是独立 RTL 路线 |
 
 ## 当前速度榜
@@ -47,6 +49,7 @@
 | 排名 | 路线 | 状态 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | V45_stage2_wait_reduce_300 | PASS，已上板验证 | 85 | 300 MHz | 0.283 us | +0.091 ns | 2228 | 1619 | 0 |
+| 1 | V46_stage1_split_dual_mcu_300 | PASS，无速度收益 | 85 | 300 MHz | 0.283 us | +0.029 ns | 2231 | 1629 | 0 |
 | 2 | V42_v34_board_verified_300 | PASS，已上板证据固化 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2228 | 1615 | 0 |
 | 2 | V37_dual_mcu_v34_stable_300 | PASS，未上板 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2226 | 1618 | 0 |
 | 4 | V33_dual_mcu_compute_split_300 | PASS，未上板 | 135 | 300 MHz | 0.450 us | +0.034 ns | 2228 | 1616 | 0 |

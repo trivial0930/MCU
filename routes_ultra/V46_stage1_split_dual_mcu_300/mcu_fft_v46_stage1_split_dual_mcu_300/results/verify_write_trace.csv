@@ -1,0 +1,17 @@
+write_order,verify_addr,captured_hex,cycle,writer_core
+0,1,e80a,78,Core1
+1,9,317c,78,Core1
+2,5,16f6,80,Core1
+3,13,0c84,80,Core1
+4,3,fea2,90,Core1
+5,11,1f8c,90,Core1
+6,7,fa5e,92,Core1
+7,0,f280,98,Core0
+8,8,e900,98,Core0
+9,4,e080,100,Core0
+10,12,0b00,100,Core0
+11,2,1a80,110,Core0
+12,10,2c00,110,Core0
+13,6,e680,112,Core0
+14,14,1600,112,Core0
+15,15,d874,114,Core1

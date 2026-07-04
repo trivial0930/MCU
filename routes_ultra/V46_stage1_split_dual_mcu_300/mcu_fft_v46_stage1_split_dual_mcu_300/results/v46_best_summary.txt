@@ -1,0 +1,6 @@
+stage1_raw_wait=12
+stage2_wait=0
+stage3_wait=0
+final_addr15_delay=21
+cnt_test=85
+conclusion=NO_SPEED_GAIN

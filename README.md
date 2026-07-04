@@ -9,6 +9,7 @@
 | 类别 | 推荐路线 | 状态 | 关键指标 |
 | --- | --- | --- | --- |
 | 当前最快合规且已上板路线 | `routes_ultra/V45_stage2_wait_reduce_300` | 官方样例 + 20 随机 PASS，300 MHz no-ILA bitstream timing-clean，实物上板 PASS | `cnt_test=85`，理论时间约 `0.283 us`，WNS `+0.091 ns`，DSP 0 |
+| Stage1 迁移负结果 | `routes_ultra/V46_stage1_split_dual_mcu_300` | PASS，300 MHz timing-clean，但无速度收益 | Core1 迁移 Stage1 下半支路，合法 `cnt_test=85`，WNS `+0.029 ns`，DSP 0，不替代 V45 |
 | 已上板保底路线 | `routes_ultra/V42_v34_board_verified_300` | V34/V42 上板证据固化，300 MHz timing-clean | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
 | 最终答辩证据包 | `routes_ultra/V49_final_board_evidence_package` | 汇总 V45/V42/V43/V44 的速度、资源、合规和上板材料 | V45 负责最快已上板成绩，V42 负责回退保底 |
 | Core1 参与中间计算证明路线 | `routes_ultra/V33_dual_mcu_compute_split_300` | PASS，300 MHz bitstream 已生成，未上板 | Core1 执行 Stage2 `(5,7,W2)`，`cnt_test=135`，WNS `+0.034 ns`，DSP 0 |
