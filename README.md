@@ -4,11 +4,11 @@
 
 ## 当前状态
 
-- `Baseline/` 保存基础 MCU FFT 工程。
 - `materials/` 保存课程资料、K7EDAEVAL 引脚表和官方测试样例。
 - `routes/` 保存路线 A 的多个独立候选版本，便于保留可用版本并隔离失败实验。
 - 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
 - `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
+- `RESULTS.md` 汇总当前速度榜、效率榜、推荐路线和上板交付物。
 
 本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已按课件确认的 `xc7k160tffg676-2` 完成综合、实现、DRC 和 bitstream。
 
@@ -17,10 +17,10 @@
 ## 推荐阅读顺序
 
 1. `materials/README.md`：确认资料来源、官方输入输出样例和板卡引脚表。
-2. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
+2. `RESULTS.md`：查看当前速度榜、效率榜和推荐上板路线。
 3. `docs/上板与交接指南.md`：最新上板状态、bit/ltx 位置、报告摘要、重新生成命令和 ILA 观察步骤。
-4. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
-5. `routes/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`：查看最新速度榜和效率榜。
+4. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
+5. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
 
 ## 快速功能回归
 
@@ -51,6 +51,13 @@ py scripts\make_leaderboards.py --in-csv results\route_a_matrix.csv
 ```
 
 比较时先看 `WNS >= 0` 的最高目标频率，再比较 `LUT`、`FF`、`DSP`、`BRAM`。最终成绩建议使用关闭 ILA 的实现结果。
+
+已生成榜单可直接查看：
+
+- `RESULTS.md`
+- `routes/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`
+- `routes/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
+- `routes/speed_v8_route_a_vivado_matrix/results/efficiency_leaderboard.csv`
 
 单条推荐路线可以直接跑到 bitstream：
 

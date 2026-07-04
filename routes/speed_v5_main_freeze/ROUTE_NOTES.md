@@ -3,12 +3,17 @@
 Purpose: preserve the received GitHub `main` baseline before any official-format
 or multiplier route work.
 
+The former top-level `Baseline/` copy has been removed to avoid duplicate code.
+This route is now the single archived baseline entry.
+
 Observed local baseline behavior before route work:
 
 - Original interleaved 16-word input format.
 - Original Q15 `MUL` semantics.
 - Baseline FFT self-check: PASS.
 - Observed simulation `cnt_test`: `224`.
+- Board constraint cleanup: KEY1 uses `LVCMOS18`, matching the HP bank voltage
+  requirement used by later routes.
 
 Note:
 

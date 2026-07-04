@@ -2,7 +2,7 @@
 
 `routes/` 目录把每条实验路线放在独立文件夹中。这样做的目的很简单：已经通过功能验证的版本不要被后续高频实验破坏，失败的优化也可以直接丢弃或回退。
 
-各路线目录下的重复工程 README 已合并删除；原始工程说明保留在 `../Baseline/mcu_fft_baseline/README.md`，路线差异看每个路线目录旁的 `ROUTE_NOTES.md`。
+顶层 `Baseline/` 目录已经删除，避免和 `speed_v5_main_freeze` 重复。原始 baseline 代码和说明统一保留在 `speed_v5_main_freeze/`，路线差异看每个路线目录旁的 `ROUTE_NOTES.md`。
 
 ## 路线总览
 
@@ -11,7 +11,7 @@
 
 | 路线 | 目标 | 当前检查状态 | 适用场景 |
 | --- | --- | --- | --- |
-| `speed_v5_main_freeze/` | 从 GitHub `main` 冻结出来的原始 baseline，使用 16 word 交错测试格式和 Q15 乘法。 | 既有记录：baseline 自检 PASS，`cnt_test=224`。 | 回看原始实现。 |
+| `speed_v5_main_freeze/` | 从 GitHub `main` 冻结出来的原始 baseline，使用 16 word 交错测试格式和 Q15 乘法。 | 既有记录：baseline 自检 PASS，`cnt_test=224`；KEY1 约束已修正为 `LVCMOS18`。 | 回看原始实现。 |
 | `speed_v6_official_sample/` | 兼容 2026 官方 FFT 样例：256 word 测试 ROM、官方地址 128-143、Q5 到 Q12 读入转换、Q7 乘法、DIF 流程修正、官方 real-then-imag 输出布局。 | 既有记录：官方样例 PASS，20 组随机定点回归 PASS，162 条指令，`cnt_test=157`。 | 功能正确性的基准线。 |
 | `speed_v7_q7_narrow_mul/` | 路线 A1：保持 v6 行为，把 ALU Q7 乘法收窄为 data x 8-bit coefficient。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 推荐第一个上板版本。 |
 | `speed_v7b_c91_shift_add/` | 路线 A2 备选：把 FFT 程序用到的常数 91 乘法专门化为 `64 + 16 + 8 + 2 + 1` 移位加。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 比较 LUT/时序时使用。 |
