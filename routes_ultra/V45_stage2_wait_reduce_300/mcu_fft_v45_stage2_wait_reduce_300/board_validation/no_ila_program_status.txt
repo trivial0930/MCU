@@ -1,0 +1,4 @@
+program_status=ok
+device=xc7k160t_0
+bit_file=D:/vivado_work/routes_ultra/mcu_fft_v45_stage2_wait_reduce_300_stable/mcu_fft_board.runs/impl_1/board_top.bit
+ilas_after_no_ila_program=0

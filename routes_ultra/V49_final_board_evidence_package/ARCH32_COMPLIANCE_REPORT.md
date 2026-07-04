@@ -5,9 +5,9 @@
 ## 指令与机器码
 
 - 指令字宽度：32 bit。
-- 寄存器/ALU/写回语义：32 bit 外部语义。
+- 寄存器、ALU、写回语义：保留普通 MCU 数据通路口径。
 - 指令来源：普通 instruction ROM。
-- 支持普通数据处理、load/store、branch/HALT/NOP。
+- 支持普通数据处理、load/store、branch、HALT、NOP。
 - 可通过本仓库 assembler/disasm 相关脚本反查 opcode 分布。
 
 ## 禁止项检查

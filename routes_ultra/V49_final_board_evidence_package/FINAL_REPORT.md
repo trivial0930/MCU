@@ -2,36 +2,36 @@
 
 ## 最终展示路线
 
-当前最终实物展示路线为 `V42_v34_board_verified_300/mcu_fft_v42_v34_board_verified_300`。
+当前最终实物展示路线为 `V45_stage2_wait_reduce_300/mcu_fft_v45_stage2_wait_reduce_300`。
 
-选择原因：V42 继承已经上板验证的 V34，不改变 RTL 行为和指令流，并补齐了上板证据、合规说明、反汇编和 verify 写回 trace。它不是仓库里理论最快的路线，但它是当前最快的已上板路线。
+选择原因：V45 是当前最快的合规实现路线，已经完成官方样例 + 20 组随机回归、300 MHz no-ILA timing-clean 实现、no-ILA 下载、ILA 抓波验证、结果 CSV 比对，并在验证结束后重新下载 no-ILA bitstream。它不依赖 FFT IP、DSP IP、DMA、协处理器或专用 FFT 加速器。
 
 ## 核心指标
 
 | 项目 | 结果 |
 | --- | --- |
-| 路线 | V42/V34 board verified baseline |
+| 路线 | V45 Stage2 Wait Reduce |
 | 工作频率 | 300 MHz |
-| `cnt_test` | 88 |
-| 理论时间 | 88 / 300 MHz = 0.293 us |
-| WNS/TNS | +0.056 ns / 0.000 ns |
-| WHS/THS | +0.085 ns / 0.000 ns |
-| LUT/FF | 2228 / 1615 |
+| `cnt_test` | 85 |
+| 理论时间 | 85 / 300 MHz = 0.283 us |
+| WNS/TNS | +0.091 ns / 0.000 ns |
+| WHS/THS | +0.127 ns / 0.000 ns |
+| LUT/FF | 2228 / 1619 |
 | DSP/BRAM | 0 / 0 |
 | 官方样例 + 20 随机 | PASS |
 | 上板状态 | YES |
-| no-ILA bitstream | `D:/vivado_work/routes_ultra/mcu_fft_v42_v34_board_verified_300/mcu_fft_board.runs/impl_1/board_top.bit` |
+| no-ILA bitstream | `D:/vivado_work/routes_ultra/mcu_fft_v45_stage2_wait_reduce_300_stable/mcu_fft_board.runs/impl_1/board_top.bit` |
 
 ## 上板验证摘要
 
-V42/V34 已完成 ILA 观察和 no-ILA 下载验证。ILA 捕获到 16 次 `verify_we` 写回，`verify_addr` 覆盖 0 到 15，最后可信写回地址为 15，`verify_vector_out` 与 `FFT_output.coe` 匹配。
+V45 已完成 no-ILA 下载和 ILA 调试验证。硬件目标为 `localhost:3121/xilinx_tcf/Digilent/210251A08870`，识别器件为 `xc7k160t_0`。ILA 抓取到 16 次 `verify_we` 写回，`verify_addr` 覆盖 0 到 15，`verify_vector_out` 与 `FFT_output.coe` 完全匹配。比对脚本输出 `compare_status=PASS`，`final_done_cnt_test=85`。
 
-详细 trace 见 `results/final_verify_write_trace.csv`。
+详细 trace 见 `results/final_verify_write_trace.csv` 和 `results/v45_hw_compare.csv`。
+
+## ILA 说明
+
+ILA 调试版只用于功能观察，因引入 debug hub、ILA RAM 和探针扇出，其实现 WNS 为 -0.068 ns，不作为最终速度成绩。正式速度、资源和上板展示均以 no-ILA bitstream 为准。
 
 ## 后续优化结论
 
-V43：直接提高频率不可作为有效成绩。300 MHz 通过；320/333/350 MHz 均生成 bitstream 但 WNS 为负；340/360 MHz 受 PLL VCO 范围限制。
-
-V44：300 MHz 稳定化有小幅收益，最佳 WNS `+0.069 ns`，但未达到 `+0.100 ns` 目标。
-
-V45：Stage2 wait reduce 已正式化，`cnt_test=85`，300 MHz WNS `+0.091 ns`，DSP=0，官方 +20 随机 PASS；但尚未上板，暂不能替代 V42 的实物展示结论。
+V43 证明当前结构直接提升到 320 MHz 以上不可作为 timing-clean 成绩。V44 稳定化有小幅收益，但未超过 V45。V46 若继续推进 Stage1 分工，需要更多验证时间，答辩前建议保持 V45 为主路线，V42 为回退路线。

@@ -8,9 +8,9 @@
 
 | 类别 | 推荐路线 | 状态 | 关键指标 |
 | --- | --- | --- | --- |
-| 当前最快合规实现路线 | `routes_ultra/V45_stage2_wait_reduce_300` | 官方样例 + 20 随机 PASS，300 MHz no-ILA bitstream 已生成，未上板 | `cnt_test=85`，理论时间约 `0.283 us`，WNS `+0.091 ns`，DSP 0 |
-| 当前最快已上板路线 | `routes_ultra/V42_v34_board_verified_300` | 已固化 V34 的 300 MHz 实物上板证据，并重新完成回归/实现 | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
-| 最终答辩证据包 | `routes_ultra/V49_final_board_evidence_package` | 汇总 V42/V43/V44/V45 的速度、资源、合规和风险材料 | V42 负责已上板可信证据，V45 负责当前最快实现成绩 |
+| 当前最快合规且已上板路线 | `routes_ultra/V45_stage2_wait_reduce_300` | 官方样例 + 20 随机 PASS，300 MHz no-ILA bitstream timing-clean，实物上板 PASS | `cnt_test=85`，理论时间约 `0.283 us`，WNS `+0.091 ns`，DSP 0 |
+| 已上板保底路线 | `routes_ultra/V42_v34_board_verified_300` | V34/V42 上板证据固化，300 MHz timing-clean | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
+| 最终答辩证据包 | `routes_ultra/V49_final_board_evidence_package` | 汇总 V45/V42/V43/V44 的速度、资源、合规和上板材料 | V45 负责最快已上板成绩，V42 负责回退保底 |
 | Core1 参与中间计算证明路线 | `routes_ultra/V33_dual_mcu_compute_split_300` | PASS，300 MHz bitstream 已生成，未上板 | Core1 执行 Stage2 `(5,7,W2)`，`cnt_test=135`，WNS `+0.034 ns`，DSP 0 |
 | 已上板 Ultra 稳定备选 | `routes_ultra/V22b_fast_mul2_300` | 已完成实物验证 | `cnt_test=173`，300 MHz 理论时间约 `0.577 us` |
 | 32 位合规展示备选 | `routes_ultra/V36_arm32_compliance_300` | PASS，300 MHz bitstream 已生成，未上板 | 32-bit 指令字、32-bit RF/ALU/WB，`cnt_test=169`，WNS `+0.157 ns` |
@@ -27,13 +27,13 @@
 | `docs/` | 上板、交接、报告摘要和调试说明。 |
 | `routesA/` | 路线 A 的稳定候选、Vivado 矩阵和 130 MHz 上板资料。 |
 | `routesB/` | 路线 B 的 B1 到 B4 候选方案和中文说明。 |
-| `routes_ultra/` | 300 MHz 极限优化路线，当前重点为 V42/V45/V49，并保留 V33/V34/V36/V38/V22b 历史依据。 |
+| `routes_ultra/` | 300 MHz 极限优化路线，当前重点为 V45/V49，并保留 V42/V43/V44/V33/V36/V22b 历史依据。 |
 | `RESULTS.md` | 当前速度榜、效率榜、推荐路线和风险说明。 |
 | `WINDOWS_CODEX_HANDOFF.md` | Windows + Vivado + Codex 环境继续调试清单。 |
 
 ## 常用复现命令
 
-最快 V45 回归：
+V45 回归：
 
 ```powershell
 cd routes_ultra\V45_stage2_wait_reduce_300\mcu_fft_v45_stage2_wait_reduce_300
@@ -47,24 +47,20 @@ cd routes_ultra\V45_stage2_wait_reduce_300\mcu_fft_v45_stage2_wait_reduce_300
 D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v45_stable_no_ila.tcl
 ```
 
-最快已上板固化 V42 回归：
+V45 上板验证：
+
+```powershell
+cd routes_ultra\V45_stage2_wait_reduce_300\mcu_fft_v45_stage2_wait_reduce_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\program_v45_no_ila.tcl
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\build_v45_ila_bitstream.tcl
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\capture_v45_ila_verify_we.tcl
+py board_validation\compare_v45_ila_capture.py
+```
+
+V42 回退路线回归：
 
 ```powershell
 cd routes_ultra\V42_v34_board_verified_300\mcu_fft_v42_v34_board_verified_300
-py scripts\run_official_regression.py --random-cases 20 --seed 2026
-```
-
-V42 no-ILA bitstream：
-
-```powershell
-cd routes_ultra\V42_v34_board_verified_300\mcu_fft_v42_v34_board_verified_300
-D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
-```
-
-V33 回归：
-
-```powershell
-cd routes_ultra\V33_dual_mcu_compute_split_300\mcu_fft_v33_dual_mcu_compute_split_300
 py scripts\run_official_regression.py --random-cases 20 --seed 2026
 ```
 
@@ -76,10 +72,10 @@ py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 202
 
 ## 上板建议
 
-- 想展示“目前最快实现成绩”：使用 `routes_ultra/V45_stage2_wait_reduce_300`，但需要先补实物上板验证。
-- 想展示“已上板最快成绩”：使用已固化上板证据的 `routes_ultra/V42_v34_board_verified_300`。
-- 想展示“已经上过板、风险最低”：使用 `routes_ultra/V22b_fast_mul2_300`。
-- 想回应老师“32 位机器码和架构位宽”检查：使用 `routes_ultra/V36_arm32_compliance_300`，或说明 V33/V34 也已恢复 32-bit RF/ALU/WB 数据通路。
+- 想展示目前最快成绩：使用 `routes_ultra/V45_stage2_wait_reduce_300` 的 no-ILA bitstream，板上验证已 PASS。
+- 想展示最低风险回退：使用已固化上板证据的 `routes_ultra/V42_v34_board_verified_300`。
+- 想展示已经上过板且结构更简单的 Ultra 备选：使用 `routes_ultra/V22b_fast_mul2_300`。
+- 想回应老师“32 位机器码和架构位宽”检查：使用 `routes_ultra/V36_arm32_compliance_300`，或说明 V33/V34/V45 均保留 32-bit 指令与普通 MCU 数据通路口径。
 - 想给队友或老师快速交付材料：使用 `routes_ultra/V49_final_board_evidence_package`。
 - 不建议作为最终展示路线：V24、V27a、V27b，因为 300 MHz timing 未通过或风险明显。
 
@@ -88,7 +84,7 @@ py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 202
 - `done` 是否拉高。
 - `verify_we` 是否产生 16 次有效写入。
 - 最后写地址是否为 15。
-- `cnt_test` 是否接近对应路线文档中的记录值。
+- `cnt_test` 是否为对应路线文档中的记录值。
 - `verify_vector_out` 是否与 `mem/FFT_output.coe` 一致。
 
 ## 结果入口
@@ -97,9 +93,9 @@ py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 202
 - `routes_ultra/README.md`
 - `routes_ultra/results/ultra_summary.csv`
 - `routes_ultra/V49_final_board_evidence_package/FINAL_REPORT.md`
+- `routes_ultra/V45_stage2_wait_reduce_300/mcu_fft_v45_stage2_wait_reduce_300/BOARD_VALIDATION.md`
 - `routes_ultra/V45_stage2_wait_reduce_300/mcu_fft_v45_stage2_wait_reduce_300/ROUTE_NOTES.md`
 - `routes_ultra/V42_v34_board_verified_300/mcu_fft_v42_v34_board_verified_300/ROUTE_NOTES.md`
-- `routes_ultra/V33_dual_mcu_compute_split_300/mcu_fft_v33_dual_mcu_compute_split_300/results/core_timeline.md`
 
 ## 协作约定
 

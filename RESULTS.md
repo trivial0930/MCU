@@ -9,7 +9,7 @@
 - Ultra MCU 工作时钟：`board_top.v` 中 PLLE2 生成 300 MHz，timing report 中 `clkout_raw` 周期为 3.333 ns
 - 综合层级：`flatten_hierarchy=none`
 - DSP 限制：`max_dsp=0`
-- 正式资源/速度统计：关闭 ILA
+- 正式资源和速度统计：关闭 ILA
 - 回归：官方样例 + 20 组随机输入，seed=2026
 - `cnt_test`：从有效输入读取开始，到最后一次可信 verify 输出写入完成
 
@@ -17,8 +17,8 @@
 
 | 排名 | 路线 | 状态 | `cnt_test` | 理论时间 | WNS | LUT | FF | DSP | 结论 |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | `V45_stage2_wait_reduce_300` | PASS，未上板 | 85 | 0.283 us | +0.091 ns | 2228 | 1619 | 0 | 当前最快 no-ILA 实现路线，V38 结果正式化复跑版本 |
-| 2 | `V42_v34_board_verified_300` | PASS，已上板证据固化 | 88 | 0.293 us | +0.056 ns | 2228 | 1615 | 0 | 当前最快已上板路线，V34 实物验证证据固化版本 |
+| 1 | `V45_stage2_wait_reduce_300` | PASS，已上板验证 | 85 | 0.283 us | +0.091 ns | 2228 | 1619 | 0 | 当前最快 no-ILA 合规实现和最快已上板路线 |
+| 2 | `V42_v34_board_verified_300` | PASS，已上板证据固化 | 88 | 0.293 us | +0.056 ns | 2228 | 1615 | 0 | 稳定回退路线，V34 实物验证证据固化版本 |
 | 2 | `V37_dual_mcu_v34_stable_300` | PASS，未上板 | 88 | 0.293 us | +0.056 ns | 2226 | 1618 | 0 | V34 等价复现和实现策略实验 |
 | 4 | `V33_dual_mcu_compute_split_300` | PASS，未上板 | 135 | 0.450 us | +0.034 ns | 2228 | 1616 | 0 | Core1 真实参与 Stage2 中间计算 |
 | 5 | `V30_dual_mcu_real_300` | PASS，未上板 | 149 | 0.497 us | +0.021 ns | 2076 | 1318 | 0 | 旧双核输出拆分主线，已被 V33/V42/V45 超过 |
@@ -38,15 +38,25 @@
 
 完整明细见 `routes_ultra/results/ultra_summary.csv` 和 `routes_ultra/README.md`。
 
-## 本轮新增结果
+## 本轮关键结论
+
+V45：
+
+- 根据 V42/V43/V44 结果，正式固化 Stage2 wait reduce 路线。
+- 官方样例 + 20 组随机 PASS。
+- 300 MHz no-ILA bitstream 生成成功，`cnt_test=85`，WNS `+0.091 ns`，DSP 0。
+- no-ILA 下载成功，硬件目标为 `localhost:3121/xilinx_tcf/Digilent/210251A08870`，器件识别为 `xc7k160t_0`。
+- ILA 调试抓到 16 次 verify 写回，地址 0..15 全覆盖，输出与 `FFT_output.coe` 完全一致。
+- ILA 比对结果：`write_count=16`、`unique_addr_count=16`、`last_write_addr=15`、`final_done_cnt_test=85`、`compare_status=PASS`。
+- ILA 版由于调试核引入额外负载，WNS 为 -0.068 ns，只作为功能抓波证据；正式成绩仍以 no-ILA timing-clean 报告为准。
+- 上板验证结束后已重新下载 no-ILA bitstream。
 
 V42：
 
 - 从已上板验证的 V34 固化为正式证据路线。
-- 重新生成 opcode 汇总、verify 写回轨迹和 Core0/Core1 反汇编证据。
 - 官方样例 + 20 组随机 PASS。
 - 300 MHz no-ILA bitstream 生成成功，WNS `+0.056 ns`，DSP 0。
-- 作为当前“最快已上板路线”的答辩入口。
+- `cnt_test=88`，保留为 V45 之外的低风险回退路线。
 
 V43：
 
@@ -59,59 +69,14 @@ V44：
 
 - 在 V42 基础上尝试 post-route physopt、netdelay high、retiming 三种稳定化实现策略。
 - 最优 `retiming_try`：WNS `+0.069 ns`，LUT 2224，FF 1608，DSP 0。
-- 相比 V42 的 `+0.056 ns` 有小幅改善，但没有达到替代阈值，因此不替换 V42。
-
-V45：
-
-- 根据 V42/V43/V44 结果，开启 Stage2 wait reduce 正式路线。
-- 实质上把 V38 的最快点整理为正式 V45 目录和文档。
-- 官方样例 + 20 组随机 PASS。
-- 300 MHz no-ILA bitstream 生成成功，`cnt_test=85`，WNS `+0.091 ns`，DSP 0。
-- 尚未上板，下一步优先做 V45 no-ILA 实物验证。
-
-V46/V49：
-
-- V46 暂缓：需要先完成 V45 上板，避免在未验证最快路线前继续叠加风险。
-- V49 已生成最终证据包，汇总 V42/V43/V44/V45 的速度、资源、合规、风险和上板材料。
-
-V33：
-
-- 从 V30 继续，跳过 V32。
-- Core1 执行 Stage2 `(5,7,W2)`，不再只是后半输出搬运。
-- 官方样例 + 20 组随机 PASS。
-- `cnt_test=135`，300 MHz no-ILA WNS `+0.034 ns`。
-
-V34：
-
-- 从 V33 继续，不改变计算分工，只压缩 Core1 Stage3 前等待。
-- `CORE1_WAIT_STAGE3_NOP` 从 70 降到 23。
-- `stage3_wait=23` 是本轮找到的最小安全边界；更小值会出现 addr15 过早或 verify 写入不足的问题。
-- 官方样例 + 20 组随机 PASS。
-- `cnt_test=88`，300 MHz no-ILA WNS `+0.056 ns`，DSP 0。
-- 已完成实物上板验证：16 次 verify 写回全匹配，最终 `cnt_test=88`。
-
-V37：
-
-- 从 V34 复制，计算分工不变，尝试更强的实现策略。
-- 官方样例 + 20 组随机 PASS。
-- no-ILA bitstream 生成成功，`cnt_test=88`，WNS `+0.056 ns`。
-- 没有超过 V34 的 WNS，因此作为复现/工具策略实验，不替代 V34。
-
-V38：
-
-- 从 V34 继续，把 `CORE1_WAIT_STAGE2_NOP` 从 80 降到 68。
-- 只延后 Core1 最后一次 addr15 写回 9 个 NOP，避免停表提前。
-- 二维扫描确认最优安全点为 `stage2_wait=68`、`final_addr15_delay=9`。
-- 官方样例 + 20 组随机 PASS。
-- `cnt_test=85`，300 MHz no-ILA stable 实现 WNS `+0.091 ns`，DSP 0。
-- 尚未上板，下一步应先下载 no-ILA，再做 ILA 抓波验证。
+- 相比 V42 的 `+0.056 ns` 有小幅改善，但没有达到替代阈值。
 
 ## 上板建议
 
-- 需要最快实现成绩：优先使用 `V45_stage2_wait_reduce_300`，但需补实物上板验证。
-- 需要最快已上板成绩：使用已固化上板证据的 `V42_v34_board_verified_300`。
-- 需要最低风险：继续使用已上板的 `V22b_fast_mul2_300`。
-- 需要回应老师“32 位机器码和架构位宽”：使用 `V36_arm32_compliance_300`，或展示 V33/V34 的 32-bit RF/ALU/WB 修改。
+- 需要最快实现和最快已上板成绩：优先使用 `V45_stage2_wait_reduce_300`。
+- 需要稳妥回退：使用已固化上板证据的 `V42_v34_board_verified_300`。
+- 需要最低风险且结构较简单：继续使用已上板的 `V22b_fast_mul2_300`。
+- 需要回应老师“32 位机器码和架构位宽”：使用 `V36_arm32_compliance_300`，或展示 V33/V34/V45 的 32-bit 指令和普通 MCU 数据通路说明。
 - 需要完整答辩资料：使用 `V49_final_board_evidence_package`。
 - 暂不推荐：V24、V27a、V27b，因为 300 MHz timing 未通过。
 
