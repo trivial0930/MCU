@@ -1,0 +1,2 @@
+device=xc7k160t_0
+ilas_after_no_ila_program=0

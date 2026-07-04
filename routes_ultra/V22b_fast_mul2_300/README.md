@@ -29,8 +29,12 @@ V22b 基于 V22a 继续激进优化通用 Q7 `OP_MUL`，每拍处理 4 bit multi
 | DSP | 0 |
 | BRAM | 0 |
 
+## 上板验证
+
+V22b 已完成实物上板验证。使用带 ILA 调试版本触发 `verify_we=1` 后按 `KEY1` 复位重跑，捕获到 16 次输出写回，地址 0 到 15 全覆盖，写回数据全部匹配 `mem/FFT_output.coe`。最终 `done=1`，`cnt_test=173`。
+
+详细记录见 `board_validation/BOARD_VALIDATION.md`。
+
 ## 结论
 
-V22b 是当前 `routes_ultra` 中最快且时序余量最好的 300 MHz 路线。相比 V20，`cnt_test` 从 197 降到 173，按 300 MHz 推算从 `0.657 us` 降到 `0.577 us`；同时 WNS 从 `+0.004 ns` 提升到 `+0.122 ns`。
-
-下一步建议生成 V22b ILA 调试版并实物上板，复用 V19 的 ILA 验证方法确认 `done`、`cnt_test` 和 16 个输出写回值。
+V22b 是当前 `routes_ultra` 中最快且已上板验证的 300 MHz 路线。相比 V20，`cnt_test` 从 197 降到 173，按 300 MHz 推算从 `0.657 us` 降到 `0.577 us`；同时 WNS 从 `+0.004 ns` 提升到 `+0.122 ns`。
