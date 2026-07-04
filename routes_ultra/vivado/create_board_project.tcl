@@ -26,6 +26,9 @@ if {![info exists SYNTH_MAX_DSP]} {
 if {![info exists ENABLE_ILA]} {
     set ENABLE_ILA 0
 }
+if {![info exists EXTRA_VERILOG_DEFINES]} {
+    set EXTRA_VERILOG_DEFINES {}
+}
 
 set root_dir [file normalize [pwd]]
 if {![info exists OUT_DIR]} {
@@ -57,9 +60,9 @@ if {$ENABLE_ILA} {
     if {[file exists [file join $root_dir vivado create_ila_0.tcl]]} {
         source [file join $root_dir vivado create_ila_0.tcl]
     }
-    set_property verilog_define {SYNTHESIS ENABLE_ILA} [current_fileset]
+    set_property verilog_define [concat {SYNTHESIS ENABLE_ILA} $EXTRA_VERILOG_DEFINES] [current_fileset]
 } else {
-    set_property verilog_define {SYNTHESIS} [current_fileset]
+    set_property verilog_define [concat {SYNTHESIS} $EXTRA_VERILOG_DEFINES] [current_fileset]
 }
 
 set_property top board_top [current_fileset]
@@ -89,3 +92,4 @@ puts "Target period: $TARGET_PERIOD_NS ns"
 puts "ENABLE_ILA: $ENABLE_ILA"
 puts "SYNTH_FLATTEN_HIERARCHY: $SYNTH_FLATTEN_HIERARCHY"
 puts "SYNTH_MAX_DSP: $SYNTH_MAX_DSP"
+puts "EXTRA_VERILOG_DEFINES: $EXTRA_VERILOG_DEFINES"

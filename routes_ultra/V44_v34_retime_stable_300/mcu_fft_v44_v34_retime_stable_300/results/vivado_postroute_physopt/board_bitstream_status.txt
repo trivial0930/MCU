@@ -1,0 +1,2 @@
+status=ok
+notes=variant=postroute_physopt synth_status=synth_design Complete! impl_status=write_bitstream Complete! notes=strategy=Performance_ExplorePostRoutePhysOpt STEPS.OPT_DESIGN.ARGS.DIRECTIVE=Explore STEPS.PLACE_DESIGN.ARGS.DIRECTIVE=ExtraNetDelay_high STEPS.PHYS_OPT_DESIGN.IS_ENABLED=true STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE=AggressiveExplore STEPS.ROUTE_DESIGN.ARGS.DIRECTIVE=Explore bit_files=D:/vivado_work/routes_ultra/mcu_fft_v44_postroute_physopt/mcu_fft_board.runs/impl_1/board_top.bit ltx_files=

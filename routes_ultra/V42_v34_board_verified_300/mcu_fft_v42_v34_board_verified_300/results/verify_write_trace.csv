@@ -1,0 +1,17 @@
+write_order,verify_addr,captured_hex,expected_hex,cnt_test_at_write,ila_sample,done,status
+0,0,f280,f280,68,16,0,PASS
+1,8,e900,e900,69,17,0,PASS
+2,4,e080,e080,70,18,0,PASS
+3,12,0b00,0b00,71,19,0,PASS
+4,1,e80a,e80a,72,20,0,PASS
+5,9,317c,317c,73,21,0,PASS
+6,5,16f6,16f6,74,22,0,PASS
+7,13,0c84,0c84,75,23,0,PASS
+8,2,1a80,1a80,80,28,0,PASS
+9,10,2c00,2c00,81,29,0,PASS
+10,6,e680,e680,82,30,0,PASS
+11,14,1600,1600,83,31,0,PASS
+12,3,fea2,fea2,84,32,0,PASS
+13,11,1f8c,1f8c,85,33,0,PASS
+14,7,fa5e,fa5e,86,34,0,PASS
+15,15,d874,d874,87,35,0,PASS

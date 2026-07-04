@@ -1,0 +1,2 @@
+status=ok
+notes=variant=netdelay_high synth_status=synth_design Complete! impl_status=write_bitstream Complete! notes=strategy=Performance_NetDelay_high STEPS.OPT_DESIGN.ARGS.DIRECTIVE=ExploreWithRemap STEPS.PLACE_DESIGN.ARGS.DIRECTIVE=ExtraNetDelay_high STEPS.PHYS_OPT_DESIGN.IS_ENABLED=true STEPS.PHYS_OPT_DESIGN.ARGS.DIRECTIVE=AggressiveExplore STEPS.ROUTE_DESIGN.ARGS.DIRECTIVE=NoTimingRelaxation bit_files=D:/vivado_work/routes_ultra/mcu_fft_v44_netdelay_high/mcu_fft_board.runs/impl_1/board_top.bit ltx_files=

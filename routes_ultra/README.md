@@ -12,8 +12,11 @@
 
 ## 最新结论
 
-- 当前最快合规实现路线：`V38_dual_mcu_stage2_wait_reduce_300`，`cnt_test=85`，300 MHz，WNS `+0.091 ns`，DSP 0，尚未上板。
-- 当前最快已上板验证路线：`V34_dual_mcu_schedule_300`，`cnt_test=88`，300 MHz，WNS `+0.056 ns`，DSP 0。
+- 当前最快合规实现路线：`V45_stage2_wait_reduce_300`，`cnt_test=85`，300 MHz，WNS `+0.091 ns`，DSP 0，尚未上板。
+- 当前最快已上板验证路线：`V42_v34_board_verified_300`，`cnt_test=88`，300 MHz，WNS `+0.056 ns`，DSP 0。
+- 高频扫频结论：`V43_high_freq_sweep_320_350` 证明 320 MHz 以上当前结构时序不闭合，300 MHz 是可信展示频点。
+- 稳定化结论：`V44_v34_retime_stable_300` 最优 WNS `+0.069 ns`，小幅优于 V42，但不足以替换已上板路线。
+- 最终证据包：`V49_final_board_evidence_package` 汇总速度、资源、合规、上板和风险材料。
 - Core1 参与中间计算证明路线：`V33_dual_mcu_compute_split_300`，Core1 执行 Stage2 `(5,7,W2)`，`cnt_test=135`。
 - 当前最快单核路线：`V31_single_core_final_tune_300`，`cnt_test=169`。
 - 当前 32 位合规展示路线：`V36_arm32_compliance_300`，`cnt_test=169`。
@@ -42,17 +45,22 @@
 | V30 | `V30_dual_mcu_real_300/mcu_fft_v30_dual_mcu_real_300` | Core1 写后半 verify 输出 | `cnt_test=149`，旧最快路线 |
 | V31 | `V31_single_core_final_tune_300/mcu_fft_v31_single_core_final_tune_300` | 单核 W2 蝶形直接改写 | `cnt_test=169`，最快单核 |
 | V33 | `V33_dual_mcu_compute_split_300/mcu_fft_v33_dual_mcu_compute_split_300` | Core1 计算 Stage2 `(5,7,W2)`，恢复 32-bit 数据通路 | `cnt_test=135`，300 MHz PASS |
-| V34 | `V34_dual_mcu_schedule_300/mcu_fft_v34_dual_mcu_schedule_300` | 在 V33 基础上压缩 Core1 Stage3 等待到 23 | `cnt_test=88`，当前最快且已上板 |
+| V34 | `V34_dual_mcu_schedule_300/mcu_fft_v34_dual_mcu_schedule_300` | 在 V33 基础上压缩 Core1 Stage3 等待到 23 | `cnt_test=88`，历史最快已上板路线，已由 V42 固化证据 |
 | V36 | `V36_arm32_compliance_300/mcu_fft_v36_arm32_compliance_300` | 32-bit 指令字、RF/ALU/WB 合规展示 | `cnt_test=169` |
 | V37 | `V37_dual_mcu_v34_stable_300/mcu_fft_v37_dual_mcu_v34_stable_300` | V34 等价复现和更强实现策略实验 | `cnt_test=88`，未超过 V34 |
-| V38 | `V38_dual_mcu_stage2_wait_reduce_300/mcu_fft_v38_dual_mcu_stage2_wait_reduce_300` | 降低 Core1 Stage2 等待，并延后最后 addr15 写回对齐停表 | `cnt_test=85`，当前最快实现 |
+| V38 | `V38_dual_mcu_stage2_wait_reduce_300/mcu_fft_v38_dual_mcu_stage2_wait_reduce_300` | 降低 Core1 Stage2 等待，并延后最后 addr15 写回对齐停表 | `cnt_test=85`，V45 的前身路线 |
+| V42 | `V42_v34_board_verified_300/mcu_fft_v42_v34_board_verified_300` | 固化 V34 已上板证据，补充反汇编、opcode 和 verify 写回材料 | `cnt_test=88`，当前最快已上板证据入口 |
+| V43 | `V43_high_freq_sweep_320_350/mcu_fft_v43_high_freq_sweep_320_350` | 在 V42 基础上扫 320/333.333/340/350/360 MHz | 320 MHz 以上时序失败或 PLL VCO 越界 |
+| V44 | `V44_v34_retime_stable_300/mcu_fft_v44_v34_retime_stable_300` | post-route physopt、netdelay high、retiming 稳定化尝试 | 最优 WNS `+0.069 ns`，不替代 V42 |
+| V45 | `V45_stage2_wait_reduce_300/mcu_fft_v45_stage2_wait_reduce_300` | 将 V38 的 Stage2 wait reduce 最快点正式化，补齐文档和实现报告 | `cnt_test=85`，当前最快合规实现 |
+| V49 | `V49_final_board_evidence_package` | 汇总 V42/V43/V44/V45 的最终答辩证据包 | 用于展示和交接，不是独立 RTL 路线 |
 
 ## 当前速度榜
 
 | 排名 | 路线 | 状态 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | V38_dual_mcu_stage2_wait_reduce_300 | PASS，未上板 | 85 | 300 MHz | 0.283 us | +0.091 ns | 2228 | 1619 | 0 |
-| 2 | V34_dual_mcu_schedule_300 | PASS，已上板验证 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2228 | 1615 | 0 |
+| 1 | V45_stage2_wait_reduce_300 | PASS，未上板 | 85 | 300 MHz | 0.283 us | +0.091 ns | 2228 | 1619 | 0 |
+| 2 | V42_v34_board_verified_300 | PASS，已上板证据固化 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2228 | 1615 | 0 |
 | 2 | V37_dual_mcu_v34_stable_300 | PASS，未上板 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2226 | 1618 | 0 |
 | 4 | V33_dual_mcu_compute_split_300 | PASS，未上板 | 135 | 300 MHz | 0.450 us | +0.034 ns | 2228 | 1616 | 0 |
 | 5 | V30_dual_mcu_real_300 | PASS，未上板 | 149 | 300 MHz | 0.497 us | +0.021 ns | 2076 | 1318 | 0 |
@@ -72,31 +80,31 @@
 
 ## 常用命令
 
-最快 V38 回归：
+最快 V45 回归：
 
 ```powershell
-cd routes_ultra\V38_dual_mcu_stage2_wait_reduce_300\mcu_fft_v38_dual_mcu_stage2_wait_reduce_300
+cd routes_ultra\V45_stage2_wait_reduce_300\mcu_fft_v45_stage2_wait_reduce_300
 py scripts\run_official_regression.py --random-cases 20 --seed 2026
 ```
 
-V38 no-ILA Vivado 实现：
+V45 no-ILA Vivado 实现：
 
 ```powershell
-cd routes_ultra\V38_dual_mcu_stage2_wait_reduce_300\mcu_fft_v38_dual_mcu_stage2_wait_reduce_300
-D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v38_stable_no_ila.tcl
+cd routes_ultra\V45_stage2_wait_reduce_300\mcu_fft_v45_stage2_wait_reduce_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v45_stable_no_ila.tcl
 ```
 
-最快已上板 V34 回归：
+最快已上板固化 V42 回归：
 
 ```powershell
-cd routes_ultra\V34_dual_mcu_schedule_300\mcu_fft_v34_dual_mcu_schedule_300
+cd routes_ultra\V42_v34_board_verified_300\mcu_fft_v42_v34_board_verified_300
 py scripts\run_official_regression.py --random-cases 20 --seed 2026
 ```
 
-V34 no-ILA Vivado 实现：
+V42 no-ILA Vivado 实现：
 
 ```powershell
-cd routes_ultra\V34_dual_mcu_schedule_300\mcu_fft_v34_dual_mcu_schedule_300
+cd routes_ultra\V42_v34_board_verified_300\mcu_fft_v42_v34_board_verified_300
 D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
 ```
 
@@ -111,6 +119,8 @@ D:/vivado_work/routes_ultra/mcu_fft_v34_dual_mcu_schedule_300/mcu_fft_board.runs
 D:/vivado_work/routes_ultra/mcu_fft_v36_arm32_compliance_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v37_dual_mcu_v34_stable_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v38_dual_mcu_stage2_wait_reduce_300_stable/mcu_fft_board.runs/impl_1/board_top.bit
+D:/vivado_work/routes_ultra/mcu_fft_v42_v34_board_verified_300/mcu_fft_board.runs/impl_1/board_top.bit
+D:/vivado_work/routes_ultra/mcu_fft_v45_stage2_wait_reduce_300_stable/mcu_fft_board.runs/impl_1/board_top.bit
 ```
 
 V27a/V27b 和 V24 会生成 bitstream，但 timing 未通过，不建议作为最终上板版本。

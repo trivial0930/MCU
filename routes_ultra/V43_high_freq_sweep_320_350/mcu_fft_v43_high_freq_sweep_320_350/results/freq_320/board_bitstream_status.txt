@@ -1,0 +1,2 @@
+status=ok
+notes=part=xc7k160tffg676-2 target_period_ns=20.000 enable_ila=0 flatten_hierarchy=none max_dsp=0 synth_status=synth_design Complete! impl_status=write_bitstream Complete! bit_files=D:/vivado_work/routes_ultra/mcu_fft_v43_freq_320/mcu_fft_board.runs/impl_1/board_top.bit ltx_files=

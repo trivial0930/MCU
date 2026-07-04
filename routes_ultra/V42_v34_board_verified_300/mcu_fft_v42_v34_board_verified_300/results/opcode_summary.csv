@@ -1,0 +1,15 @@
+core,mnemonic,opcode_hex,count,is_fft_special
+Core0,ADD,0x1,20,no
+Core0,HALT,0xf,1,no
+Core0,LDR,0x7,36,no
+Core0,MOVI,0x5,4,no
+Core0,MUL,0xe,4,no
+Core0,STR,0x8,36,no
+Core0,SUB,0x2,21,no
+Core1,ADD,0x1,6,no
+Core1,HALT,0xf,1,no
+Core1,LDR,0x7,12,no
+Core1,MOVI,0x5,2,no
+Core1,NOP,0x0,103,no
+Core1,STR,0x8,12,no
+Core1,SUB,0x2,6,no

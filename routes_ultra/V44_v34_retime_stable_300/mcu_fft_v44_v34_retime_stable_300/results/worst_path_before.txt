@@ -1,0 +1,81 @@
+Max Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             0.056ns  (required time - arrival time)
+  Source:                 u_mcu_top/u_mcu_core0/ex_op1_reg[14]/C
+                            (rising edge-triggered cell FDRE clocked by clkout_raw  {rise@0.000ns fall@1.667ns period=3.333ns})
+  Destination:            u_mcu_top/u_mcu_core1/wb_wdata_reg[7]/D
+                            (rising edge-triggered cell FDRE clocked by clkout_raw  {rise@0.000ns fall@1.667ns period=3.333ns})
+  Path Group:             clkout_raw
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            3.333ns  (clkout_raw rise@3.333ns - clkout_raw rise@0.000ns)
+  Data Path Delay:        3.225ns  (logic 0.815ns (25.275%)  route 2.410ns (74.725%))
+  Logic Levels:           10  (LUT2=1 LUT4=1 LUT5=1 LUT6=5 MUXF7=1 MUXF8=1)
+  Clock Path Skew:        -0.047ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    -1.354ns = ( 1.979 - 3.333 )
+    Source Clock Delay      (SCD):    -1.621ns
+    Clock Pessimism Removal (CPR):    -0.314ns
+  Clock Uncertainty:      0.039ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.032ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clkout_raw rise edge)
+                                                      0.000     0.000 r
+    G22                                               0.000     0.000 r  CLK_50M (IN)
+                         net (fo=0)                   0.000     0.000    CLK_50M
+    G22                  IBUF (Prop_ibuf_I_O)         1.519     1.519 r  CLK_50M_IBUF_inst/O
+                         net (fo=1, routed)           1.098     2.617    u_clk_ultra_pll/clk_in
+    PLLE2_ADV_X0Y2       PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -7.146    -4.529 r  u_clk_ultra_pll/u_plle2_base/CLKOUT0
+                         net (fo=1, routed)           1.440    -3.089    u_clk_ultra_pll/clkout_raw
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.093    -2.996 r  u_clk_ultra_pll/u_clkout_buf/O
+                         net (fo=1687, routed)        1.375    -1.621    u_mcu_top/u_mcu_core0/clk
+    SLICE_X32Y220        FDRE                                         r  u_mcu_top/u_mcu_core0/ex_op1_reg[14]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X32Y220        FDRE (Prop_fdre_C_Q)         0.223    -1.398 r  u_mcu_top/u_mcu_core0/ex_op1_reg[14]/Q
+                         net (fo=9, routed)           0.324    -1.074    u_mcu_top/u_mcu_core0/p_0_in[6]
+    SLICE_X32Y219        LUT4 (Prop_lut4_I1_O)        0.043    -1.031 f  u_mcu_top/u_mcu_core0/dmem_we_INST_0_i_3/O
+                         net (fo=2, routed)           0.109    -0.922    u_mcu_top/u_mcu_core0/dmem_we_INST_0_i_3_n_0
+    SLICE_X32Y219        LUT5 (Prop_lut5_I0_O)        0.043    -0.879 f  u_mcu_top/u_mcu_core0/dmem_we_INST_0_i_1/O
+                         net (fo=26, routed)          0.373    -0.506    u_mcu_top/u_mcu_core0/u_ext_test_rom_if/is_test_rom
+    SLICE_X29Y220        LUT2 (Prop_lut2_I0_O)        0.043    -0.463 f  u_mcu_top/u_mcu_core0/u_ext_test_rom_if/test_rom_addr[2]_INST_0/O
+                         net (fo=20, routed)          0.652     0.189    u_test_ROM/addr[2]
+    SLICE_X31Y219        LUT6 (Prop_lut6_I1_O)        0.043     0.232 r  u_test_ROM/test_vector_in[7]_INST_0_i_3/O
+                         net (fo=1, routed)           0.000     0.232    u_test_ROM/test_vector_in[7]_INST_0_i_3_n_0
+    SLICE_X31Y219        MUXF7 (Prop_muxf7_I0_O)      0.120     0.352 r  u_test_ROM/test_vector_in[7]_INST_0_i_1/O
+                         net (fo=1, routed)           0.000     0.352    u_test_ROM/test_vector_in[7]_INST_0_i_1_n_0
+    SLICE_X31Y219        MUXF8 (Prop_muxf8_I0_O)      0.045     0.397 r  u_test_ROM/test_vector_in[7]_INST_0/O
+                         net (fo=4, routed)           0.384     0.781    u_mcu_top/u_mcu_core1/u_ext_test_rom_if/test_vector_in[7]
+    SLICE_X32Y222        LUT6 (Prop_lut6_I0_O)        0.126     0.907 r  u_mcu_top/u_mcu_core1/u_ext_test_rom_if/read_data[7]_INST_0/O
+                         net (fo=1, routed)           0.285     1.192    u_mcu_top/u_mcu_core1/test_rom_read_data[7]
+    SLICE_X33Y225        LUT6 (Prop_lut6_I0_O)        0.043     1.235 r  u_mcu_top/u_mcu_core1/wb_wdata[7]_i_6/O
+                         net (fo=1, routed)           0.184     1.418    u_mcu_top/u_mcu_core1/wb_wdata[7]_i_6_n_0
+    SLICE_X31Y225        LUT6 (Prop_lut6_I0_O)        0.043     1.461 f  u_mcu_top/u_mcu_core1/wb_wdata[7]_i_2/O
+                         net (fo=1, routed)           0.099     1.560    u_mcu_top/u_mcu_core1/wb_wdata[7]_i_2_n_0
+    SLICE_X31Y225        LUT6 (Prop_lut6_I0_O)        0.043     1.603 r  u_mcu_top/u_mcu_core1/wb_wdata[7]_i_1/O
+                         net (fo=1, routed)           0.000     1.603    u_mcu_top/u_mcu_core1/wb_wdata[7]_i_1_n_0
+    SLICE_X31Y225        FDRE                                         r  u_mcu_top/u_mcu_core1/wb_wdata_reg[7]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clkout_raw rise edge)
+                                                      3.333     3.333 r
+    G22                                               0.000     3.333 r  CLK_50M (IN)
+                         net (fo=0)                   0.000     3.333    CLK_50M
+    G22                  IBUF (Prop_ibuf_I_O)         1.387     4.720 r  CLK_50M_IBUF_inst/O
+                         net (fo=1, routed)           1.001     5.721    u_clk_ultra_pll/clk_in
+    PLLE2_ADV_X0Y2       PLLE2_ADV (Prop_plle2_adv_CLKIN1_CLKOUT0)
+                                                     -6.363    -0.642 r  u_clk_ultra_pll/u_plle2_base/CLKOUT0
+                         net (fo=1, routed)           1.333     0.691    u_clk_ultra_pll/clkout_raw
+    BUFGCTRL_X0Y0        BUFG (Prop_bufg_I_O)         0.083     0.774 r  u_clk_ultra_pll/u_clkout_buf/O
+                         net (fo=1687, routed)        1.205     1.979    u_mcu_top/u_mcu_core1/clk
+    SLICE_X31Y225        FDRE                                         r  u_mcu_top/u_mcu_core1/wb_wdata_reg[7]/C
+                         clock pessimism             -0.314     1.665
+                         clock uncertainty           -0.039     1.626
+    SLICE_X31Y225        FDRE (Setup_fdre_C_D)        0.033     1.659    u_mcu_top/u_mcu_core1/wb_wdata_reg[7]
+  -------------------------------------------------------------------
+                         required time                          1.659
+                         arrival time                          -1.603
+  -------------------------------------------------------------------
+                         slack                                  0.056

@@ -1,0 +1,7 @@
+program_status=ok
+device=xc7k160t_0
+ila=hw_ila_1
+armed_for=verify_we_eq_1
+action=press_and_release_KEY1_reset
+capture_status=ok
+csv=board_validation/v34_ila_verify_we_capture.csv

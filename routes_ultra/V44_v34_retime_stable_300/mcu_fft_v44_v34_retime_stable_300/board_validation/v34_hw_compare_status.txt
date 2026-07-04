@@ -1,0 +1,7 @@
+write_count=16
+unique_addr_count=16
+last_write_addr=15
+last_write_cnt_test=87
+final_done_cnt_test=88
+compare_status=PASS
+csv=board_validation/v34_hw_compare.csv

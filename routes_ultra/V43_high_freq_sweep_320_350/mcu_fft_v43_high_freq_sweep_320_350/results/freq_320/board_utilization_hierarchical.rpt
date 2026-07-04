@@ -1,0 +1,36 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Sun Jul  5 00:32:57 2026
+| Host         : LAPTOP-RLNQPQBS running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file C:/Users/����/OneDrive/�ĵ�/����ʵ��/MCU/routes_ultra/V43_high_freq_sweep_320_350/mcu_fft_v43_high_freq_sweep_320_350/results/vivado_board/board_utilization_hierarchical.rpt
+| Design       : board_top
+| Device       : xc7k160tffg676-2
+| Speed File   : -2
+| Design State : Routed
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++-----------------------+-------------+------------+------------+---------+------+------+--------+--------+------------+
+|        Instance       |    Module   | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++-----------------------+-------------+------------+------------+---------+------+------+--------+--------+------------+
+| board_top             |       (top) |       2250 |       2214 |      36 |    0 | 1641 |      0 |      0 |          0 |
+|   (board_top)         |       (top) |          4 |          4 |       0 |    0 |    0 |      0 |      0 |          0 |
+|   u_mcu_top           |     mcu_top |       2203 |       2179 |      24 |    0 | 1641 |      0 |      0 |          0 |
+|     u_mcu_core1       |    mcu_core |       1002 |       1002 |       0 |    0 |  795 |      0 |      0 |          0 |
+|       (u_mcu_core1)   |    mcu_core |        710 |        710 |       0 |    0 |  283 |      0 |      0 |          0 |
+|       u_reg_file      |    reg_file |        264 |        264 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     u_instr_rom_core0 |   instr_rom |         69 |         69 |       0 |    0 |    0 |      0 |      0 |          0 |
+|     u_mcu_core0       | mcu_core__1 |       1025 |       1025 |       0 |    0 |  827 |      0 |      0 |          0 |
+|       (u_mcu_core0)   | mcu_core__1 |        721 |        721 |       0 |    0 |  315 |      0 |      0 |          0 |
+|       u_reg_file      | reg_file__1 |        264 |        264 |       0 |    0 |  512 |      0 |      0 |          0 |
++-----------------------+-------------+------------+------------+---------+------+------+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
