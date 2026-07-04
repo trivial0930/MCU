@@ -1,0 +1,34 @@
+﻿Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Sat Jul  4 17:08:01 2026
+| Host         : LAPTOP-RLNQPQBS running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file C:/Users/����/OneDrive/�ĵ�/����ʵ��/MCU/routes_ultra/V22b_fast_mul2_300/mcu_fft_v22b_fast_mul2_300/results/vivado_board/board_utilization_hierarchical.rpt
+| Design       : board_top
+| Device       : xc7k160tffg676-2
+| Speed File   : -2
+| Design State : Routed
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++--------------------+-----------+------------+------------+---------+------+-----+--------+--------+------------+
+|      Instance      |   Module  | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | DSP Blocks |
++--------------------+-----------+------------+------------+---------+------+-----+--------+--------+------------+
+| board_top          |     (top) |       1053 |        977 |      76 |    0 | 675 |      0 |      0 |          0 |
+|   (board_top)      |     (top) |          4 |          4 |       0 |    0 |   0 |      0 |      0 |          0 |
+|   u_mcu_top        |   mcu_top |       1007 |        943 |      64 |    0 | 675 |      0 |      0 |          0 |
+|     u_data_ram     |  data_ram |         64 |          0 |      64 |    0 |   0 |      0 |      0 |          0 |
+|     u_instr_rom    | instr_rom |         86 |         86 |       0 |    0 |   0 |      0 |      0 |          0 |
+|     u_mcu_core     |  mcu_core |        853 |        853 |       0 |    0 | 656 |      0 |      0 |          0 |
+|       (u_mcu_core) |  mcu_core |        610 |        610 |       0 |    0 | 256 |      0 |      0 |          0 |
+|       u_reg_file   |  reg_file |        208 |        208 |       0 |    0 | 400 |      0 |      0 |          0 |
++--------------------+-----------+------------+------------+---------+------+-----+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining

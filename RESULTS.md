@@ -29,14 +29,17 @@ routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 
 ## Ultra 300 MHz 最新结果
 
-`routes_ultra/` 已完成两条真正 timing-clean 的 300 MHz 路线：
+`routes_ultra/` 已完成多条真正 timing-clean 的 300 MHz 路线。最新最快路线为 V22b：
 
 | 路线 | 状态 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| `V19_pipeline_300` | 推荐的 300 MHz 稳健版 | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
-| `V20_forward_300` | 当前最快 300 MHz 版 | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
+| `V22b_fast_mul2_300` | 当前最快 300 MHz 版，2 拍通用 Q7 MUL | 173 | 300 MHz | 0.577 us | +0.122 ns | 1053 | 675 | 0 |
+| `V22_fast_mul_300` | 4 拍 radix-4 通用 Q7 MUL | 181 | 300 MHz | 0.603 us | +0.089 ns | 1012 | 675 | 0 |
+| `V21_forward_stable_300` | V20 forward 稳健化 | 197 | 300 MHz | 0.657 us | +0.031 ns | 973 | 675 | 0 |
+| `V20_forward_300` | 早期最快 300 MHz 版，余量极薄 | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
+| `V19_pipeline_300` | 已实物上板验证的 300 MHz 稳健版 | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
 
-两条路线均通过官方样例 + 20 组随机输入回归、Vivado 综合、实现、DRC 和 bitstream 生成。V20 速度最快但时序余量极薄；若上板稳定性优先，建议先使用 V19。
+以上路线均通过官方样例 + 20 组随机输入回归、Vivado 综合、实现、DRC 和 bitstream 生成，正式统计均关闭 ILA 且 DSP=0。V19 已完成实物上板验证；V22b 是新的速度主线，下一步建议做 V22b ILA 上板验证。
 
 ## 最新 130 MHz 上板结果
 
