@@ -15,6 +15,7 @@
 
 - 当前最快路线：`V30_dual_mcu_real_300`，真实双 MCU 输出拆分，`cnt_test=149`，300 MHz，WNS `+0.021 ns`。
 - 当前最快单核路线：`V31_single_core_final_tune_300`，`cnt_test=169`，300 MHz，WNS `+0.181 ns`。
+- 当前 32 位合规展示路线：`V36_arm32_compliance_300`，固定 32 位指令字，32 位 RF/ALU/WB，`cnt_test=169`，300 MHz，WNS `+0.157 ns`。
 - 当前已上板验证主线：`V22b_fast_mul2_300`，`cnt_test=173`，300 MHz，WNS `+0.122 ns`。
 - V27a/V27b 虽然把 `cnt_test` 降到 157，但 300 MHz 时序失败，不能作为主线。
 - V29 Phase 1 已搭出双完整 MCU 骨架并 300 MHz timing-clean，但 Core1 还未参与 FFT，当前无速度收益。
@@ -40,6 +41,7 @@
 | V29 | `V29_dual_mcu_300/mcu_fft_v29_dual_mcu_300` | 双完整 MCU Phase 1 骨架 | 300 MHz PASS，但无加速 |
 | V30 | `V30_dual_mcu_real_300/mcu_fft_v30_dual_mcu_real_300` | 真实双 MCU 输出拆分，Core1 写后半 verify 输出 | `cnt_test=149`，300 MHz PASS |
 | V31 | `V31_single_core_final_tune_300/mcu_fft_v31_single_core_final_tune_300` | W2 蝶形直接计算 `b.real-a.real`，删除 3 条 counted SUB | `cnt_test=169`，300 MHz PASS |
+| V36 | `V36_arm32_compliance_300/mcu_fft_v36_arm32_compliance_300` | 从 V31 恢复 32 位 RF/ALU/前递/写回，补合规展示文档 | `cnt_test=169`，300 MHz PASS |
 
 ## 当前速度榜
 
@@ -47,13 +49,14 @@
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | V30_dual_mcu_real_300 | PASS，未上板 | 149 | 300 MHz | 0.497 us | +0.021 ns | 2076 | 1318 | 0 |
 | 2 | V31_single_core_final_tune_300 | PASS，未上板 | 169 | 300 MHz | 0.563 us | +0.181 ns | 1053 | 675 | 0 |
-| 3 | V26_scheduled_mul2_300 | PASS，未上板 | 172 | 300 MHz | 0.573 us | +0.067 ns | 1050 | 675 | 0 |
-| 3 | V28_branch_reduce_300 | PASS，未上板 | 172 | 300 MHz | 0.573 us | +0.067 ns | 1050 | 675 | 0 |
-| 5 | V22b_fast_mul2_300 | PASS，已上板 | 173 | 300 MHz | 0.577 us | +0.122 ns | 1053 | 675 | 0 |
-| 6 | V22_fast_mul_300 | PASS | 181 | 300 MHz | 0.603 us | +0.089 ns | 1012 | 675 | 0 |
-| 7 | V21_forward_stable_300 | PASS | 197 | 300 MHz | 0.657 us | +0.031 ns | 973 | 675 | 0 |
-| 8 | V20_forward_300 | PASS | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
-| 9 | V19_pipeline_300 | PASS | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
+| 2 | V36_arm32_compliance_300 | PASS，合规展示 | 169 | 300 MHz | 0.563 us | +0.157 ns | 1213 | 822 | 0 |
+| 4 | V26_scheduled_mul2_300 | PASS，未上板 | 172 | 300 MHz | 0.573 us | +0.067 ns | 1050 | 675 | 0 |
+| 4 | V28_branch_reduce_300 | PASS，未上板 | 172 | 300 MHz | 0.573 us | +0.067 ns | 1050 | 675 | 0 |
+| 6 | V22b_fast_mul2_300 | PASS，已上板 | 173 | 300 MHz | 0.577 us | +0.122 ns | 1053 | 675 | 0 |
+| 7 | V22_fast_mul_300 | PASS | 181 | 300 MHz | 0.603 us | +0.089 ns | 1012 | 675 | 0 |
+| 8 | V21_forward_stable_300 | PASS | 197 | 300 MHz | 0.657 us | +0.031 ns | 973 | 675 | 0 |
+| 9 | V20_forward_300 | PASS | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
+| 10 | V19_pipeline_300 | PASS | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
 | - | V27b_hybrid_mul_300 | 功能 PASS，时序 FAIL | 157 | 300 MHz | 0.523 us | -1.052 ns | 1361 | 698 | 0 |
 | - | V27a_mul1_lut_300 | 功能 PASS，时序 FAIL | 157 | 300 MHz | 0.523 us | -2.199 ns | 1203 | 648 | 0 |
 | - | V24_load_forward_300 | 功能 PASS，时序 FAIL | 173 | 300 MHz | 0.577 us | -0.005 ns | 1106 | 681 | 0 |
@@ -91,6 +94,7 @@ D:/vivado_work/routes_ultra/mcu_fft_v28_branch_reduce_300/mcu_fft_board.runs/imp
 D:/vivado_work/routes_ultra/mcu_fft_v29_dual_mcu_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v30_dual_mcu_real_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v31_single_core_final_tune_300/mcu_fft_board.runs/impl_1/board_top.bit
+D:/vivado_work/routes_ultra/mcu_fft_v36_arm32_compliance_300/mcu_fft_board.runs/impl_1/board_top.bit
 ```
 
 V27a/V27b 和 V24 会生成 bitstream，但 timing 未通过，不建议作为最终上板版本。

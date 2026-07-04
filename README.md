@@ -10,6 +10,7 @@
 | --- | --- | --- | --- |
 | 当前最快路线 | `routes_ultra/V30_dual_mcu_real_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=149`，理论时间约 `0.497 us`，WNS `+0.021 ns`，DSP 0 |
 | 当前最快单核路线 | `routes_ultra/V31_single_core_final_tune_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=169`，理论时间约 `0.563 us`，WNS `+0.181 ns`，DSP 0 |
+| 32 位合规展示路线 | `routes_ultra/V36_arm32_compliance_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | 32-bit 指令字，32-bit RF/ALU/WB，`cnt_test=169`，WNS `+0.157 ns`，DSP 0 |
 | 已上板 Ultra 主线 | `routes_ultra/V22b_fast_mul2_300` | 已完成实物验证 | `cnt_test=173`，300 MHz 理论时间约 `0.577 us` |
 | Route A 稳定上板路线 | `routesA/speed_v7_q7_narrow_mul` | 已完成 130 MHz PLL 实物验证 | `cnt_test=157`，理论时间约 `1.208 us`，DSP 0 |
 
@@ -30,7 +31,7 @@
 ## 推荐阅读顺序
 
 1. `RESULTS.md`：先看当前排行榜、推荐上板路线和不建议继续投入的路线。
-2. `routes_ultra/README.md`：查看 300 MHz 极限路线的完整迭代状态，重点看 V30、V31、V22b。
+2. `routes_ultra/README.md`：查看 300 MHz 极限路线的完整迭代状态，重点看 V30、V31、V36、V22b。
 3. `docs/上板与交接指南.md`：查看 bitstream、ILA、上板观察信号和交接步骤。
 4. `routesA/README.md`：理解稳定 Route A 的来源、验证状态和 130 MHz 板级结果。
 5. `materials/README.md`：确认官方样例、板卡资料和实验约束。
@@ -93,6 +94,7 @@ D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ../../vivado/run_boar
 ## 上板建议
 
 - 需要课堂展示且优先稳妥：使用已实物验证的 `routes_ultra/V22b_fast_mul2_300` 或 Route A 的 `speed_v7_q7_narrow_mul`。
+- 需要回应老师“32 位机器码和架构位宽”检查：使用 `routes_ultra/V36_arm32_compliance_300`，并展示其中的 `COMPLIANCE_CHECK.md`。
 - 需要冲击当前最快成绩：优先尝试 `routes_ultra/V30_dual_mcu_real_300`，但该路线 WNS 余量只有 `+0.021 ns`，建议先用 ILA 版本确认 `done`、`verify_we`、`verify_addr`、`verify_vector_out` 和 `cnt_test`。
 - 需要更稳的 300 MHz 单核候选：使用 `routes_ultra/V31_single_core_final_tune_300`，时序余量比 V30 更宽。
 - 不建议作为最终展示路线：V24、V27a、V27b，因为 300 MHz timing 未通过或风险明显。
