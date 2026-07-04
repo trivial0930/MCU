@@ -1,0 +1,57 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Sun Jul  5 06:01:06 2026
+| Host         : LAPTOP-RLNQPQBS running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file C:/Users/戎择辰/OneDrive/文档/数电实验/MCU/routes_ultra/V54_octa_output_owner_300/mcu_fft_v54_octa_output_owner_300/results/vivado_board/board_utilization_hierarchical.rpt
+| Design       : board_top
+| Device       : xc7k160tffg676-2
+| Speed File   : -2
+| Design State : Physopt postRoute
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++----------------------------------+----------------+------------+------------+---------+------+------+--------+--------+------------+
+|             Instance             |     Module     | Total LUTs | Logic LUTs | LUTRAMs | SRLs |  FFs | RAMB36 | RAMB18 | DSP Blocks |
++----------------------------------+----------------+------------+------------+---------+------+------+--------+--------+------------+
+| board_top                        |          (top) |       8851 |       8755 |      96 |    0 | 6519 |      0 |      0 |          0 |
+|   (board_top)                    |          (top) |          8 |          8 |       0 |    0 |    0 |      0 |      0 |          0 |
+|   u_mcu_top                      |        mcu_top |       8571 |       8571 |       0 |    0 | 6519 |      0 |      0 |          0 |
+|     (u_mcu_top)                  |        mcu_top |        158 |        158 |       0 |    0 |   16 |      0 |      0 |          0 |
+|     g_mcu_core[0].u_mcu_core     |       mcu_core |       1011 |       1011 |       0 |    0 |  819 |      0 |      0 |          0 |
+|       (g_mcu_core[0].u_mcu_core) |       mcu_core |        706 |        706 |       0 |    0 |  307 |      0 |      0 |          0 |
+|       u_reg_file                 |       reg_file |        270 |        270 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     g_mcu_core[1].u_mcu_core     |    mcu_core__1 |       1015 |       1015 |       0 |    0 |  809 |      0 |      0 |          0 |
+|       (g_mcu_core[1].u_mcu_core) |    mcu_core__1 |        710 |        710 |       0 |    0 |  297 |      0 |      0 |          0 |
+|       u_reg_file                 |    reg_file__1 |        270 |        270 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     g_mcu_core[2].u_mcu_core     |    mcu_core__2 |       1014 |       1014 |       0 |    0 |  810 |      0 |      0 |          0 |
+|       (g_mcu_core[2].u_mcu_core) |    mcu_core__2 |        702 |        702 |       0 |    0 |  298 |      0 |      0 |          0 |
+|       u_reg_file                 |    reg_file__2 |        277 |        277 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     g_mcu_core[3].u_mcu_core     |    mcu_core__3 |       1026 |       1026 |       0 |    0 |  809 |      0 |      0 |          0 |
+|       (g_mcu_core[3].u_mcu_core) |    mcu_core__3 |        712 |        712 |       0 |    0 |  297 |      0 |      0 |          0 |
+|       u_reg_file                 |    reg_file__3 |        279 |        279 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     g_mcu_core[4].u_mcu_core     |    mcu_core__4 |       1013 |       1013 |       0 |    0 |  817 |      0 |      0 |          0 |
+|       (g_mcu_core[4].u_mcu_core) |    mcu_core__4 |        708 |        708 |       0 |    0 |  305 |      0 |      0 |          0 |
+|       u_reg_file                 |    reg_file__4 |        269 |        269 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     g_mcu_core[5].u_mcu_core     |    mcu_core__5 |       1016 |       1016 |       0 |    0 |  811 |      0 |      0 |          0 |
+|       (g_mcu_core[5].u_mcu_core) |    mcu_core__5 |        710 |        710 |       0 |    0 |  299 |      0 |      0 |          0 |
+|       u_reg_file                 |    reg_file__5 |        270 |        270 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     g_mcu_core[6].u_mcu_core     |    mcu_core__7 |       1011 |       1011 |       0 |    0 |  806 |      0 |      0 |          0 |
+|       (g_mcu_core[6].u_mcu_core) |    mcu_core__7 |        708 |        708 |       0 |    0 |  294 |      0 |      0 |          0 |
+|       u_reg_file                 |    reg_file__7 |        268 |        268 |       0 |    0 |  512 |      0 |      0 |          0 |
+|     g_mcu_core[7].u_mcu_core     |    mcu_core__6 |        995 |        995 |       0 |    0 |  803 |      0 |      0 |          0 |
+|       (g_mcu_core[7].u_mcu_core) |    mcu_core__6 |        696 |        696 |       0 |    0 |  291 |      0 |      0 |          0 |
+|       u_reg_file                 |    reg_file__6 |        264 |        264 |       0 |    0 |  512 |      0 |      0 |          0 |
+|   u_verify_RAM_oct               | verify_RAM_oct |        128 |         32 |      96 |    0 |    0 |      0 |      0 |          0 |
++----------------------------------+----------------+------------+------------+---------+------+------+--------+--------+------------+
+* Note: The sum of lower-level cells may be larger than their parent cells total, due to cross-hierarchy LUT combining
+
+

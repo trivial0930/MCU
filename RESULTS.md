@@ -1,19 +1,13 @@
 # 当前结果速览
 
-## 2026-07-05 V53 更新
-
-`routes_ultra/V53_quad_output_owner_300/mcu_fft_v53_quad_output_owner_300` 已完成四核输出归属路线的功能回归和 300MHz no-ILA 实现。当前结果为 `cnt_test=72`，300MHz 理论时间 `0.240 us`，WNS/TNS 为 `+0.089 ns / 0.000 ns`，WHS/THS 为 `+0.065 ns / 0.000 ns`，LUT/FF/DSP/BRAM 为 `5002 / 3718 / 0 / 0`。官方样例 + 20 组随机输入 PASS，DRC 0 Error，bitstream 已生成。该路线目前是最快 no-ILA 合规候选，但还未完成实物上板验证；已上板最快备份仍为 V45。
-
 更新时间：2026-07-05
 
 ## 统一口径
 
 - 目标器件：`xc7k160tffg676-2`
 - Ultra 板载输入时钟：50 MHz
-- Ultra MCU 工作时钟：`board_top.v` 中 PLLE2 生成 300 MHz，timing report 中 `clkout_raw` 周期为 3.333 ns
-- 综合层级：`flatten_hierarchy=none`
-- DSP 限制：`max_dsp=0`
-- 正式资源和速度统计：关闭 ILA
+- Ultra MCU 工作时钟：`board_top.v` 内部 PLLE2 生成 300 MHz
+- 正式资源和速度统计：关闭 ILA，`flatten_hierarchy=none`，`max_dsp=0`
 - 回归：官方样例 + 20 组随机输入，seed=2026
 - `cnt_test`：从有效输入读取开始，到最后一次可信 verify 输出写入完成
 
@@ -21,78 +15,36 @@
 
 | 排名 | 路线 | 状态 | `cnt_test` | 理论时间 | WNS | LUT | FF | DSP | 结论 |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | `V45_stage2_wait_reduce_300` | PASS，已上板验证 | 85 | 0.283 us | +0.091 ns | 2228 | 1619 | 0 | 当前最快 no-ILA 合规实现和最快已上板路线 |
-| 1 | `V46_stage1_split_dual_mcu_300` | PASS，无速度收益 | 85 | 0.283 us | +0.029 ns | 2231 | 1629 | 0 | Core1 迁移 Stage1 下半支路，但合法停表仍不快于 V45 |
-| 2 | `V42_v34_board_verified_300` | PASS，已上板证据固化 | 88 | 0.293 us | +0.056 ns | 2228 | 1615 | 0 | 稳定回退路线，V34 实物验证证据固化版本 |
-| 2 | `V37_dual_mcu_v34_stable_300` | PASS，未上板 | 88 | 0.293 us | +0.056 ns | 2226 | 1618 | 0 | V34 等价复现和实现策略实验 |
-| 4 | `V33_dual_mcu_compute_split_300` | PASS，未上板 | 135 | 0.450 us | +0.034 ns | 2228 | 1616 | 0 | Core1 真实参与 Stage2 中间计算 |
-| 5 | `V30_dual_mcu_real_300` | PASS，未上板 | 149 | 0.497 us | +0.021 ns | 2076 | 1318 | 0 | 旧双核输出拆分主线，已被 V33/V42/V45 超过 |
-| 6 | `V31_single_core_final_tune_300` | PASS，未上板 | 169 | 0.563 us | +0.181 ns | 1053 | 675 | 0 | 当前最快单核路线 |
-| 6 | `V36_arm32_compliance_300` | PASS，合规展示 | 169 | 0.563 us | +0.157 ns | 1213 | 822 | 0 | 32-bit 机器码/数据通路展示路线 |
-| 8 | `V26_scheduled_mul2_300` | PASS，未上板 | 172 | 0.573 us | +0.067 ns | 1050 | 675 | 0 | 已被 V31/V33/V42/V45 超过 |
-| 8 | `V28_branch_reduce_300` | PASS，未上板 | 172 | 0.573 us | +0.067 ns | 1050 | 675 | 0 | V31 的来源路线 |
+| 1 | `V54_octa_output_owner_300` | PASS，bitstream 已生成，待上板 | 58 | 0.193 us | +0.011 ns | 8851 | 6519 | 0 | 当前最快 no-ILA 合规候选 |
+| 2 | `V53_quad_output_owner_300` | PASS，bitstream 已生成，待上板 | 72 | 0.240 us | +0.089 ns | 5002 | 3718 | 0 | 四核输出归属路线，已被 V54 超过 |
+| 3 | `V45_stage2_wait_reduce_300` | PASS，已上板验证 | 85 | 0.283 us | +0.091 ns | 2228 | 1619 | 0 | 当前最快已上板路线 |
+| 3 | `V46_stage1_split_dual_mcu_300` | PASS，无速度收益 | 85 | 0.283 us | +0.029 ns | 2231 | 1629 | 0 | Core1 迁移 Stage1 的负结果保留 |
+| 5 | `V42_v34_board_verified_300` | PASS，已上板证据固化 | 88 | 0.293 us | +0.056 ns | 2228 | 1615 | 0 | 稳定回退路线 |
+| 6 | `V33_dual_mcu_compute_split_300` | PASS，未上板 | 135 | 0.450 us | +0.034 ns | 2228 | 1616 | 0 | Core1 真实参与 Stage2 中间计算 |
+| 7 | `V30_dual_mcu_real_300` | PASS，未上板 | 149 | 0.497 us | +0.021 ns | 2076 | 1318 | 0 | 旧双核输出拆分路线 |
+| 8 | `V31_single_core_final_tune_300` | PASS，未上板 | 169 | 0.563 us | +0.181 ns | 1053 | 675 | 0 | 当前最快单核路线 |
+| 8 | `V36_arm32_compliance_300` | PASS，合规展示 | 169 | 0.563 us | +0.157 ns | 1213 | 822 | 0 | 32-bit 合规展示路线 |
 | 10 | `V22b_fast_mul2_300` | PASS，已上板验证 | 173 | 0.577 us | +0.122 ns | 1053 | 675 | 0 | Ultra 已上板稳定备选 |
-| 11 | `V22_fast_mul_300` | PASS | 181 | 0.603 us | +0.089 ns | 1012 | 675 | 0 | 被 V22b/V26/V28 超过 |
-| 12 | `V21_forward_stable_300` | PASS | 197 | 0.657 us | +0.031 ns | 973 | 675 | 0 | 稳定前递版本 |
-| 12 | `V20_forward_300` | PASS | 197 | 0.657 us | +0.004 ns | 989 | 675 | 0 | 时序余量很薄 |
-| 14 | `V19_pipeline_300` | PASS | 204 | 0.680 us | +0.121 ns | 860 | 675 | 0 | 300 MHz 稳健基线 |
-| - | `V27b_hybrid_mul_300` | 功能 PASS，时序 FAIL | 157 | 0.523 us | -1.052 ns | 1361 | 698 | 0 | 不可作为主线 |
-| - | `V27a_mul1_lut_300` | 功能 PASS，时序 FAIL | 157 | 0.523 us | -2.199 ns | 1203 | 648 | 0 | 单拍通用乘法过重 |
-| - | `V24_load_forward_300` | 功能 PASS，时序 FAIL | 173 | 0.577 us | -0.005 ns | 1106 | 681 | 0 | 负结果 |
-| - | `V29_dual_mcu_300` | Phase 1 骨架 PASS | 173 | 0.577 us | +0.003 ns | 1679 | 915 | 0 | 双核骨架，无速度收益 |
 
-完整明细见 `routes_ultra/results/ultra_summary.csv` 和 `routes_ultra/README.md`。
+不推荐作为最终展示主线：`V24_load_forward_300`、`V27a_mul1_lut_300`、`V27b_hybrid_mul_300`，原因是 300 MHz timing 未通过。
 
-## 本轮关键结论
+## 本轮 V54 关键结论
 
-V45：
+V54 从 V53 的思路继续推进到 8 个完整 MCU core，每个 core 负责一个复数输出 X0 到 X7：
 
-- 根据 V42/V43/V44 结果，正式固化 Stage2 wait reduce 路线。
 - 官方样例 + 20 组随机 PASS。
-- 300 MHz no-ILA bitstream 生成成功，`cnt_test=85`，WNS `+0.091 ns`，DSP 0。
-- no-ILA 下载成功，硬件目标为 `localhost:3121/xilinx_tcf/Digilent/210251A08870`，器件识别为 `xc7k160t_0`。
-- ILA 调试抓到 16 次 verify 写回，地址 0..15 全覆盖，输出与 `FFT_output.coe` 完全一致。
-- ILA 比对结果：`write_count=16`、`unique_addr_count=16`、`last_write_addr=15`、`final_done_cnt_test=85`、`compare_status=PASS`。
-- ILA 版由于调试核引入额外负载，WNS 为 -0.068 ns，只作为功能抓波证据；正式成绩仍以 no-ILA timing-clean 报告为准。
-- 上板验证结束后已重新下载 no-ILA bitstream。
-
-V46：
-
-- 从 V45 复制，尝试 Core1 更早参与 Stage1。
-- Core0 通过普通 `STR` 把 `x1/x5/x3/x7` 原始输入转交到 `RAM20..27`。
-- Core1 用普通 `LDR/SUB/ADD/MUL/STR` 计算 `(1,5,W1)` 与 `(3,7,W3)` 下半支路。
-- 扫描证明 `final_addr15_delay < 21` 时 addr15 会提前写，属于假停表；最低合规点为 `final_addr15_delay=21`。
-- 官方样例 + 20 随机 PASS，300 MHz WNS `+0.029 ns`，DSP 0。
-- 合法 `cnt_test=85`，没有超过 V45，因此作为负结果保留，不建议替代主线。
-
-V42：
-
-- 从已上板验证的 V34 固化为正式证据路线。
-- 官方样例 + 20 组随机 PASS。
-- 300 MHz no-ILA bitstream 生成成功，WNS `+0.056 ns`，DSP 0。
-- `cnt_test=88`，保留为 V45 之外的低风险回退路线。
-
-V43：
-
-- 在 V42 基础上做 320/333.333/340/350/360 MHz 高频扫频。
-- 300 MHz timing-clean；320 MHz、333.333 MHz、350 MHz 均可生成 bitstream 但 WNS 为负。
-- 340 MHz、360 MHz 因 PLLE2 VCO 超出允许范围被脚本主动阻断。
-- 结论：当前结构不建议直接冲 320 MHz 以上，300 MHz 仍是可信展示频点。
-
-V44：
-
-- 在 V42 基础上尝试 post-route physopt、netdelay high、retiming 三种稳定化实现策略。
-- 最优 `retiming_try`：WNS `+0.069 ns`，LUT 2224，FF 1608，DSP 0。
-- 相比 V42 的 `+0.056 ns` 有小幅改善，但没有达到替代阈值。
+- `cnt_test=58`，比 V53 的 72 少 14 cycle，比 V45 的 85 少 27 cycle。
+- 300 MHz no-ILA 实现通过：WNS/TNS = +0.011 ns / 0.000 ns，WHS/THS = +0.063 ns / 0.000 ns。
+- DRC 报告 `Checks found: 0`。
+- DSP=0，BRAM=0。
+- V54 不增加专用 FFT 硬件，也不增加专用指令；速度收益来自输出归属拆分、test ROM 复制、verify RAM bank 化和奇数输出核内 `×91` 结果复用。
 
 ## 上板建议
 
-- 需要最快实现和最快已上板成绩：优先使用 `V45_stage2_wait_reduce_300`。
-- 需要稳妥回退：使用已固化上板证据的 `V42_v34_board_verified_300`。
-- 需要最低风险且结构较简单：继续使用已上板的 `V22b_fast_mul2_300`。
-- 需要回应老师“32 位机器码和架构位宽”：使用 `V36_arm32_compliance_300`，或展示 V33/V34/V45 的 32-bit 指令和普通 MCU 数据通路说明。
-- 需要完整答辩资料：使用 `V49_final_board_evidence_package`。
-- 暂不推荐：V24、V27a、V27b，因为 300 MHz timing 未通过。
+- 展示最快理论实现：使用 V54，先下载 no-ILA bitstream，再补充 ILA 版本抓 verify 写回证据。
+- 展示已经实测上板 PASS 的结果：使用 V45。
+- 需要稳妥回退：使用 V42/V34 固化证据路线。
+- 需要回答老师合规要求：准备 V54 的 `OCTA_MCU_COMPLIANCE_REPORT.md`、`opcode_summary_all.csv` 和 `verify_writer_trace.csv`。
 
 ## Route A 130 MHz 上板结果
 
