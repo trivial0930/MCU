@@ -1,0 +1,5 @@
+route,target_mhz,strategy,wns_ns,lut,ff,dsp,bram,status,notes
+speed_v7b_c91_shift_add,130,Performance_Explore,0.178,889,549,0,0,ok,route=speed_v7b_c91_shift_add target_mhz=130 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0
+speed_v7c_c91_shift_sub,130,Performance_Explore,0.120,855,549,0,0,ok,route=speed_v7c_c91_shift_sub target_mhz=130 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0
+speed_v7_q7_narrow_mul,130,Performance_Explore,0.027,986,549,0,0,ok,route=speed_v7_q7_narrow_mul target_mhz=130 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0
+speed_v6_official_sample,95,Performance_Explore,-0.162,1704,549,0,0,no_passing_result,No result met WNS>=0 and DSP=0 in the tested targets

@@ -35,7 +35,7 @@ def parse_wns(text):
 def parse_util(text):
     result = {"lut": "", "ff": "", "dsp": "", "bram": ""}
 
-    lut = re.search(r"\|\s*(?:CLB LUTs|Slice LUTs\*)\s*\|\s*(\d+)", text)
+    lut = re.search(r"\|\s*(?:CLB LUTs|Slice LUTs\*?)\s*\|\s*(\d+)", text)
     ff = re.search(r"\|\s*(?:CLB Registers|Slice Registers)\s*\|\s*(\d+)", text)
     dsp = re.search(r"\|\s*DSPs\s*\|\s*(\d+)", text)
     bram = re.search(r"\|\s*Block RAM Tile\s*\|\s*(\d+)", text)

@@ -9,10 +9,18 @@
 #
 # Optional overrides:
 #   set PART_NAME xc7k160tffg676-2
+#   set SYNTH_FLATTEN_HIERARCHY none
+#   set SYNTH_MAX_DSP 0
 #   set CANDIDATES {{speed_v7_q7_narrow_mul ../speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul}}
 
 if {![info exists PART_NAME]} {
     set PART_NAME "xc7k160tffg676-2"
+}
+if {![info exists SYNTH_FLATTEN_HIERARCHY]} {
+    set SYNTH_FLATTEN_HIERARCHY "none"
+}
+if {![info exists SYNTH_MAX_DSP]} {
+    set SYNTH_MAX_DSP 0
 }
 
 if {![info exists CANDIDATES]} {
@@ -71,9 +79,9 @@ foreach candidate $CANDIDATES {
     add_route_sources $root_dir
 
     cd $root_dir
-    if {[catch {synth_design -top board_top -part $PART_NAME} err]} {
+    if {[catch {synth_design -top board_top -part $PART_NAME -flatten_hierarchy $SYNTH_FLATTEN_HIERARCHY -max_dsp $SYNTH_MAX_DSP} err]} {
         puts "ERROR: synth smoke failed for $route_name: $err"
-        write_status $status_file failed "route=$route_name part=$PART_NAME error=$err"
+        write_status $status_file failed "route=$route_name part=$PART_NAME flatten_hierarchy=$SYNTH_FLATTEN_HIERARCHY max_dsp=$SYNTH_MAX_DSP error=$err"
         cd $matrix_dir
         close_project
         continue
@@ -81,8 +89,9 @@ foreach candidate $CANDIDATES {
     cd $matrix_dir
 
     report_utilization -file [file join $proj_dir "${proj_name}_utilization.rpt"]
+    report_utilization -hierarchical -file [file join $proj_dir "${proj_name}_utilization_hierarchical.rpt"]
     report_timing_summary -file [file join $proj_dir "${proj_name}_timing_summary.rpt"]
     write_checkpoint -force [file join $proj_dir "${proj_name}_synth.dcp"]
-    write_status $status_file ok "route=$route_name part=$PART_NAME xdc=skipped"
+    write_status $status_file ok "route=$route_name part=$PART_NAME flatten_hierarchy=$SYNTH_FLATTEN_HIERARCHY max_dsp=$SYNTH_MAX_DSP xdc=skipped"
     close_project
 }

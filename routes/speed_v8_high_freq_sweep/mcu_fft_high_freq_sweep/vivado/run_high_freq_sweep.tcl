@@ -3,11 +3,20 @@
 #   vivado -mode batch -source vivado/run_high_freq_sweep.tcl
 #
 # Optional overrides before sourcing:
-#   set PART_NAME xc7k325tffg676-2
+#   set PART_NAME xc7k160tffg676-2
+#   set SYNTH_FLATTEN_HIERARCHY none
+#   set SYNTH_MAX_DSP 0
 #   set JOBS 4
+#   set OUT_DIR D:/vivado_work/mcu_high_freq_sweep
 
 if {![info exists PART_NAME]} {
-    set PART_NAME "xc7k325tffg676-2"
+    set PART_NAME "xc7k160tffg676-2"
+}
+if {![info exists SYNTH_FLATTEN_HIERARCHY]} {
+    set SYNTH_FLATTEN_HIERARCHY "none"
+}
+if {![info exists SYNTH_MAX_DSP]} {
+    set SYNTH_MAX_DSP 0
 }
 if {![info exists JOBS]} {
     set JOBS 4
@@ -57,16 +66,25 @@ proc write_status {path status notes} {
     close $fd
 }
 
-proc set_synth_workdir {proj_dir root_dir} {
-    set pre_tcl [file join $proj_dir synth_pre_cd.tcl]
+proc set_synth_init_files {proj_dir root_dir} {
+    set pre_tcl [file join $proj_dir synth_pre_files.tcl]
+    set init_files [concat \
+        [glob -nocomplain [file join $root_dir mem *.mem]] \
+        [glob -nocomplain [file join $root_dir mem *.coe]]]
     set fd [open $pre_tcl w]
-    puts $fd "cd {[file normalize $root_dir]}"
+    puts $fd "file mkdir mem"
+    puts $fd "foreach f {$init_files} {"
+    puts $fd "    file copy -force \$f mem"
+    puts $fd "}"
     close $fd
     set_property STEPS.SYNTH_DESIGN.TCL.PRE $pre_tcl [get_runs synth_1]
 }
 
 set root_dir [file normalize [pwd]]
-set out_dir  [file join $root_dir build vivado_sweep]
+if {![info exists OUT_DIR]} {
+    set OUT_DIR [file join $root_dir build vivado_sweep]
+}
+set out_dir [file normalize $OUT_DIR]
 file mkdir $out_dir
 
 set src_xdc [file join $root_dir constraints top.xdc]
@@ -105,9 +123,11 @@ foreach target $targets {
         add_route_sources $root_dir $dst_xdc
 
         set_property strategy Flow_PerfOptimized_high [get_runs synth_1]
+        set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY $SYNTH_FLATTEN_HIERARCHY [get_runs synth_1]
+        set_property STEPS.SYNTH_DESIGN.ARGS.MAX_DSP $SYNTH_MAX_DSP [get_runs synth_1]
         set_property strategy $strategy [get_runs impl_1]
         set_property STEPS.PHYS_OPT_DESIGN.IS_ENABLED true [get_runs impl_1]
-        set_synth_workdir $proj_dir $root_dir
+        set_synth_init_files $proj_dir $root_dir
 
         set run_error ""
         if {[catch {
@@ -115,12 +135,12 @@ foreach target $targets {
             wait_on_run impl_1
         } run_error]} {
             puts "WARNING: implementation run failed for $proj_name: $run_error"
-            write_status $status_file failed "target_mhz=$mhz strategy=$strategy part=$PART_NAME error=$run_error"
+            write_status $status_file failed "target_mhz=$mhz strategy=$strategy part=$PART_NAME flatten_hierarchy=$SYNTH_FLATTEN_HIERARCHY max_dsp=$SYNTH_MAX_DSP error=$run_error"
             close_project
             continue
         }
         set run_status [get_property STATUS [get_runs impl_1]]
-        write_status $status_file $run_status "target_mhz=$mhz strategy=$strategy part=$PART_NAME"
+        write_status $status_file $run_status "target_mhz=$mhz strategy=$strategy part=$PART_NAME flatten_hierarchy=$SYNTH_FLATTEN_HIERARCHY max_dsp=$SYNTH_MAX_DSP"
 
         if {[catch {open_run impl_1} err]} {
             puts "WARNING: cannot open implemented run for $proj_name: $err"
@@ -131,6 +151,7 @@ foreach target $targets {
         set report_prefix [file join $proj_dir "${proj_name}"]
         report_timing_summary -file "${report_prefix}_timing_summary.rpt"
         report_utilization -file "${report_prefix}_utilization.rpt"
+        report_utilization -hierarchical -file "${report_prefix}_utilization_hierarchical.rpt"
         report_design_analysis -timing -file "${report_prefix}_design_analysis_timing.rpt"
         write_checkpoint -force "${report_prefix}_routed.dcp"
         close_project

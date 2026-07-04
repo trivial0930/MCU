@@ -1,0 +1,16 @@
+route,target_mhz,strategy,wns_ns,lut,ff,dsp,bram,status,notes,mhz_per_lut,mhz_per_lut_ff
+speed_v7c_c91_shift_sub,130,Performance_Explore,0.120,855,549,0,0,ok,route=speed_v7c_c91_shift_sub target_mhz=130 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.152047,0.092593
+speed_v7b_c91_shift_add,130,Performance_Explore,0.178,889,549,0,0,ok,route=speed_v7b_c91_shift_add target_mhz=130 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.146232,0.090403
+speed_v7c_c91_shift_sub,120,Performance_Explore,0.518,853,549,0,0,ok,route=speed_v7c_c91_shift_sub target_mhz=120 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.140680,0.085592
+speed_v7b_c91_shift_add,120,Performance_Explore,0.525,873,549,0,0,ok,route=speed_v7b_c91_shift_add target_mhz=120 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.137457,0.084388
+speed_v7_q7_narrow_mul,130,Performance_Explore,0.027,986,549,0,0,ok,route=speed_v7_q7_narrow_mul target_mhz=130 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.131846,0.084691
+speed_v7c_c91_shift_sub,110,Performance_Explore,0.512,851,549,0,0,ok,route=speed_v7c_c91_shift_sub target_mhz=110 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.129260,0.078571
+speed_v7b_c91_shift_add,110,Performance_Explore,0.485,868,549,0,0,ok,route=speed_v7b_c91_shift_add target_mhz=110 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.126728,0.077629
+speed_v7_q7_narrow_mul,120,Performance_Explore,0.146,981,549,0,0,ok,route=speed_v7_q7_narrow_mul target_mhz=120 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.122324,0.078431
+speed_v7c_c91_shift_sub,100,Performance_Explore,0.464,843,549,0,0,ok,route=speed_v7c_c91_shift_sub target_mhz=100 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.118624,0.071839
+speed_v7b_c91_shift_add,100,Performance_Explore,1.108,868,549,0,0,ok,route=speed_v7b_c91_shift_add target_mhz=100 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.115207,0.070572
+speed_v7_q7_narrow_mul,110,Performance_Explore,0.417,962,549,0,0,ok,route=speed_v7_q7_narrow_mul target_mhz=110 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.114345,0.072799
+speed_v7c_c91_shift_sub,95,Performance_Explore,1.307,843,549,0,0,ok,route=speed_v7c_c91_shift_sub target_mhz=95 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.112693,0.068247
+speed_v7b_c91_shift_add,95,Performance_Explore,1.340,868,549,0,0,ok,route=speed_v7b_c91_shift_add target_mhz=95 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.109447,0.067043
+speed_v7_q7_narrow_mul,100,Performance_Explore,0.760,952,549,0,0,ok,route=speed_v7_q7_narrow_mul target_mhz=100 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.105042,0.066622
+speed_v7_q7_narrow_mul,95,Performance_Explore,1.111,952,549,0,0,ok,route=speed_v7_q7_narrow_mul target_mhz=95 strategy=Performance_Explore part=xc7k160tffg676-2 flatten_hierarchy=none max_dsp=0,0.099790,0.063291

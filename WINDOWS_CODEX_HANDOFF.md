@@ -51,9 +51,11 @@ vivado
 Vivado Tcl Console：
 
 ```tcl
-set PART_NAME xc7k325tffg676-2
+set PART_NAME xc7k160tffg676-2
 set TARGET_PERIOD_NS 20.000
 set ENABLE_ILA 1
+set SYNTH_FLATTEN_HIERARCHY none
+set SYNTH_MAX_DSP 0
 source ../../vivado/create_board_project.tcl
 ```
 
@@ -86,7 +88,9 @@ cd M:\routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
 @'
 set ENABLE_ILA 1
 set TARGET_PERIOD_NS 20.000
-set PART_NAME xc7k325tffg676-2
+set PART_NAME xc7k160tffg676-2
+set SYNTH_FLATTEN_HIERARCHY none
+set SYNTH_MAX_DSP 0
 set JOBS 4
 set OUT_DIR D:/vivado_work/mcu_q7_ila
 source ../../vivado/run_board_bitstream.tcl
@@ -129,7 +133,7 @@ assign clk = CLK_50M;
 
 - `routes/speed_v8_route_a_vivado_matrix/results/route_a_matrix.csv`
 - 最终路线的 timing/utilization report
-- 选择最终路线的理由：频率、WNS、资源、是否带 ILA
+- 选择最终路线的理由：频率、WNS、资源、DSP 是否为 0、是否带 ILA
 - 若修改 RTL，需要重新跑功能回归并更新对应路线说明
 
 当前已完成的首板交付物和上板步骤见 `docs/上板与交接指南.md`。

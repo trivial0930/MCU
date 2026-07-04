@@ -16,7 +16,7 @@
 | `speed_v7_q7_narrow_mul/` | 路线 A1：保持 v6 行为，把 ALU Q7 乘法收窄为 data x 8-bit coefficient。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 推荐第一个上板版本。 |
 | `speed_v7b_c91_shift_add/` | 路线 A2 备选：把 FFT 程序用到的常数 91 乘法专门化为 `64 + 16 + 8 + 2 + 1` 移位加。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 比较 LUT/时序时使用。 |
 | `speed_v7c_c91_shift_sub/` | 路线 A2 备选：把常数 91 写成 `128 - 32 - 4 - 1` 移位减。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 比较 LUT/时序时使用。 |
-| `speed_v8_high_freq_sweep/` | 路线 A3/A4：基于 v7 窄乘法 RTL 的单路线高频 sweep。 | Vivado 脚本默认 part 已更新为 `xc7k325tffg676-2`。 | 只看推荐路线的频率边界。 |
+| `speed_v8_high_freq_sweep/` | 路线 A3/A4：基于 v7 窄乘法 RTL 的单路线高频 sweep。 | Vivado 脚本默认 part 已更新为 `xc7k160tffg676-2`，并默认 `flatten_hierarchy=none`、`max_dsp=0`。 | 只看推荐路线的频率边界。 |
 | `speed_v8_route_a_vivado_matrix/` | 路线 A3/A4：对 v6、v7、v7b、v7c 做目标频率和 Vivado strategy 矩阵比较。 | 已用 Vivado 2025.2 完成前期综合冒烟；最终首板路线已优先收敛到 `speed_v7_q7_narrow_mul`。 | 决定最终速度路线。 |
 
 ## 本机调试结论
@@ -27,7 +27,7 @@
 D:\vivado\2025.2\Vivado\bin\vivado.bat
 ```
 
-目标器件和 license 已可用。根据课程资料引脚表和 Vivado 封装检查，当前上板 part 使用 `xc7k325tffg676-2`，不是旧文档中假设的 `xc7k325tffg900-2`。
+目标器件和 license 已可用。根据课件 `Lab1.pdf` 中的实物封装说明，当前上板 part 使用 `xc7k160tffg676-2`。
 
 推荐首板路线 `speed_v7_q7_narrow_mul` 已完成：
 
@@ -36,6 +36,7 @@ D:\vivado\2025.2\Vivado\bin\vivado.bat
 - DRC：0 Error
 - bitstream：PASS
 - ILA 调试文件：已生成 `.bit` 和 `.ltx`
+- 资源统计口径：`flatten_hierarchy=none`，`max_dsp=0`，最新报告 `DSPs=0`
 
 ## 重新跑本地功能回归
 
@@ -71,8 +72,9 @@ py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\rout
 矩阵默认比较：
 
 - 目标频率：95、100、110、120、130 MHz。
-- 实现策略：`Performance_Explore`、`Performance_ExplorePostRoutePhysOpt`。
-- 器件：`xc7k325tffg676-2`。
+- 实现策略：默认使用已稳定完成报告生成的 `Performance_Explore`。
+- 器件：`xc7k160tffg676-2`。
+- 综合设置：`flatten_hierarchy=none`，`max_dsp=0`。
 
 如果板卡或 Vivado 工程使用不同器件，可在 Vivado Tcl 中先设置：
 

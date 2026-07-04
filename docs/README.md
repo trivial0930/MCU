@@ -11,8 +11,9 @@
 - Vivado 2025.2 路径：`D:\vivado\2025.2\Vivado\bin\vivado.bat`
 - Icarus Verilog 已安装：`C:\iverilog\bin`
 - 功能回归：四条路线均已 PASS
-- 目标板卡 part：已按课程引脚表修正为 `xc7k325tffg676-2`
+- 目标板卡 part：已按课件实物封装修正为 `xc7k160tffg676-2`
 - 推荐路线 `speed_v7_q7_narrow_mul`：综合、实现、DRC、bitstream 均已完成
 - 首板调试文件：`board_top_ila.bit` 与 `board_top_ila.ltx` 已生成
+- 老师强调项：`flatten_hierarchy=none`、`max_dsp=0` 已写入 Vivado 脚本，最新报告 `DSPs=0`
 
-注意：旧文档中提到的 `xc7k325tffg900-2` 与当前课程引脚表不匹配。上板前请以实物 FPGA 丝印为准再次确认封装；若不是 FFG676，需要重新核对 XDC。
+注意：课件 `Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。上板前请以实物 FPGA 丝印为准再次确认封装；若不是 FFG676，需要重新核对 XDC。
