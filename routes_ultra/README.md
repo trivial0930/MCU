@@ -1,44 +1,60 @@
-# routes_ultra：V10/V11/V12 高频实验路线
+# routes_ultra：300 MHz 极限优化路线
 
-本目录保存基于 `MCU_FFT_300MHz_extreme_optimization_report.pdf` 落地的三条高频实验路线。三条路线都从已经上板验证过的 Route A `speed_v7_q7_narrow_mul` 派生，保持以下统一口径：
+本目录保存 MCU FFT 在 K7 目标板 `xc7k160tffg676-2` 上的高频路线。当前已经不再停留在单纯调 PLL 的频点试探，而是完成了真正面向 300 MHz 的流水化改造。
+
+统一口径：
 
 - 目标器件：`xc7k160tffg676-2`
+- 板载输入时钟：50 MHz
+- MCU 工作时钟：由 `PLLE2_BASE` 在 `board_top.v` 中生成
 - 综合层级：`flatten_hierarchy=none`
 - DSP 限制：`max_dsp=0`
 - 正式资源/时序统计：关闭 ILA
-- 输入板载时钟：50 MHz，通过 `PLLE2_BASE` 产生路线目标时钟
+- DRC：当前均为 0 Error，仅保留与原项目一致的 `CFGBVS/CONFIG_VOLTAGE` warning
 
-## 目录结构
+注意：Vivado 状态文件中的 `target_period_ns=20.000` 是输入 50 MHz 时钟约束，不代表 MCU 工作频率。判断路线频率必须看 PLL 参数和 timing report 中 `clkout_raw` 的 `Requirement`。
 
-| 路线 | 工程目录 | 主要改动 | 目标时钟 |
-| --- | --- | --- | ---: |
-| V10 | `V10_width_reduce/mcu_fft_v10_width_reduce` | 25 bit 寄存器堆和 ALU 窄化，读出时符号扩展到 32 bit | 150 MHz |
-| V11 | `V11_2stage_core/mcu_fft_v11_2stage_core` | 在 V10 基础上增加 `instr_id` 取指寄存器边界 | 200 MHz |
-| V12 | `V12_alu_pipe_300/mcu_fft_v12_alu_pipe_300` | 在 V10 基础上将 `MUL` 改为启动/写回两周期控制 | 300 MHz |
+## 路线说明
 
-## 当前结论
+| 路线 | 工程目录 | 主要改动 | 当前结论 |
+| --- | --- | --- | --- |
+| V10 | `V10_width_reduce/mcu_fft_v10_width_reduce` | 25 bit 寄存器堆和 ALU 窄化 | 150 MHz 未过时序，作为失败基线 |
+| V11 | `V11_2stage_core/mcu_fft_v11_2stage_core` | 增加取指寄存器边界 | 200 MHz 未过时序，作为失败基线 |
+| V12 | `V12_alu_pipe_300/mcu_fft_v12_alu_pipe_300` | 早期两周期 MUL 尝试 | 300 MHz 未过时序，作为失败基线 |
+| V13 | `V13_addr_decode_slim/mcu_fft_v13_addr_decode_slim` | 窄地址译码、IF/ID 边界、25 bit 数据通路、CMP 快路径 | 150 MHz timing-clean |
+| V19 | `V19_pipeline_300/mcu_fft_v19_pipeline_300` | 发射/执行/写回流水，MUL 顺序移加，RAW 停顿，WB 前递 | 300 MHz timing-clean，余量较稳 |
+| V20 | `V20_forward_300/mcu_fft_v20_forward_300` | 在 V19 基础上增加 ALU/MOVI EX 前递，减少停顿 | 当前最快 300 MHz 版本，时序余量极薄 |
 
-三条路线已经完成 RTL 开发、本地回归、Vivado 综合、实现、DRC 和 bitstream 生成；开发板 JTAG 链路也已经识别到 `xc7k160t_0`。但是三条高频目标均未满足 post-route setup timing，因此当前 bitstream 只能作为极限实验产物，不能作为“高频上板通过”的最终成绩。
+## 当前速度榜
 
-| 路线 | 回归 | `cnt_test` | 目标频率 | 理论时间 | WNS | LUT | FF | DSP | DRC |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| V10 | 官方样例 + 20 组随机 PASS | 157 | 150 MHz | 1.047 us | -0.664 ns | 904 | 448 | 0 | 0 Error，CFGBVS warning |
-| V11 | 官方样例 + 20 组随机 PASS | 157 | 200 MHz | 0.785 us | -1.319 ns | 902 | 481 | 0 | 0 Error，CFGBVS warning |
-| V12 | 官方样例 + 20 组随机 PASS | 161 | 300 MHz | 0.537 us | -4.099 ns | 1139 | 484 | 0 | 0 Error，CFGBVS warning |
+| 排名 | 路线 | 回归 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
+| ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | V20_forward_300 | 官方样例 + 20 组随机 PASS | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
+| 2 | V19_pipeline_300 | 官方样例 + 20 组随机 PASS | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
+| 3 | V13_addr_decode_slim | 官方样例 + 20 组随机 PASS | 157 | 150 MHz | 1.047 us | +0.198 ns | 874 | 462 | 0 |
+| - | V10_width_reduce | 官方样例 + 20 组随机 PASS | 157 | 150 MHz | 1.047 us | -0.664 ns | 904 | 448 | 0 |
+| - | V11_2stage_core | 官方样例 + 20 组随机 PASS | 157 | 200 MHz | 0.785 us | -1.319 ns | 902 | 481 | 0 |
+| - | V12_alu_pipe_300 | 官方样例 + 20 组随机 PASS | 161 | 300 MHz | 0.537 us | -4.099 ns | 1139 | 484 | 0 |
+
+## 推荐使用
+
+- 要展示“已经达成 300 MHz”：优先使用 `V19_pipeline_300`，WNS 有 `+0.121 ns`，比 V20 更稳。
+- 要展示“当前最快成绩”：使用 `V20_forward_300`，`cnt_test=197`，理论时间 `0.657 us`，但 WNS 只有 `+0.004 ns`，上板时应重点观察稳定性。
+- 不建议继续只靠提高 PLL 频点；下一步真正有效的方向是减少 V20 的 MUL 停顿或进一步拆分 EX 前递路径。
 
 ## 常用命令
 
-本地回归示例：
+本地回归：
 
 ```powershell
-cd routes_ultra\V10_width_reduce\mcu_fft_v10_width_reduce
+cd routes_ultra\V20_forward_300\mcu_fft_v20_forward_300
 py scripts\run_official_regression.py --random-cases 20 --seed 2026
 ```
 
-无 ILA Vivado 实现示例：
+无 ILA Vivado 实现：
 
 ```powershell
-cd routes_ultra\V10_width_reduce\mcu_fft_v10_width_reduce
+cd routes_ultra\V20_forward_300\mcu_fft_v20_forward_300
 D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
 ```
 
@@ -48,12 +64,9 @@ D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_i
 D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source routes_ultra\vivado\detect_hw.tcl
 ```
 
-## 本机 bitstream 位置
+## Bitstream 位置
 
 ```text
-D:/vivado_work/routes_ultra/mcu_fft_v10_width_reduce/mcu_fft_board.runs/impl_1/board_top.bit
-D:/vivado_work/routes_ultra/mcu_fft_v11_2stage_core/mcu_fft_board.runs/impl_1/board_top.bit
-D:/vivado_work/routes_ultra/mcu_fft_v12_alu_pipe_300/mcu_fft_board.runs/impl_1/board_top.bit
+D:/vivado_work/routes_ultra/mcu_fft_v19_pipeline_300/mcu_fft_board.runs/impl_1/board_top.bit
+D:/vivado_work/routes_ultra/mcu_fft_v20_forward_300/mcu_fft_board.runs/impl_1/board_top.bit
 ```
-
-由于这些目标频率下 WNS 为负，下载前请优先参考 `路线Ultra开发上板记录.md` 中的降频建议。

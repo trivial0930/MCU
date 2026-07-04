@@ -1,4 +1,4 @@
-﻿# Run from a route project root, for example:
+# Run from a route project root, for example:
 #   cd routes_ultra/V10_width_reduce/mcu_fft_v10_width_reduce
 #   D:/vivado/2025.2/Vivado/bin/vivado.bat -mode batch -source ../../vivado/run_no_ila_board_bitstream.tcl
 

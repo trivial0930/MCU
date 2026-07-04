@@ -1,4 +1,4 @@
-﻿# Run from a route project root, for example:
+# Run from a route project root, for example:
 #   cd routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 #   set PART_NAME xc7k160tffg676-2
 #   set TARGET_PERIOD_NS 20.000

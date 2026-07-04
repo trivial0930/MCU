@@ -2,90 +2,103 @@
 
 日期：2026-07-04
 
-## 1. 工作目标
+## 1. 当前目标
 
-根据 `MCU_FFT_300MHz_extreme_optimization_report.pdf`，将 V10、V11、V12 三条高频路线从 RTL 开发推进到功能回归、Vivado 综合实现、DRC、bitstream 生成和硬件链路检查。
+当前目标已经从“尝试高频路线”升级为“真正达成 300 MHz MCU 工作时钟”。因此后续判断不再只看 bitstream 是否生成，而是必须同时满足：
 
-## 2. 已完成内容
+1. 官方 FFT 样例通过。
+2. 20 组随机输入回归通过。
+3. Vivado post-route setup timing clean。
+4. DRC 0 Error。
+5. 关闭 ILA 后统计资源和速度。
 
-1. 新建 `routes_ultra/`，三条路线拆成独立工程，避免影响 Route A 稳定上板版本。
-2. V10 完成宽度缩窄：
-   - `reg_file` 使用 `DATA_W=25` 存储。
-   - 读端符号扩展到 32 bit，保持外部接口不变。
-   - ALU 的 ADD/SUB/MOV/MUL 采用窄位宽内部结果，再扩展输出。
-3. V11 完成取指边界：
-   - 增加 `instr_id` 寄存器。
-   - 将 PC/ROM 输出与译码、寄存器读、ALU 路径分开。
-   - 分支时插入 NOP 气泡。
-4. V12 完成 MUL 多周期控制：
-   - `MUL` 启动周期锁存操作数和目的寄存器。
-   - 下一周期写回乘法结果并推进 PC。
-   - 普通 ADD/SUB/LDR/STR/MOV/HALT 保持单周期。
-5. 三条路线均完成官方样例 + 20 组随机输入回归。
-6. 三条路线均完成 Vivado 综合、实现、DRC 和 bitstream 生成。
-7. Vivado Hardware Manager 已识别开发板：
-   - `devices=xc7k160t_0`
-   - `device=xc7k160t name=xc7k160t_0`
+## 2. 已完成路线
 
-## 3. Vivado 结果
+| 路线 | 状态 | 说明 |
+| --- | --- | --- |
+| V10_width_reduce | 已完成，未过时序 | 150 MHz WNS 为负，说明只做位宽收窄不够 |
+| V11_2stage_core | 已完成，未过时序 | 只切开取指边界，主执行路径仍过长 |
+| V12_alu_pipe_300 | 已完成，未过时序 | 早期 MUL 多周期不足以解决整体关键路径 |
+| V13_addr_decode_slim | 已完成，过 150 MHz | 窄地址译码 + IF/ID + 25 bit 数据通路，是后续 300 MHz 的稳定基础 |
+| V19_pipeline_300 | 已完成，过 300 MHz | 真正流水化版本，MUL 改为顺序移加，300 MHz 余量较稳 |
+| V20_forward_300 | 已完成，过 300 MHz | 在 V19 基础上增加 EX 前递，当前速度最快，但时序余量很薄 |
 
-| 路线 | PLL 输出目标 | `cnt_test` | WNS | TNS | LUT | FF | DSP | BRAM | 结论 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| V10_width_reduce | 150 MHz | 157 | -0.664 ns | -169.132 ns | 904 | 448 | 0 | 0 | bitstream 已生成，但未过 setup timing |
-| V11_2stage_core | 200 MHz | 157 | -1.319 ns | -427.209 ns | 902 | 481 | 0 | 0 | bitstream 已生成，但未过 setup timing |
-| V12_alu_pipe_300 | 300 MHz | 161 | -4.099 ns | -3121.943 ns | 1139 | 484 | 0 | 0 | bitstream 已生成，但离 300 MHz 仍有明显差距 |
+## 3. 关键技术变化
 
-三条路线 DRC 均为 0 Error，仅保留与原项目一致的 `CFGBVS/CONFIG_VOLTAGE` warning。
+V19/V20 与 V10-V13 的本质区别不是 PLL 参数，而是执行路径被拆开：
 
-## 4. 判断
+- 增加发射、执行、写回流水边界。
+- 将 `reg_file -> ALU/MUL/地址译码 -> writeback` 的单周期长路径拆成较短路径。
+- 使用 RAW 冒险检测，必要时插入 bubble。
+- 使用 WB 前递保证相邻依赖正确。
+- V20 对 ADD/SUB/AND/OR/MOVI/MOVR/BL 等快速结果增加 EX 前递，减少停顿。
+- `MUL` 不再走单周期 LUT 乘法，改为顺序移加，牺牲少量周期换取 300 MHz 时序。
+- 继续保持 `max_dsp=0`，没有使用 DSP。
 
-V10/V11/V12 的开发、回归、综合、实现和 bitstream 生成均已完成，但高频目标没有 timing-clean。因此当前不能把 150/200/300 MHz 版本作为正式上板通过版本。
+## 4. 最新 Vivado 结果
 
-从 WNS 反推关键路径：
+| 路线 | MCU 频率 | `cnt_test` | 理论时间 | WNS | TNS | LUT | FF | DSP | BRAM | 结论 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| V13_addr_decode_slim | 150 MHz | 157 | 1.047 us | +0.198 ns | 0.000 ns | 874 | 462 | 0 | 0 | 150 MHz 稳定基线 |
+| V19_pipeline_300 | 300 MHz | 204 | 0.680 us | +0.121 ns | 0.000 ns | 860 | 675 | 0 | 0 | 推荐的 300 MHz 稳健版 |
+| V20_forward_300 | 300 MHz | 197 | 0.657 us | +0.004 ns | 0.000 ns | 989 | 675 | 0 | 0 | 当前最快版，余量极薄 |
 
-| 路线 | 目标周期 | WNS | 估算关键路径 |
-| --- | ---: | ---: | ---: |
-| V10 | 6.667 ns | -0.664 ns | 约 7.331 ns |
-| V11 | 5.000 ns | -1.319 ns | 约 6.319 ns |
-| V12 | 3.333 ns | -4.099 ns | 约 7.432 ns |
+V20 的最差路径：
 
-说明：
+- Source：`u_mcu_top/u_mcu_core/ex_op1_reg[3]/C`
+- Destination：`u_mcu_top/u_mcu_core/wb_wdata_reg[7]/D`
+- Requirement：3.333 ns
+- Data Path Delay：3.334 ns
+- Logic Levels：11
 
-- V10 降低了寄存器数量，但关键路径仍集中在地址计算、外设判断和写回组合链。
-- V11 当前只切掉 PC/ROM 到译码的一段路径，尚未切开 `reg_file -> ALU -> writeback` 主路径。
-- V12 的 MUL 多周期控制功能正确，但普通地址和写回路径仍然主导 timing；要冲 300 MHz 需要真正的 EX/WB 分级和地址译码寄存。
+说明：Vivado 仍报告 WNS 为 `+0.004 ns`，因此 post-route timing 是通过的，但已经非常贴边。上板时如果出现温度、电压或板级不稳定，优先回退到 V19。
 
-## 5. 下一步降频上板建议
+## 5. 当前推荐上板顺序
 
-不要直接把当前负 WNS 高频 bitstream 当作正式结果。建议先生成 timing-clean 降频版本：
+1. 先下载 V19 无 ILA bitstream，确认 300 MHz 功能稳定。
+2. 再下载 V20 无 ILA bitstream，确认当前最快版本是否稳定。
+3. 如需抓波，单独生成 ILA 版本；不要用 ILA 版本做最终资源和速度成绩。
+4. 抓波重点观察：
+   - `done`
+   - `verify_we`
+   - `verify_addr`
+   - `verify_vector_out`
+   - `cnt_test`
+5. 若 V20 上板不稳定，保留 V20 作为极限实验结果，实际展示采用 V19。
 
-| 路线 | 建议频率 | PLL 参数建议 | 目的 |
-| --- | ---: | --- | --- |
-| V10 | 130 MHz 或 135 MHz | 130 MHz：`MULT=26, DIV=10`；135 MHz：`MULT=27, DIV=10` | 验证宽度缩窄版能稳定上板 |
-| V11 | 150 MHz | `MULT=18, DIV=6` | 验证取指寄存器边界是否稳定 |
-| V12 | 130 MHz | `MULT=26, DIV=10` | 验证 MUL 多周期控制在板上功能正确 |
+## 6. 命令
 
-降频版 timing-clean 后，再打开 ILA 做一次功能抓波，重点观察：
+V20 本地回归：
 
-- `done`
-- `verify_we`
-- `verify_addr`
-- `verify_vector_out`
-- `cnt_test`
+```powershell
+cd routes_ultra\V20_forward_300\mcu_fft_v20_forward_300
+py scripts\run_official_regression.py --random-cases 20 --seed 2026
+```
 
-最终提交成绩仍应使用关闭 ILA 的 bitstream。
+V20 无 ILA 综合实现和 bitstream：
 
-## 6. 文件位置
+```powershell
+cd routes_ultra\V20_forward_300\mcu_fft_v20_forward_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
+```
 
-Vivado 报告：
+V19 无 ILA bitstream：
 
-- `*/results/vivado_board/board_timing_summary.rpt`
-- `*/results/vivado_board/board_utilization.rpt`
-- `*/results/vivado_board/board_drc.rpt`
-- `*/results/vivado_board/board_methodology.rpt`
+```text
+D:/vivado_work/routes_ultra/mcu_fft_v19_pipeline_300/mcu_fft_board.runs/impl_1/board_top.bit
+```
 
-本机 bitstream：
+V20 无 ILA bitstream：
 
-- `D:/vivado_work/routes_ultra/mcu_fft_v10_width_reduce/mcu_fft_board.runs/impl_1/board_top.bit`
-- `D:/vivado_work/routes_ultra/mcu_fft_v11_2stage_core/mcu_fft_board.runs/impl_1/board_top.bit`
-- `D:/vivado_work/routes_ultra/mcu_fft_v12_alu_pipe_300/mcu_fft_board.runs/impl_1/board_top.bit`
+```text
+D:/vivado_work/routes_ultra/mcu_fft_v20_forward_300/mcu_fft_board.runs/impl_1/board_top.bit
+```
+
+## 7. 后续更激进方向
+
+下一步不要继续靠提高 PLL 硬冲。V20 的 WNS 只有 `+0.004 ns`，继续加频风险很高。更有效的方向是：
+
+1. 优化顺序 MUL：把 8 次移加改成 4 次 radix-4 移加，目标把 `cnt_test` 从 197 继续压到 181 左右。
+2. 将 EX 前递路径再切一拍，避免 V20 当前 11 级逻辑成为新的瓶颈。
+3. 对 FFT 程序做指令调度，把独立 LDR/STR/ADD 穿插到 MUL 等待期间，减少流水停顿。
+4. 如老师允许，可研究半精度或块浮点数据格式；但不建议加入专用 FFT 协处理器或 DMA 旁路，否则容易偏离“MCU 指令驱动”的要求。

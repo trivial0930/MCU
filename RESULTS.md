@@ -9,7 +9,8 @@
 - DSP 限制：`max_dsp=0`
 - 正式资源/速度统计：关闭 ILA
 - 上板调试：先使用带 ILA bitstream，确认功能后切换无 ILA bitstream
-- 当前实物上板时钟：`130 MHz`，由板载 50 MHz 通过 `PLLE2_BASE` 倍频得到
+- Route A 当前实物上板时钟：`130 MHz`，由板载 50 MHz 通过 `PLLE2_BASE` 倍频得到
+- Ultra 当前最高已实现时钟：`300 MHz`，见 `routes_ultra/`
 
 ## 推荐上板路线
 
@@ -25,6 +26,17 @@ routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 | `results/vivado_board/board_top_no_ila.bit` | 50 MHz 历史正式版本 |
 | `output/hardware_debug/routeA_130MHz_PLL_20260704/ila/board_top_130pll_ila.bit` | 130 MHz 带 ILA 验证版本，本地交付物 |
 | `output/hardware_debug/routeA_130MHz_PLL_20260704/no_ila/board_top_130pll_no_ila.bit` | 130 MHz 无 ILA 正式上板版本，本地交付物 |
+
+## Ultra 300 MHz 最新结果
+
+`routes_ultra/` 已完成两条真正 timing-clean 的 300 MHz 路线：
+
+| 路线 | 状态 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| `V19_pipeline_300` | 推荐的 300 MHz 稳健版 | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
+| `V20_forward_300` | 当前最快 300 MHz 版 | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
+
+两条路线均通过官方样例 + 20 组随机输入回归、Vivado 综合、实现、DRC 和 bitstream 生成。V20 速度最快但时序余量极薄；若上板稳定性优先，建议先使用 V19。
 
 ## 最新 130 MHz 上板结果
 

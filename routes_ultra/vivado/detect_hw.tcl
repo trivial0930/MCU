@@ -1,4 +1,4 @@
-﻿open_hw_manager
+open_hw_manager
 connect_hw_server -allow_non_jtag
 open_hw_target
 set devs [get_hw_devices]

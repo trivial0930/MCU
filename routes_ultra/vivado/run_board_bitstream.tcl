@@ -1,4 +1,4 @@
-﻿# Run from a route project root, for example:
+# Run from a route project root, for example:
 #   cd routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 #   vivado -mode batch -source ../../vivado/run_board_bitstream.tcl
 #

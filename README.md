@@ -10,10 +10,13 @@
 - `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
 - `RESULTS.md` 汇总当前速度榜、效率榜、推荐路线和上板交付物。
 - `routesB/` 保存路线 B 的 B1 到 B4 独立候选方案，当前功能回归通过，Vivado 矩阵和排行榜脚本已补齐。
+- `routes_ultra/` 保存 300 MHz 极限路线，当前 `V19_pipeline_300` 和 `V20_forward_300` 已完成 300 MHz timing-clean bitstream。
 
 本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已按课件确认的 `xc7k160tffg676-2` 完成综合、实现、DRC 和 bitstream。
 
 最新上板结果：`speed_v7_q7_narrow_mul` 已通过 `PLLE2_BASE` 将板载 50 MHz 倍频到 130 MHz，实物上板验证通过。无 ILA 正式版本 post-route WNS 为 `0.190 ns`，`cnt_test=157`，测试窗口约 `1.208 us`，DSP 为 0。带 ILA 版本仅用于抓波，已确认 16 次写回全部与 `FFT_output.coe` 匹配；最终板卡已切回无 ILA bitstream。
+
+Ultra 最新结果：`routes_ultra/V20_forward_300` 已在 300 MHz 下完成官方样例 + 20 组随机回归、Vivado 实现、DRC 和 bitstream，`cnt_test=197`，理论时间约 `0.657 us`，post-route WNS 为 `+0.004 ns`。`routes_ultra/V19_pipeline_300` 同样通过 300 MHz，WNS 为 `+0.121 ns`，更适合作为稳健上板候选。
 
 重要更新：课件 `materials/source_docs/Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。仓库脚本默认 part 已改为 `xc7k160tffg676-2`，综合默认 `flatten_hierarchy=none`、`max_dsp=0`，最新无 ILA 和带 ILA 报告中 `DSPs=0`。上板前仍建议核对板卡 FPGA 丝印；若实物确为其他 package，需要重新核对 XDC。
 
@@ -21,9 +24,10 @@
 
 1. `materials/README.md`：确认资料来源、官方输入输出样例和板卡引脚表。
 2. `RESULTS.md`：查看当前速度榜、效率榜和推荐上板路线。
-3. `docs/上板与交接指南.md`：最新上板状态、bit/ltx 位置、报告摘要、重新生成命令和 ILA 观察步骤。
-4. `routesA/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
-5. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
+3. `routes_ultra/README.md`：查看 300 MHz 极限路线、V19/V20 速度榜和 bitstream 位置。
+4. `docs/上板与交接指南.md`：最新上板状态、bit/ltx 位置、报告摘要、重新生成命令和 ILA 观察步骤。
+5. `routesA/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
+6. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
 
 ## 快速功能回归
 

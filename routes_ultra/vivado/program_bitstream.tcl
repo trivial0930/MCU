@@ -1,4 +1,4 @@
-﻿# Usage:
+# Usage:
 #   set BIT_FILE D:/vivado_work/routes_ultra/mcu_fft_v10_width_reduce/mcu_fft_board.runs/impl_1/board_top.bit
 #   source routes_ultra/vivado/program_bitstream.tcl
 
