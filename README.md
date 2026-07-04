@@ -1,106 +1,124 @@
-# MCU FFT 路线 A 实验仓库
+# MCU FFT 实验仓库
 
-本仓库用于电子科技大学英才实验学院数字电路 MCU 实验中的 8 点定点复数 FFT 任务。项目核心不是直接例化 FFT IP，而是用一个轻量 MCU 执行汇编程序完成 FFT 计算，并围绕官方 2026 测试样例做功能验证、上板调试和速度路线比较。
+本仓库用于电子科技大学英才实验学院数字电路 MCU 实验中的 8 点定点复数 FFT 任务。设计目标是在不直接例化 FFT IP、DSP IP 或专用 FFT 加速器的前提下，用自研轻量 MCU 执行普通指令完成 FFT 计算，并完成仿真、综合实现、bitstream 生成和实物上板验证。
 
-## 当前状态
+## 当前结论
 
-- `materials/` 保存课程资料、K7EDAEVAL 引脚表和官方测试样例。
-- `routesA/` 保存路线 A 的多个独立候选版本，便于保留可用版本并隔离失败实验。
-- 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
-- `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
-- `RESULTS.md` 汇总当前速度榜、效率榜、推荐路线和上板交付物。
-- `routesB/` 保存路线 B 的 B1 到 B4 独立候选方案，当前功能回归通过，Vivado 矩阵和排行榜脚本已补齐。
-- `routes_ultra/` 保存 300 MHz 极限路线，当前最快路线为真实双核 `V30_dual_mcu_real_300`，最快单核路线为 `V31_single_core_final_tune_300`，已上板验证主线仍为 `V22b_fast_mul2_300`。
+更新时间：2026-07-04
 
-本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已按课件确认的 `xc7k160tffg676-2` 完成综合、实现、DRC 和 bitstream。
+| 类别 | 推荐路线 | 状态 | 关键指标 |
+| --- | --- | --- | --- |
+| 当前最快路线 | `routes_ultra/V30_dual_mcu_real_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=149`，理论时间约 `0.497 us`，WNS `+0.021 ns`，DSP 0 |
+| 当前最快单核路线 | `routes_ultra/V31_single_core_final_tune_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=169`，理论时间约 `0.563 us`，WNS `+0.181 ns`，DSP 0 |
+| 已上板 Ultra 主线 | `routes_ultra/V22b_fast_mul2_300` | 已完成实物验证 | `cnt_test=173`，300 MHz 理论时间约 `0.577 us` |
+| Route A 稳定上板路线 | `routesA/speed_v7_q7_narrow_mul` | 已完成 130 MHz PLL 实物验证 | `cnt_test=157`，理论时间约 `1.208 us`，DSP 0 |
 
-最新上板结果：`speed_v7_q7_narrow_mul` 已通过 `PLLE2_BASE` 将板载 50 MHz 倍频到 130 MHz，实物上板验证通过。无 ILA 正式版本 post-route WNS 为 `0.190 ns`，`cnt_test=157`，测试窗口约 `1.208 us`，DSP 为 0。带 ILA 版本仅用于抓波，已确认 16 次写回全部与 `FFT_output.coe` 匹配；最终板卡已切回无 ILA bitstream。
+目标 FPGA 以课件 `materials/source_docs/Lab1.pdf` 为准：`XC7K160T-2FFG676-I`，Vivado part 使用 `xc7k160tffg676-2`。正式统计口径为关闭 ILA、`flatten_hierarchy=none`、`max_dsp=0`，资源统计以 post-implementation 报告为准。
 
-Ultra 最新结果：`routes_ultra/V30_dual_mcu_real_300` 已完成真实双 MCU 输出拆分，官方样例 + 20 组随机回归 PASS，300 MHz no-ILA timing-clean，`cnt_test=149`，理论时间约 `0.497 us`，post-route WNS 为 `+0.021 ns`，DSP=0，是当前最快路线。`routes_ultra/V31_single_core_final_tune_300` 是当前最快单核路线，`cnt_test=169`，理论时间约 `0.563 us`，WNS `+0.181 ns`，DSP=0。已实物上板验证主线仍为 `V22b_fast_mul2_300`，`cnt_test=173`。
+## 仓库结构
 
-重要更新：课件 `materials/source_docs/Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。仓库脚本默认 part 已改为 `xc7k160tffg676-2`，综合默认 `flatten_hierarchy=none`、`max_dsp=0`，最新无 ILA 和带 ILA 报告中 `DSPs=0`。上板前仍建议核对板卡 FPGA 丝印；若实物确为其他 package，需要重新核对 XDC。
+| 路径 | 内容 |
+| --- | --- |
+| `materials/` | 课程资料、K7EDAEVAL 引脚表、官方输入输出样例和原始文档归档 |
+| `docs/` | 上板、交接、报告摘要和调试说明 |
+| `routesA/` | 路线 A 的稳定候选、Vivado 矩阵和 130 MHz 上板资料 |
+| `routesB/` | 路线 B 的 B1 到 B4 候选方案，保留独立工程和中文说明 |
+| `routes_ultra/` | 300 MHz 极限优化路线，包含 V19 到 V31 的迭代记录和结果榜 |
+| `RESULTS.md` | 当前速度榜、效率榜、推荐路线和风险说明 |
+| `WINDOWS_CODEX_HANDOFF.md` | Windows + Vivado + Codex 环境继续调试的操作清单 |
 
 ## 推荐阅读顺序
 
-1. `materials/README.md`：确认资料来源、官方输入输出样例和板卡引脚表。
-2. `RESULTS.md`：查看当前速度榜、效率榜和推荐上板路线。
-3. `routes_ultra/README.md`：查看 300 MHz 极限路线、V30/V31 状态和 bitstream 位置。
-4. `docs/上板与交接指南.md`：最新上板状态、bit/ltx 位置、报告摘要、重新生成命令和 ILA 观察步骤。
-5. `routesA/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
-6. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
+1. `RESULTS.md`：先看当前排行榜、推荐上板路线和不建议继续投入的路线。
+2. `routes_ultra/README.md`：查看 300 MHz 极限路线的完整迭代状态，重点看 V30、V31、V22b。
+3. `docs/上板与交接指南.md`：查看 bitstream、ILA、上板观察信号和交接步骤。
+4. `routesA/README.md`：理解稳定 Route A 的来源、验证状态和 130 MHz 板级结果。
+5. `materials/README.md`：确认官方样例、板卡资料和实验约束。
 
-## 快速功能回归
+## 快速回归
 
-需要安装 Python 与 Icarus Verilog，并确保 `iverilog`、`vvp` 在 PATH 中：
+### Route A 本地回归
+
+需要 Python、Icarus Verilog，并确保 `iverilog`、`vvp` 在 PATH 中：
 
 ```powershell
 py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
 ```
 
-该命令会依次检查四条路线：
+该命令会检查 Route A 的主要稳定路线，包括 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
 
-- `speed_v6_official_sample`
-- `speed_v7_q7_narrow_mul`
-- `speed_v7b_c91_shift_add`
-- `speed_v7c_c91_shift_sub`
-
-如果缺少 Icarus Verilog，脚本会在运行前退出，不会刷新各路线下的 `results/route_a_regression.log`。
-
-## Vivado 路线比较
-
-在安装 Vivado 的 Windows 机器上运行：
+### Ultra V30 回归
 
 ```powershell
-cd routesA\speed_v8_route_a_vivado_matrix
-vivado -mode batch -source vivado\run_route_a_matrix.tcl
-py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_a_matrix.csv
-py scripts\make_leaderboards.py --in-csv results\route_a_matrix.csv
+cd routes_ultra\V30_dual_mcu_real_300\mcu_fft_v30_dual_mcu_real_300
+py scripts\run_official_regression.py --random-cases 20 --seed 2026
 ```
 
-比较时先看 `WNS >= 0` 的最高目标频率，再比较 `LUT`、`FF`、`DSP`、`BRAM`。最终成绩建议使用关闭 ILA 的实现结果。
+### Ultra V31 回归
 
-已生成榜单可直接查看：
+```powershell
+cd routes_ultra\V31_single_core_final_tune_300\mcu_fft_v31_single_core_final_tune_300
+py scripts\run_official_regression.py --random-cases 20 --seed 2026
+```
+
+## Vivado 生成
+
+本机 Vivado 路径：
+
+```text
+D:\vivado\2025.2\Vivado\bin\vivado.bat
+```
+
+Ultra 路线生成无 ILA bitstream：
+
+```powershell
+cd routes_ultra\V30_dual_mcu_real_300\mcu_fft_v30_dual_mcu_real_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
+```
+
+V31 可将路径替换为：
+
+```powershell
+cd routes_ultra\V31_single_core_final_tune_300\mcu_fft_v31_single_core_final_tune_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
+```
+
+Route A 稳定路线生成 bitstream：
+
+```powershell
+cd routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ../../vivado/run_board_bitstream.tcl
+```
+
+## 上板建议
+
+- 需要课堂展示且优先稳妥：使用已实物验证的 `routes_ultra/V22b_fast_mul2_300` 或 Route A 的 `speed_v7_q7_narrow_mul`。
+- 需要冲击当前最快成绩：优先尝试 `routes_ultra/V30_dual_mcu_real_300`，但该路线 WNS 余量只有 `+0.021 ns`，建议先用 ILA 版本确认 `done`、`verify_we`、`verify_addr`、`verify_vector_out` 和 `cnt_test`。
+- 需要更稳的 300 MHz 单核候选：使用 `routes_ultra/V31_single_core_final_tune_300`，时序余量比 V30 更宽。
+- 不建议作为最终展示路线：V24、V27a、V27b，因为 300 MHz timing 未通过或风险明显。
+
+首次上板重点观察：
+
+- `done` 是否拉高。
+- `verify_we` 是否产生 16 次有效写入。
+- 最后写地址是否为 15。
+- `cnt_test` 是否接近路线文档中的记录值。
+- `verify_vector_out` 是否与 `mem/FFT_output.coe` 一致。
+
+## 结果文件
+
+常用结果入口：
 
 - `RESULTS.md`
+- `routes_ultra/results/ultra_summary.csv`
+- `routes_ultra/README.md`
 - `routesA/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`
 - `routesA/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
 - `routesA/speed_v8_route_a_vivado_matrix/results/efficiency_leaderboard.csv`
 
-单条推荐路线可以直接跑到 bitstream：
+## 协作约定
 
-```powershell
-cd routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
-vivado -mode batch -source ../../vivado/run_board_bitstream.tcl
-```
-
-该脚本会运行综合、实现、DRC 和 `write_bitstream`，并把报告写入 `results/vivado_board/`。
-
-## 上板入口
-
-推荐先使用稳定的窄乘法路线：
-
-```powershell
-cd routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
-vivado
-```
-
-Vivado Tcl Console 中执行：
-
-```tcl
-set PART_NAME xc7k160tffg676-2
-set TARGET_PERIOD_NS 20.000
-set ENABLE_ILA 1
-set SYNTH_FLATTEN_HIERARCHY none
-set SYNTH_MAX_DSP 0
-source ../../vivado/create_board_project.tcl
-```
-
-首次上板重点观察：`done` 是否拉高、`verify_we` 是否产生 16 次写入、最后写地址是否为 15、`cnt_test` 是否接近 157、输出序列是否与 `mem/FFT_output.coe` 一致。
-
-已生成的首板调试文件位于：
-
-- `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.bit`
-- `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.ltx`
-- `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_no_ila.bit`
-
-130 MHz PLL 实物上板交付物位于本地 `output/hardware_debug/routeA_130MHz_PLL_20260704/`，PDF 报告位于本地 `output/pdf/RouteA_130MHz_PLL_board_report.pdf`。`output/` 目录按仓库规则不提交到 GitHub，GitHub 中保留源码、脚本、报告摘要和 Vivado 文本报告。
+- GitHub 远端使用 SSH：`git@github.com:trivial0930/MCU.git`。
+- 中文文档统一使用 UTF-8 编码。
+- `output/`、Vivado 工程缓存、`.Xil/`、`build/` 等生成物不提交。
+- 提交到 GitHub 的内容应优先保留源码、脚本、关键报告、榜单 CSV/Markdown 和可复现实验命令。
