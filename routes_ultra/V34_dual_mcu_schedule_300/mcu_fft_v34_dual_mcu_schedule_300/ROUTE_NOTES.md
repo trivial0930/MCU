@@ -54,6 +54,7 @@ V33 中 Core1 的两个等待点为：
 | --- | --- |
 | 官方样例 | PASS |
 | 20 组随机输入，seed=2026 到 2045 | PASS |
+| 实物上板验证 | PASS |
 | `cnt_test` | 88 |
 | 理论时间，300 MHz | 0.293 us |
 | 内部 MCU 时钟 | PLL 由 50 MHz 输入生成 300 MHz |
@@ -66,6 +67,12 @@ V33 中 Core1 的两个等待点为：
 
 Timing report 中 `clkout_raw` 周期为 3.333 ns、频率为 300.000 MHz；最差 setup path 的 requirement 为 3.333 ns。
 
+## 上板结果
+
+V34 已完成 ILA 抓波验证。板上抓到 16 次 `verify_we` 写回，地址 0 到 15 全覆盖，最后写地址为 15；所有 `verify_vector_out` 均与 `results/expected_fft_output.txt` 匹配。最后写 addr15 当拍 `cnt_test=87`，`done=1` 后最终 `cnt_test=88`。
+
+验证完成后已重新下载 no-ILA 正式 bitstream，确认 `ilas_after_no_ila_program=0`。详细记录见 `board_validation/BOARD_VALIDATION.md`。
+
 ## 复现命令
 
 ```powershell
@@ -76,4 +83,4 @@ D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_i
 
 ## 结论
 
-V34 将 V33 的 `cnt_test=135` 压缩到 `cnt_test=88`，在 300 MHz 下理论时间约 0.293 us。它没有新增硬件计算单元，只是把 Core1 的后半 Stage3 输出更早穿插进 Core0 的前半输出窗口，是当前最快且合规的 Ultra 路线。V35 单核备胎路线本轮暂缓，因为其目标仅为 168/167，收益远低于 V34 主线。
+V34 将 V33 的 `cnt_test=135` 压缩到 `cnt_test=88`，在 300 MHz 下理论时间约 0.293 us。它没有新增硬件计算单元，只是把 Core1 的后半 Stage3 输出更早穿插进 Core0 的前半输出窗口，是当前最快、合规且已上板验证的 Ultra 路线。V35 单核备胎路线本轮暂缓，因为其目标仅为 168/167，收益远低于 V34 主线。

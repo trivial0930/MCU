@@ -8,9 +8,9 @@
 
 | 类别 | 推荐路线 | 状态 | 关键指标 |
 | --- | --- | --- | --- |
-| 当前最快合规路线 | `routes_ultra/V34_dual_mcu_schedule_300` | 官方样例 + 20 随机 PASS，300 MHz no-ILA bitstream 已生成，未上板 | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
+| 当前最快合规路线 | `routes_ultra/V34_dual_mcu_schedule_300` | 官方样例 + 20 随机 PASS，已完成 300 MHz 实物上板验证 | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
 | Core1 参与中间计算证明路线 | `routes_ultra/V33_dual_mcu_compute_split_300` | PASS，300 MHz bitstream 已生成，未上板 | Core1 执行 Stage2 `(5,7,W2)`，`cnt_test=135`，WNS `+0.034 ns`，DSP 0 |
-| 已上板 Ultra 主线 | `routes_ultra/V22b_fast_mul2_300` | 已完成实物验证 | `cnt_test=173`，300 MHz 理论时间约 `0.577 us` |
+| 已上板 Ultra 稳定备选 | `routes_ultra/V22b_fast_mul2_300` | 已完成实物验证 | `cnt_test=173`，300 MHz 理论时间约 `0.577 us` |
 | 32 位合规展示备选 | `routes_ultra/V36_arm32_compliance_300` | PASS，300 MHz bitstream 已生成，未上板 | 32-bit 指令字、32-bit RF/ALU/WB，`cnt_test=169`，WNS `+0.157 ns` |
 | 最快单核备选 | `routes_ultra/V31_single_core_final_tune_300` | PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=169`，理论时间约 `0.563 us`，WNS `+0.181 ns` |
 | Route A 稳定上板路线 | `routesA/speed_v7_q7_narrow_mul` | 已完成 130 MHz PLL 实物验证 | `cnt_test=157`，理论时间约 `1.208 us`，DSP 0 |
@@ -60,7 +60,7 @@ py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 202
 
 ## 上板建议
 
-- 想展示“目前最快成绩”：优先尝试 `routes_ultra/V34_dual_mcu_schedule_300`，但它还未完成实物验证，建议先用 ILA 版本观察 `done`、`verify_we`、`verify_addr`、`verify_vector_out`、`cnt_test`。
+- 想展示“目前最快成绩”：优先使用已上板验证的 `routes_ultra/V34_dual_mcu_schedule_300`。
 - 想展示“已经上过板、风险最低”：使用 `routes_ultra/V22b_fast_mul2_300`。
 - 想回应老师“32 位机器码和架构位宽”检查：使用 `routes_ultra/V36_arm32_compliance_300`，或说明 V33/V34 也已恢复 32-bit RF/ALU/WB 数据通路。
 - 不建议作为最终展示路线：V24、V27a、V27b，因为 300 MHz timing 未通过或风险明显。

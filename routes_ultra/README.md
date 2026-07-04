@@ -12,7 +12,7 @@
 
 ## 最新结论
 
-- 当前最快合规路线：`V34_dual_mcu_schedule_300`，`cnt_test=88`，300 MHz，WNS `+0.056 ns`，DSP 0。
+- 当前最快合规且已上板验证路线：`V34_dual_mcu_schedule_300`，`cnt_test=88`，300 MHz，WNS `+0.056 ns`，DSP 0。
 - Core1 参与中间计算证明路线：`V33_dual_mcu_compute_split_300`，Core1 执行 Stage2 `(5,7,W2)`，`cnt_test=135`。
 - 当前最快单核路线：`V31_single_core_final_tune_300`，`cnt_test=169`。
 - 当前 32 位合规展示路线：`V36_arm32_compliance_300`，`cnt_test=169`。
@@ -41,14 +41,14 @@
 | V30 | `V30_dual_mcu_real_300/mcu_fft_v30_dual_mcu_real_300` | Core1 写后半 verify 输出 | `cnt_test=149`，旧最快路线 |
 | V31 | `V31_single_core_final_tune_300/mcu_fft_v31_single_core_final_tune_300` | 单核 W2 蝶形直接改写 | `cnt_test=169`，最快单核 |
 | V33 | `V33_dual_mcu_compute_split_300/mcu_fft_v33_dual_mcu_compute_split_300` | Core1 计算 Stage2 `(5,7,W2)`，恢复 32-bit 数据通路 | `cnt_test=135`，300 MHz PASS |
-| V34 | `V34_dual_mcu_schedule_300/mcu_fft_v34_dual_mcu_schedule_300` | 在 V33 基础上压缩 Core1 Stage3 等待到 23 | `cnt_test=88`，当前最快 |
+| V34 | `V34_dual_mcu_schedule_300/mcu_fft_v34_dual_mcu_schedule_300` | 在 V33 基础上压缩 Core1 Stage3 等待到 23 | `cnt_test=88`，当前最快且已上板 |
 | V36 | `V36_arm32_compliance_300/mcu_fft_v36_arm32_compliance_300` | 32-bit 指令字、RF/ALU/WB 合规展示 | `cnt_test=169` |
 
 ## 当前速度榜
 
 | 排名 | 路线 | 状态 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | V34_dual_mcu_schedule_300 | PASS，未上板 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2228 | 1615 | 0 |
+| 1 | V34_dual_mcu_schedule_300 | PASS，已上板验证 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2228 | 1615 | 0 |
 | 2 | V33_dual_mcu_compute_split_300 | PASS，未上板 | 135 | 300 MHz | 0.450 us | +0.034 ns | 2228 | 1616 | 0 |
 | 3 | V30_dual_mcu_real_300 | PASS，未上板 | 149 | 300 MHz | 0.497 us | +0.021 ns | 2076 | 1318 | 0 |
 | 4 | V31_single_core_final_tune_300 | PASS，未上板 | 169 | 300 MHz | 0.563 us | +0.181 ns | 1053 | 675 | 0 |
