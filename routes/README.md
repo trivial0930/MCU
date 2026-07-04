@@ -18,6 +18,7 @@
 | `speed_v7c_c91_shift_sub/` | 路线 A2 备选：把常数 91 写成 `128 - 32 - 4 - 1` 移位减。 | 既有记录：官方样例 PASS，20 组随机回归 PASS，`cnt_test=157`。 | 比较 LUT/时序时使用。 |
 | `speed_v8_high_freq_sweep/` | 路线 A3/A4：基于 v7 窄乘法 RTL 的单路线高频 sweep。 | Vivado 脚本默认 part 已更新为 `xc7k160tffg676-2`，并默认 `flatten_hierarchy=none`、`max_dsp=0`。 | 只看推荐路线的频率边界。 |
 | `speed_v8_route_a_vivado_matrix/` | 路线 A3/A4：对 v6、v7、v7b、v7c 做目标频率和 Vivado strategy 矩阵比较。 | 已用 Vivado 2025.2 完成前期综合冒烟；最终首板路线已优先收敛到 `speed_v7_q7_narrow_mul`。 | 决定最终速度路线。 |
+| `speed_v9_cycle_reduce/` | 路线 B 原型：基于路线 A 最优效率版本 `speed_v7c_c91_shift_sub`，新增复合常数乘指令以减少 `cnt_test`。 | 官方样例 PASS，20 组随机回归 PASS；指令数 `156`，`cnt_test=151`；Vivado 120 MHz PASS，130 MHz WNS=-0.140。 | 低周期路线探索，目前还未超过路线 A 最优成绩。 |
 
 ## 本机调试结论
 
@@ -94,3 +95,7 @@ source vivado/run_route_a_matrix.tcl
 5. 如果常数 91 专用路线的时序优势不明显，优先保留 `speed_v7_q7_narrow_mul`，因为它的语义更通用、风险更低。
 
 最新榜单已经生成在 `speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`。早期 synth-only 冒烟 CSV 已移除，避免和正式 post-route、`max_dsp=0` 结果混淆。
+
+## 路线 B 当前结论
+
+`speed_v9_cycle_reduce` 已证明可以在 MCU 指令体系内做低周期优化：把 W1/W3 蝶形中的 `ADD/SUB + MUL91` 合并为复合指令后，`cnt_test` 从 `157` 降到 `151`。不过第一版复合指令扩大了 ALU 组合路径，当前只能在 120 MHz 下收敛，130 MHz 仍有 `-0.140 ns` WNS，因此总时间约 `151 / 120 MHz = 1.258 us`，还没有超过路线 A v7c 的 `157 / 130 MHz = 1.208 us`。

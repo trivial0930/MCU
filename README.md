@@ -9,6 +9,7 @@
 - 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
 - `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
 - `RESULTS.md` 汇总当前速度榜、效率榜、推荐路线和上板交付物。
+- `routes/speed_v9_cycle_reduce` 是路线 B 低周期原型，当前功能回归通过，120 MHz 收敛，130 MHz 尚未收敛。
 
 本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已按课件确认的 `xc7k160tffg676-2` 完成综合、实现、DRC 和 bitstream。
 

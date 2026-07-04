@@ -54,5 +54,20 @@ routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 - 若更看重语义通用性和上板风险，优先使用 `speed_v7_q7_narrow_mul`。
 - `speed_v6_official_sample` 在 `max_dsp=0` 后 95 MHz 已不满足时序，不建议作为最终速度路线。
 
+## 路线 B 初步结果
+
+已基于路线 A 当前效率最优的 `speed_v7c_c91_shift_sub` 新建
+`routes/speed_v9_cycle_reduce`，实现第一版低周期优化：
+
+| 路线 | 指令数 | cnt_test | 目标频率 | WNS(ns) | LUT | FF | DSP | 结论 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `speed_v9_cycle_reduce` | 156 | 151 | 120 MHz | 0.091 | 1194 | 549 | 0 | PASS |
+| `speed_v9_cycle_reduce` | 156 | 151 | 130 MHz | -0.140 | 1210 | 549 | 0 | 未过时序 |
+
+结论：路线 B 可以实现并通过功能回归，`cnt_test` 从路线 A v7c 的 `157`
+降到 `151`。但第一版复合指令增加了 ALU 组合路径和 LUT，当前 130 MHz
+未收敛；按已收敛的 120 MHz 计算，总时间约 `1.258 us`，暂时还没有超过
+路线 A v7c 在 130 MHz 下的 `1.208 us`。
+
 更详细说明见 `docs/上板与交接指南.md` 和
 `routes/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`。

@@ -1,0 +1,3 @@
+route,target_mhz,strategy,wns_ns,lut,ff,dsp,bram,instr_count,cnt_test,total_time_us,status,notes
+speed_v9_cycle_reduce,120,Performance_Explore,0.091,1194,549,0,0,156,151,1.258,pass,"Route B prototype closes timing but is slower than Route A v7c at 130 MHz"
+speed_v9_cycle_reduce,130,Performance_Explore,-0.140,1210,549,0,0,156,151,1.162,failed_timing,"Functional regression passes, but post-route timing does not close"
