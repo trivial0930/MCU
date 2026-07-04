@@ -1,0 +1,2 @@
+`define CLK_PERIOD 10
+`define TIMEOUT_CYCLES 10000

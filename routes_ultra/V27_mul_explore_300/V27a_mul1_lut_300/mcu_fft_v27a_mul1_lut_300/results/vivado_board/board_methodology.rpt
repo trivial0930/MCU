@@ -1,0 +1,158 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Sat Jul  4 18:29:03 2026
+| Host         : LAPTOP-RLNQPQBS running 64-bit major release  (build 9200)
+| Command      : report_methodology -file C:/Users/����/OneDrive/�ĵ�/����ʵ��/MCU/routes_ultra/V27_mul_explore_300/V27a_mul1_lut_300/mcu_fft_v27a_mul1_lut_300/results/vivado_board/board_methodology.rpt
+| Design       : board_top
+| Device       : xc7k160tffg676-2
+| Speed File   : -2
+| Design State : Fully Routed
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Report Methodology
+
+Table of Contents
+-----------------
+1. REPORT SUMMARY
+2. REPORT DETAILS
+
+1. REPORT SUMMARY
+-----------------
+            Netlist: netlist
+          Floorplan: impl_1
+      Design limits: <entire design considered>
+             Max checks: <unlimited>
+             Checks found: 25
++-----------+----------+-----------------------+--------+
+| Rule      | Severity | Description           | Checks |
++-----------+----------+-----------------------+--------+
+| TIMING-16 | Warning  | Large setup violation | 25     |
++-----------+----------+-----------------------+--------+
+
+2. REPORT DETAILS
+-----------------
+TIMING-16#1 Warning
+Large setup violation
+There is a large setup violation of -1.190 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[0]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#2 Warning
+Large setup violation
+There is a large setup violation of -1.454 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[1]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#3 Warning
+Large setup violation
+There is a large setup violation of -1.667 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[2]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#4 Warning
+Large setup violation
+There is a large setup violation of -1.786 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[4]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#5 Warning
+Large setup violation
+There is a large setup violation of -1.795 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[3]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#6 Warning
+Large setup violation
+There is a large setup violation of -1.796 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[5]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#7 Warning
+Large setup violation
+There is a large setup violation of -1.945 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[6]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#8 Warning
+Large setup violation
+There is a large setup violation of -1.946 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[8]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#9 Warning
+Large setup violation
+There is a large setup violation of -1.970 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[14]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#10 Warning
+Large setup violation
+There is a large setup violation of -2.004 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[7]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#11 Warning
+Large setup violation
+There is a large setup violation of -2.010 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[9]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#12 Warning
+Large setup violation
+There is a large setup violation of -2.045 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[17]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#13 Warning
+Large setup violation
+There is a large setup violation of -2.048 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[11]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#14 Warning
+Large setup violation
+There is a large setup violation of -2.056 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[13]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#15 Warning
+Large setup violation
+There is a large setup violation of -2.071 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[15]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#16 Warning
+Large setup violation
+There is a large setup violation of -2.084 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[18]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#17 Warning
+Large setup violation
+There is a large setup violation of -2.096 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[19]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#18 Warning
+Large setup violation
+There is a large setup violation of -2.101 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[12]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#19 Warning
+Large setup violation
+There is a large setup violation of -2.116 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[10]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#20 Warning
+Large setup violation
+There is a large setup violation of -2.120 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[16]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#21 Warning
+Large setup violation
+There is a large setup violation of -2.144 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[24]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#22 Warning
+Large setup violation
+There is a large setup violation of -2.153 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[21]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#23 Warning
+Large setup violation
+There is a large setup violation of -2.162 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[23]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#24 Warning
+Large setup violation
+There is a large setup violation of -2.166 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[20]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>
+
+TIMING-16#25 Warning
+Large setup violation
+There is a large setup violation of -2.199 ns between u_mcu_top/u_mcu_core/ex_op1_reg[0]_replica_4/C (clocked by clkout_raw) and u_mcu_top/u_mcu_core/wb_wdata_reg[22]/D (clocked by clkout_raw). Large setup violations at the end of those stages might be difficult to fix during the post-placement implementation flow and could be the result of non-optimal XDC constraints or non-optimal design architecture
+Related violations: <none>

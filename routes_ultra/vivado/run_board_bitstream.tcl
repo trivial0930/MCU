@@ -36,6 +36,22 @@ proc write_board_status {path status notes} {
     close $fd
 }
 
+proc find_board_project_script {start_dir} {
+    set dir [file normalize $start_dir]
+    for {set depth 0} {$depth < 10} {incr depth} {
+        set candidate [file normalize [file join $dir vivado create_board_project.tcl]]
+        if {[file exists $candidate]} {
+            return $candidate
+        }
+        set parent [file dirname $dir]
+        if {$parent eq $dir} {
+            break
+        }
+        set dir $parent
+    }
+    return ""
+}
+
 set root_dir [file normalize [pwd]]
 set results_dir [file join $root_dir results vivado_board]
 file mkdir $results_dir
@@ -48,9 +64,9 @@ if {[llength [get_parts -quiet $PART_NAME]] == 0} {
     error $msg
 }
 
-set board_script [file normalize [file join $root_dir .. .. vivado create_board_project.tcl]]
-if {![file exists $board_script]} {
-    set msg "cannot find create_board_project.tcl at $board_script"
+set board_script [find_board_project_script $root_dir]
+if {$board_script eq ""} {
+    set msg "cannot find create_board_project.tcl while searching upward from $root_dir"
     puts "ERROR: $msg"
     write_board_status $status_file failed $msg
     error $msg
