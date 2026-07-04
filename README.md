@@ -1,6 +1,6 @@
 # MCU FFT 实验仓库
 
-本仓库用于电子科技大学英才实验学院数字电路 MCU 实验中的 8 点定点复数 FFT 任务。设计目标是在不直接例化 FFT IP、DSP IP 或专用 FFT 加速器的前提下，用自研轻量 MCU 执行普通指令完成 FFT 计算，并完成仿真、综合实现、bitstream 生成和实物上板验证。
+本仓库用于电子科技大学英才实验学院数字电路 MCU 实验中的 8 点定点复数 FFT 任务。当前设计目标是在不直接例化 FFT IP、DSP IP、DMA、协处理器或专用 FFT 加速器的前提下，用自研轻量 MCU 执行普通指令完成 FFT 计算，并完成仿真、综合、实现、bitstream 生成和上板验证资料整理。
 
 ## 当前结论
 
@@ -8,119 +8,82 @@
 
 | 类别 | 推荐路线 | 状态 | 关键指标 |
 | --- | --- | --- | --- |
-| 当前最快路线 | `routes_ultra/V30_dual_mcu_real_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=149`，理论时间约 `0.497 us`，WNS `+0.021 ns`，DSP 0 |
-| 当前最快单核路线 | `routes_ultra/V31_single_core_final_tune_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=169`，理论时间约 `0.563 us`，WNS `+0.181 ns`，DSP 0 |
-| 32 位合规展示路线 | `routes_ultra/V36_arm32_compliance_300` | 仿真 PASS，300 MHz bitstream 已生成，未上板 | 32-bit 指令字，32-bit RF/ALU/WB，`cnt_test=169`，WNS `+0.157 ns`，DSP 0 |
+| 当前最快合规路线 | `routes_ultra/V34_dual_mcu_schedule_300` | 官方样例 + 20 随机 PASS，300 MHz no-ILA bitstream 已生成，未上板 | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
+| Core1 参与中间计算证明路线 | `routes_ultra/V33_dual_mcu_compute_split_300` | PASS，300 MHz bitstream 已生成，未上板 | Core1 执行 Stage2 `(5,7,W2)`，`cnt_test=135`，WNS `+0.034 ns`，DSP 0 |
 | 已上板 Ultra 主线 | `routes_ultra/V22b_fast_mul2_300` | 已完成实物验证 | `cnt_test=173`，300 MHz 理论时间约 `0.577 us` |
+| 32 位合规展示备选 | `routes_ultra/V36_arm32_compliance_300` | PASS，300 MHz bitstream 已生成，未上板 | 32-bit 指令字、32-bit RF/ALU/WB，`cnt_test=169`，WNS `+0.157 ns` |
+| 最快单核备选 | `routes_ultra/V31_single_core_final_tune_300` | PASS，300 MHz bitstream 已生成，未上板 | `cnt_test=169`，理论时间约 `0.563 us`，WNS `+0.181 ns` |
 | Route A 稳定上板路线 | `routesA/speed_v7_q7_narrow_mul` | 已完成 130 MHz PLL 实物验证 | `cnt_test=157`，理论时间约 `1.208 us`，DSP 0 |
 
-目标 FPGA 以课件 `materials/source_docs/Lab1.pdf` 为准：`XC7K160T-2FFG676-I`，Vivado part 使用 `xc7k160tffg676-2`。正式统计口径为关闭 ILA、`flatten_hierarchy=none`、`max_dsp=0`，资源统计以 post-implementation 报告为准。
+目标 FPGA 以课程资料为准：`XC7K160T-2FFG676-I`，Vivado part 使用 `xc7k160tffg676-2`。Ultra 路线板载输入时钟为 50 MHz，`board_top.v` 内部通过 PLLE2 生成 300 MHz MCU 时钟；正式速度和资源统计使用 no-ILA、`flatten_hierarchy=none`、`max_dsp=0`、post-implementation 报告。
 
 ## 仓库结构
 
 | 路径 | 内容 |
 | --- | --- |
-| `materials/` | 课程资料、K7EDAEVAL 引脚表、官方输入输出样例和原始文档归档 |
-| `docs/` | 上板、交接、报告摘要和调试说明 |
-| `routesA/` | 路线 A 的稳定候选、Vivado 矩阵和 130 MHz 上板资料 |
-| `routesB/` | 路线 B 的 B1 到 B4 候选方案，保留独立工程和中文说明 |
-| `routes_ultra/` | 300 MHz 极限优化路线，包含 V19 到 V31 的迭代记录和结果榜 |
-| `RESULTS.md` | 当前速度榜、效率榜、推荐路线和风险说明 |
-| `WINDOWS_CODEX_HANDOFF.md` | Windows + Vivado + Codex 环境继续调试的操作清单 |
+| `materials/` | 课程资料、板卡资料、官方输入输出样例和原始文档归档。 |
+| `docs/` | 上板、交接、报告摘要和调试说明。 |
+| `routesA/` | 路线 A 的稳定候选、Vivado 矩阵和 130 MHz 上板资料。 |
+| `routesB/` | 路线 B 的 B1 到 B4 候选方案和中文说明。 |
+| `routes_ultra/` | 300 MHz 极限优化路线，当前重点为 V33/V34/V36/V22b。 |
+| `RESULTS.md` | 当前速度榜、效率榜、推荐路线和风险说明。 |
+| `WINDOWS_CODEX_HANDOFF.md` | Windows + Vivado + Codex 环境继续调试清单。 |
 
-## 推荐阅读顺序
+## 常用复现命令
 
-1. `RESULTS.md`：先看当前排行榜、推荐上板路线和不建议继续投入的路线。
-2. `routes_ultra/README.md`：查看 300 MHz 极限路线的完整迭代状态，重点看 V30、V31、V36、V22b。
-3. `docs/上板与交接指南.md`：查看 bitstream、ILA、上板观察信号和交接步骤。
-4. `routesA/README.md`：理解稳定 Route A 的来源、验证状态和 130 MHz 板级结果。
-5. `materials/README.md`：确认官方样例、板卡资料和实验约束。
+最快 V34 回归：
 
-## 快速回归
+```powershell
+cd routes_ultra\V34_dual_mcu_schedule_300\mcu_fft_v34_dual_mcu_schedule_300
+py scripts\run_official_regression.py --random-cases 20 --seed 2026
+```
 
-### Route A 本地回归
+V34 no-ILA bitstream：
 
-需要 Python、Icarus Verilog，并确保 `iverilog`、`vvp` 在 PATH 中：
+```powershell
+cd routes_ultra\V34_dual_mcu_schedule_300\mcu_fft_v34_dual_mcu_schedule_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
+```
+
+V33 回归：
+
+```powershell
+cd routes_ultra\V33_dual_mcu_compute_split_300\mcu_fft_v33_dual_mcu_compute_split_300
+py scripts\run_official_regression.py --random-cases 20 --seed 2026
+```
+
+Route A 本地回归：
 
 ```powershell
 py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
 ```
 
-该命令会检查 Route A 的主要稳定路线，包括 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
-
-### Ultra V30 回归
-
-```powershell
-cd routes_ultra\V30_dual_mcu_real_300\mcu_fft_v30_dual_mcu_real_300
-py scripts\run_official_regression.py --random-cases 20 --seed 2026
-```
-
-### Ultra V31 回归
-
-```powershell
-cd routes_ultra\V31_single_core_final_tune_300\mcu_fft_v31_single_core_final_tune_300
-py scripts\run_official_regression.py --random-cases 20 --seed 2026
-```
-
-## Vivado 生成
-
-本机 Vivado 路径：
-
-```text
-D:\vivado\2025.2\Vivado\bin\vivado.bat
-```
-
-Ultra 路线生成无 ILA bitstream：
-
-```powershell
-cd routes_ultra\V30_dual_mcu_real_300\mcu_fft_v30_dual_mcu_real_300
-D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
-```
-
-V31 可将路径替换为：
-
-```powershell
-cd routes_ultra\V31_single_core_final_tune_300\mcu_fft_v31_single_core_final_tune_300
-D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_no_ila_board_bitstream.tcl
-```
-
-Route A 稳定路线生成 bitstream：
-
-```powershell
-cd routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
-D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ../../vivado/run_board_bitstream.tcl
-```
-
 ## 上板建议
 
-- 需要课堂展示且优先稳妥：使用已实物验证的 `routes_ultra/V22b_fast_mul2_300` 或 Route A 的 `speed_v7_q7_narrow_mul`。
-- 需要回应老师“32 位机器码和架构位宽”检查：使用 `routes_ultra/V36_arm32_compliance_300`，并展示其中的 `COMPLIANCE_CHECK.md`。
-- 需要冲击当前最快成绩：优先尝试 `routes_ultra/V30_dual_mcu_real_300`，但该路线 WNS 余量只有 `+0.021 ns`，建议先用 ILA 版本确认 `done`、`verify_we`、`verify_addr`、`verify_vector_out` 和 `cnt_test`。
-- 需要更稳的 300 MHz 单核候选：使用 `routes_ultra/V31_single_core_final_tune_300`，时序余量比 V30 更宽。
+- 想展示“目前最快成绩”：优先尝试 `routes_ultra/V34_dual_mcu_schedule_300`，但它还未完成实物验证，建议先用 ILA 版本观察 `done`、`verify_we`、`verify_addr`、`verify_vector_out`、`cnt_test`。
+- 想展示“已经上过板、风险最低”：使用 `routes_ultra/V22b_fast_mul2_300`。
+- 想回应老师“32 位机器码和架构位宽”检查：使用 `routes_ultra/V36_arm32_compliance_300`，或说明 V33/V34 也已恢复 32-bit RF/ALU/WB 数据通路。
 - 不建议作为最终展示路线：V24、V27a、V27b，因为 300 MHz timing 未通过或风险明显。
 
-首次上板重点观察：
+首轮上板重点观察：
 
 - `done` 是否拉高。
 - `verify_we` 是否产生 16 次有效写入。
 - 最后写地址是否为 15。
-- `cnt_test` 是否接近路线文档中的记录值。
+- `cnt_test` 是否接近对应路线文档中的记录值。
 - `verify_vector_out` 是否与 `mem/FFT_output.coe` 一致。
 
-## 结果文件
-
-常用结果入口：
+## 结果入口
 
 - `RESULTS.md`
-- `routes_ultra/results/ultra_summary.csv`
 - `routes_ultra/README.md`
-- `routesA/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`
-- `routesA/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
-- `routesA/speed_v8_route_a_vivado_matrix/results/efficiency_leaderboard.csv`
+- `routes_ultra/results/ultra_summary.csv`
+- `routes_ultra/V34_dual_mcu_schedule_300/mcu_fft_v34_dual_mcu_schedule_300/ROUTE_NOTES.md`
+- `routes_ultra/V33_dual_mcu_compute_split_300/mcu_fft_v33_dual_mcu_compute_split_300/results/core_timeline.md`
 
 ## 协作约定
 
 - GitHub 远端使用 SSH：`git@github.com:trivial0930/MCU.git`。
 - 中文文档统一使用 UTF-8 编码。
 - `output/`、Vivado 工程缓存、`.Xil/`、`build/` 等生成物不提交。
-- 提交到 GitHub 的内容应优先保留源码、脚本、关键报告、榜单 CSV/Markdown 和可复现实验命令。
+- 提交到 GitHub 的内容优先保留源码、脚本、关键报告、榜单 CSV/Markdown 和可复现实验命令。
