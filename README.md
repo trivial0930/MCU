@@ -6,22 +6,22 @@
 
 更新时间：2026-07-05
 
-当前最快 no-ILA 合规实现已经推进到 8 核路线：
+当前最快 no-ILA 合规实现已经推进到 8 核路线，并已完成实物上板验证：
 
 | 项目 | 当前推荐 |
 | --- | --- |
-| 当前最快 no-ILA 合规候选 | `routes_ultra/V54_octa_output_owner_300/mcu_fft_v54_octa_output_owner_300` |
+| 当前最快 no-ILA 合规路线 | `routes_ultra/V54_octa_output_owner_300/mcu_fft_v54_octa_output_owner_300` |
 | 核心数 | 8 个完整 MCU core |
 | 功能回归 | 官方样例 + 20 组随机输入 PASS |
-| `cnt_test` | 58 |
-| 300 MHz 理论时间 | 0.193 us |
-| Vivado 300 MHz no-ILA | WNS/TNS = +0.011 ns / 0.000 ns |
-| 资源 | LUT 8851，FF 6519，DSP 0，BRAM 0 |
+| `cnt_test` | 59 |
+| 300 MHz 理论时间 | 0.197 us |
+| Vivado 300 MHz no-ILA | WNS/TNS = +0.095 ns / 0.000 ns |
+| 资源 | LUT 8733，FF 6476，DSP 0，BRAM 0 |
 | DRC | 0 checks found |
 | bitstream | `D:/vivado_work/routes_ultra/mcu_fft_v54_octa_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit` |
-| 上板状态 | 已生成 bitstream，尚未实物验证 |
+| 上板状态 | PASS，板上 ILA 抓波 16 次 verify 写回全覆盖，最终已切回 no-ILA 正式版本 |
 
-V45 仍保留为当前最快已上板验证路线：`cnt_test=85`，300 MHz no-ILA timing-clean，实物验证 PASS。V53 是四核中间路线：`cnt_test=72`，已被 V54 超过。
+V54 为当前最快已上板验证路线。V45 保留为资源更小的双核已上板备份路线：`cnt_test=85`。V53 是四核中间路线：`cnt_test=72`，已被 V54 超过。
 
 ## 合规边界
 
@@ -71,8 +71,8 @@ py scripts\run_official_regression.py --random-cases 20 --seed 2026
 
 ## 上板建议
 
-- 如果要展示当前最快理论成绩，优先使用 V54 的 no-ILA bitstream，下一步补实物上板验证。
-- 如果要展示已经上板 PASS 的成绩，使用 V45。
+- 如果要展示当前最快成绩，优先使用 V54 的 no-ILA bitstream。
+- 如果要展示低资源双核备份成绩，使用 V45。
 - 如果要保守回退，使用已经固化上板证据的 V42/V34 路线。
 - 如果老师重点检查“32 位机器码和架构位宽”，同时准备 V36 或 V54 的 opcode/disassembly/合规说明材料。
 

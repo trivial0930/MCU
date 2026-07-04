@@ -15,9 +15,9 @@
 
 | 排名 | 路线 | 状态 | `cnt_test` | 理论时间 | WNS | LUT | FF | DSP | 结论 |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 1 | `V54_octa_output_owner_300` | PASS，bitstream 已生成，待上板 | 58 | 0.193 us | +0.011 ns | 8851 | 6519 | 0 | 当前最快 no-ILA 合规候选 |
+| 1 | `V54_octa_output_owner_300` | PASS，已上板验证 | 59 | 0.197 us | +0.095 ns | 8733 | 6476 | 0 | 当前最快 no-ILA 合规实测路线 |
 | 2 | `V53_quad_output_owner_300` | PASS，bitstream 已生成，待上板 | 72 | 0.240 us | +0.089 ns | 5002 | 3718 | 0 | 四核输出归属路线，已被 V54 超过 |
-| 3 | `V45_stage2_wait_reduce_300` | PASS，已上板验证 | 85 | 0.283 us | +0.091 ns | 2228 | 1619 | 0 | 当前最快已上板路线 |
+| 3 | `V45_stage2_wait_reduce_300` | PASS，已上板验证 | 85 | 0.283 us | +0.091 ns | 2228 | 1619 | 0 | 双核已上板备份路线 |
 | 3 | `V46_stage1_split_dual_mcu_300` | PASS，无速度收益 | 85 | 0.283 us | +0.029 ns | 2231 | 1629 | 0 | Core1 迁移 Stage1 的负结果保留 |
 | 5 | `V42_v34_board_verified_300` | PASS，已上板证据固化 | 88 | 0.293 us | +0.056 ns | 2228 | 1615 | 0 | 稳定回退路线 |
 | 6 | `V33_dual_mcu_compute_split_300` | PASS，未上板 | 135 | 0.450 us | +0.034 ns | 2228 | 1616 | 0 | Core1 真实参与 Stage2 中间计算 |
@@ -33,16 +33,17 @@
 V54 从 V53 的思路继续推进到 8 个完整 MCU core，每个 core 负责一个复数输出 X0 到 X7：
 
 - 官方样例 + 20 组随机 PASS。
-- `cnt_test=58`，比 V53 的 72 少 14 cycle，比 V45 的 85 少 27 cycle。
-- 300 MHz no-ILA 实现通过：WNS/TNS = +0.011 ns / 0.000 ns，WHS/THS = +0.063 ns / 0.000 ns。
+- `cnt_test=59`，比 V53 的 72 少 13 cycle，比 V45 的 85 少 26 cycle。
+- 300 MHz no-ILA 实现通过：WNS/TNS = +0.095 ns / 0.000 ns，WHS/THS = +0.072 ns / 0.000 ns。
 - DRC 报告 `Checks found: 0`。
 - DSP=0，BRAM=0。
+- 已完成板上 ILA 抓波验证：16 次 verify 写回、地址 0..15 全覆盖、最后地址 15、输出与期望完全一致，最终重新下载 no-ILA 正式 bitstream。
 - V54 不增加专用 FFT 硬件，也不增加专用指令；速度收益来自输出归属拆分、test ROM 复制、verify RAM bank 化和奇数输出核内 `×91` 结果复用。
 
 ## 上板建议
 
-- 展示最快理论实现：使用 V54，先下载 no-ILA bitstream，再补充 ILA 版本抓 verify 写回证据。
-- 展示已经实测上板 PASS 的结果：使用 V45。
+- 展示最快已上板实现：使用 V54 的 no-ILA bitstream。
+- 展示低资源双核备份结果：使用 V45。
 - 需要稳妥回退：使用 V42/V34 固化证据路线。
 - 需要回答老师合规要求：准备 V54 的 `OCTA_MCU_COMPLIANCE_REPORT.md`、`opcode_summary_all.csv` 和 `verify_writer_trace.csv`。
 

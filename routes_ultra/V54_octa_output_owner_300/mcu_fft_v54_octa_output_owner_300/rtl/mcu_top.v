@@ -63,6 +63,9 @@ module mcu_top(
     wire [7:0] last_verify_ram_write_i;
     wire [7:0] done_core_i;
     reg [15:0] done_mask_q;
+    reg [7:0] owner_seen_q;
+    reg [7:0] owner_done_q;
+    reg verify_complete_pulse_q;
 
     assign test_rom_addr0 = test_rom_addr_i[0];
     assign test_rom_addr1 = test_rom_addr_i[1];
@@ -186,21 +189,30 @@ module mcu_top(
     wire [15:0] done_mask_next =
         done_mask_q | verify_bit0 | verify_bit1 | verify_bit2 | verify_bit3 |
         verify_bit4 | verify_bit5 | verify_bit6 | verify_bit7;
-    wire verify_complete_pulse = (done_mask_next == 16'hffff) && (done_mask_q != 16'hffff);
+    wire [7:0] owner_seen_next = owner_seen_q | verify_we_i;
+    wire [7:0] owner_done_next = owner_done_q | (verify_we_i & owner_seen_q);
+    wire verify_complete_pulse_raw = (owner_done_next == 8'hff) && (owner_done_q != 8'hff);
 
     cnt_test_unit u_cnt_test(
         .clk(clk),
         .rst(rst),
         .start_pulse(|first_test_rom_read_i),
-        .stop_pulse(verify_complete_pulse),
+        .stop_pulse(verify_complete_pulse_q),
         .cnt_test(cnt_test)
     );
 
     always @(posedge clk) begin
-        if (rst)
+        if (rst) begin
             done_mask_q <= 16'h0000;
-        else
+            owner_seen_q <= 8'h00;
+            owner_done_q <= 8'h00;
+            verify_complete_pulse_q <= 1'b0;
+        end else begin
             done_mask_q <= done_mask_next;
+            owner_seen_q <= owner_seen_next;
+            owner_done_q <= owner_done_next;
+            verify_complete_pulse_q <= verify_complete_pulse_raw;
+        end
     end
 
     assign verify_done_mask = done_mask_q;

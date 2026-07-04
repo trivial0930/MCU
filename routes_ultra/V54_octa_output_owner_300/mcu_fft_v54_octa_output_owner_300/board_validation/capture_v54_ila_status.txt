@@ -1,0 +1,7 @@
+program_status=ok
+device=xc7k160t_0
+ila=hw_ila_1
+armed_for=verify_we_all_eq_0x55
+auto_reset_delay=debug build holds reset after configuration so capture can arm
+capture_status=ok
+csv=board_validation/v54_ila_verify_we_capture.csv

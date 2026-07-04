@@ -1,2 +1,2 @@
-route,freq_mhz,cnt_test,total_time_us,regression,wns_ns,tns_ns,whs_ns,ths_ns,lut,ff,dsp,bram,drc,bitstream
-V54_octa_output_owner_300,300,58,0.193,PASS,0.011,0.000,0.063,0.000,8851,6519,0,0,0 checks found,D:/vivado_work/routes_ultra/mcu_fft_v54_octa_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit
+route,freq_mhz,cnt_test,total_time_us,regression,wns_ns,tns_ns,whs_ns,ths_ns,lut,ff,dsp,bram,drc,board_status,bitstream
+V54_octa_output_owner_300,300,59,0.197,PASS,0.095,0.000,0.072,0.000,8733,6476,0,0,0 checks found,PASS,D:/vivado_work/routes_ultra/mcu_fft_v54_octa_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit

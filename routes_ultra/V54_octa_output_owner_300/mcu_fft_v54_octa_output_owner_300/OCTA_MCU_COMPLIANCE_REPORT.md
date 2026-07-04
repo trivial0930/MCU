@@ -2,7 +2,7 @@
 
 ## 结论
 
-V54 是 8 个完整 MCU core 的输出归属拆分路线，不是 FFT 专用硬件加速器。所有输出均由普通 32-bit ARM-like 指令序列计算，并由普通 `STR` 指令写入 verify RAM。
+V54 是 8 个完整 MCU core 的输出归属拆分路线，不是 FFT 专用硬件加速器。所有输出均由普通 32-bit ARM-like 指令序列计算，并由普通 `STR` 指令写入 verify RAM。当前版本已经完成 300MHz no-ILA timing-clean 实现和实物上板验证。
 
 ## 禁项检查
 
@@ -64,32 +64,37 @@ MOVI, MOVR, LDR, ADD, SUB, MUL, STR, HALT
 
 ## verify 写回可信性
 
-仿真记录显示：
+仿真和板上记录显示：
 
 - verify 写回次数：16
 - 覆盖地址：0..15
+- 最后写回地址：15
 - `done_mask=ffff`
-- `cnt_test=58`
 - 官方样例和 20 组随机全部 PASS
+- 板上 ILA 输出比对 PASS
 
-写回轨迹见 `results/verify_writer_trace.csv`。停表条件来自 `done_mask`，不是依赖某一个 verify 地址提前写入，因此不属于假停表。
+当前停表不是依赖某一个 verify 地址提前写入，而是每个 owner core 都完成两次 verify 写回后再打一拍停止。这个改动让 `cnt_test=59`，比旧的 58 多 1 个保守周期，但提高了 300MHz WNS，并避免假停表风险。
 
 ## Vivado 结果
 
-| 项目 | 结果 |
-| --- | --- |
-| 频率 | 300 MHz |
-| no-ILA | 是 |
-| WNS/TNS | +0.011 ns / 0.000 ns |
-| WHS/THS | +0.063 ns / 0.000 ns |
-| LUT/FF | 8851 / 6519 |
-| DSP | 0 |
-| BRAM | 0 |
-| DRC | Checks found: 0 |
-| bitstream | 已生成 |
+| 项目 | 正式 no-ILA | ILA 调试版 |
+| --- | ---: | ---: |
+| 频率 | 300 MHz | 300 MHz |
+| WNS/TNS | +0.095 / 0.000 ns | +0.072 / 0.000 ns |
+| WHS/THS | +0.072 / 0.000 ns | +0.044 / 0.000 ns |
+| LUT/FF | 8733 / 6476 | 10325 / 9383 |
+| DSP | 0 | 0 |
+| BRAM | 0 | 6 |
+| DRC | Checks found: 0 | Checks found: 0 |
 
-bitstream 位置：
+正式 bitstream：
 
 ```text
 D:/vivado_work/routes_ultra/mcu_fft_v54_octa_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit
+```
+
+ILA 调试 bitstream：
+
+```text
+D:/vivado_work/routes_ultra/mcu_fft_v54_octa_output_owner_300_ila/mcu_fft_board.runs/impl_1/board_top.bit
 ```

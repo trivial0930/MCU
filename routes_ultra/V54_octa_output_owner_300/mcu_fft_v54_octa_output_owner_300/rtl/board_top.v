@@ -73,7 +73,26 @@ module board_top #(
         .locked(pll_locked)
     );
 
+`ifdef ENABLE_ILA
+    reg [33:0] ila_reset_delay_q = 34'd0;
+    reg ila_reset_hold_q = 1'b1;
+
+    always @(posedge clk or negedge pll_locked) begin
+        if (!pll_locked) begin
+            ila_reset_delay_q <= 34'd0;
+            ila_reset_hold_q <= 1'b1;
+        end else if (!ila_reset_delay_q[33]) begin
+            ila_reset_delay_q <= ila_reset_delay_q + 34'd1;
+            ila_reset_hold_q <= 1'b1;
+        end else begin
+            ila_reset_hold_q <= 1'b0;
+        end
+    end
+
+    assign rst = ~KEY1 | ~pll_locked | ila_reset_hold_q;
+`else
     assign rst = ~KEY1 | ~pll_locked;
+`endif
 
     test_ROM #(.INIT_FILE("mem/FFT_input.mem")) u_test_ROM0 (.clk(clk), .addr(test_rom_addr0), .test_vector_in(test_vector_in0));
     test_ROM #(.INIT_FILE("mem/FFT_input.mem")) u_test_ROM1 (.clk(clk), .addr(test_rom_addr1), .test_vector_in(test_vector_in1));
@@ -157,6 +176,21 @@ module board_top #(
         .verify_addr(verify_addr),
         .cnt_test(cnt_test),
         .done(done)
+`ifdef ENABLE_ILA
+        ,
+        .verify_vector_out_all({
+            verify_vector_out7, verify_vector_out6, verify_vector_out5, verify_vector_out4,
+            verify_vector_out3, verify_vector_out2, verify_vector_out1, verify_vector_out0
+        }),
+        .verify_we_all({
+            verify_we7, verify_we6, verify_we5, verify_we4,
+            verify_we3, verify_we2, verify_we1, verify_we0
+        }),
+        .verify_addr_all({
+            verify_addr7, verify_addr6, verify_addr5, verify_addr4,
+            verify_addr3, verify_addr2, verify_addr1, verify_addr0
+        })
+`endif
     );
 
     assign LED1 = done;

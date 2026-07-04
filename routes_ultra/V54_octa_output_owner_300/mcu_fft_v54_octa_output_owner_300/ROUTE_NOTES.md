@@ -6,7 +6,7 @@ V54 从 `routes_ultra/V53_quad_output_owner_300/mcu_fft_v53_quad_output_owner_30
 
 ## 目标
 
-在继续满足课程和老师约束的前提下，将输出归属拆分扩展到 8 个完整 MCU core：
+在继续满足课程和老师约束的前提下，把输出归属拆分扩展到 8 个完整 MCU core：
 
 - 不新增 FFT engine、butterfly_unit、fft_stage_unit、twiddle_engine、DMA controller 或 coprocessor。
 - 不新增 BFY、FFT_STAGE、BUTTERFLY、CMUL、CADD、CSUB 等专用指令。
@@ -31,39 +31,39 @@ V54 从 `routes_ultra/V53_quad_output_owner_300/mcu_fft_v53_quad_output_owner_30
 
 ## 存储和同步
 
-- `test_ROM` 被复制为 8 份，只作为只读输入存储。
+- `test_ROM` 复制为 8 份，只作只读输入存储。
 - 每个 core 通过普通 `LDR` 访问自己的 `test_ROM` 端口。
-- V54 不使用 shared RAM 做跨 core 计算交换，减少同步等待。
+- V54 不使用 shared RAM 做跨 core 计算交换。
 - `verify_RAM_oct` 按输出 owner 拆成 8 个单写 bank。
-- `mcu_top` 用 16 bit `done_mask` 记录 16 个 verify 地址是否都被写入。
-- `cnt_test_unit` 从任一 core 第一次有效读取输入开始计数，到 `done_mask` 将变为 `16'hffff` 的周期停止。
+- `done_mask_q` 记录 16 个 verify 地址是否被写入，作为仿真和板上证据。
+- `owner_seen_q/owner_done_q` 记录每个 core 是否已经完成两次 verify 写回。
+- `verify_complete_pulse_q` 把全 owner 完成脉冲打一拍后送入 `cnt_test_unit`，降低 verify 完成逻辑到停表寄存器的时序压力。
 
 ## 优化记录
 
 | 步骤 | 变化 | 结果 |
 | --- | --- | --- |
 | V54 初版 | 8 核 output-owner，奇数核重复计算 `×91` | PASS，`cnt_test=78` |
-| 乘法结果复用 | 奇数核内用 `R14/R15` 复用同一 pair 的 `×91` 结果 | PASS，`cnt_test=58` |
-| DRC 清理 | 在 XDC 中补 `CFGBVS=VCCO` 和 `CONFIG_VOLTAGE=3.3` | DRC `Checks found: 0` |
-
-曾尝试把累加器清零从 `MOVR` 改成更早的 `MOVI #0`，总仿真周期减少但第一次输入读取也提前，导致合法 `cnt_test` 从 58 变为 59。该修改已放弃，最终保留 `cnt_test=58` 的指令时序。
+| 乘法结果复用 | 奇数核内用 `R14/R15` 复用同一 pair 的 `×91` 结果 | PASS，`cnt_test=58`，但 WNS 仅约 +0.011 ns |
+| 停表路径加固 | owner 两次写回完成后一拍停表，切断 verify 组合完成逻辑到 counter 的紧路径 | PASS，`cnt_test=59`，WNS 提升到 +0.095 ns |
+| ILA 宽探针 | 调试版一次抓取 8 核 `verify_we/addr/data` | 板上 16 次写回全覆盖并比对 PASS |
 
 ## 最终结果
 
 | 项目 | V45 | V53 | V54 |
 | --- | ---: | ---: | ---: |
 | core 数 | 2 | 4 | 8 |
-| `cnt_test` | 85 | 72 | 58 |
-| 300 MHz 理论时间 | 0.283 us | 0.240 us | 0.193 us |
-| WNS/TNS | +0.091 / 0.000 ns | +0.089 / 0.000 ns | +0.011 / 0.000 ns |
-| WHS/THS | +0.127 / 0.000 ns | +0.065 / 0.000 ns | +0.063 / 0.000 ns |
-| LUT | 2228 | 5002 | 8851 |
-| FF | 1619 | 3718 | 6519 |
+| `cnt_test` | 85 | 72 | 59 |
+| 300 MHz 理论时间 | 0.283 us | 0.240 us | 0.197 us |
+| WNS/TNS | +0.091 / 0.000 ns | +0.089 / 0.000 ns | +0.095 / 0.000 ns |
+| WHS/THS | +0.127 / 0.000 ns | +0.065 / 0.000 ns | +0.072 / 0.000 ns |
+| LUT | 2228 | 5002 | 8733 |
+| FF | 1619 | 3718 | 6476 |
 | DSP | 0 | 0 | 0 |
 | BRAM | 0 | 0 | 0 |
 | 官方样例 + 20 随机 | PASS | PASS | PASS |
-| 上板状态 | 已验证 | 待上板 | 待上板 |
+| 上板状态 | 已验证 | 待上板 | 已验证 |
 
 ## 建议
 
-V54 建议作为新的最快 no-ILA 候选推进上板验证。若实物验证 PASS，可将展示主线从 V45 切换到 V54；若上板调试临时受阻，V45 仍是最快已验证备份。
+V54 已经完成 300MHz no-ILA timing-clean 实现和板上 ILA 数据验证，建议作为新的最快展示主线。V45 仍保留为更小资源、较低风险的双核备份路线。
