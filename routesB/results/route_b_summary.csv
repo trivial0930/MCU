@@ -1,0 +1,5 @@
+route,project,instruction_count,cnt_test,official_sample,random_cases,seed_range,current_status,next_action
+B1_full_fusion,mcu_fft_b1_full_fusion,156,151,PASS,20,2026-2045,功能回归通过；周期最低；已有 Vivado 120 MHz 通过、130 MHz 未收敛,继续优化 ALU 复合常数乘关键路径后再冲 130 MHz
+B2_w1_only_fusion,mcu_fft_b2_w1_only_fusion,160,154,PASS,20,2026-2045,功能回归通过；只融合 W1；时序压力预计低于 B1,运行 Vivado 120/130 MHz 看是否能以更高 Fmax 抵消周期损失
+B3_w3_only_fusion,mcu_fft_b3_w3_only_fusion,159,153,PASS,20,2026-2045,功能回归通过；只融合 W3；周期收益介于 B1 和 B2 之间,优先进入 Vivado 矩阵作为路线 B 折中候选
+B4_schedule_only,mcu_fft_b4_schedule_only,162,156,PASS,20,2026-2045,功能回归通过；不改指令集；只做 VERIFY_BASE 调度提前,作为低风险上板备选验证 130 MHz 时序

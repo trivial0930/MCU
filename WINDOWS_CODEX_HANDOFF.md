@@ -34,7 +34,7 @@ where vvp
 从仓库根目录运行四条路线的统一回归：
 
 ```powershell
-py routes\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
+py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
 ```
 
 缺少 Icarus Verilog 时可以跳过此步，但上板前至少应确认仓库中已有的 `results/regression_summary.txt` 与 `results/route_a_regression.log` 是通过版本。
@@ -44,7 +44,7 @@ py routes\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
 优先从 `speed_v7_q7_narrow_mul` 开始，因为它保持 Q7 乘法语义，同时减少乘法器宽度，风险低于常数 91 专用路线。
 
 ```powershell
-cd routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
+cd routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
 vivado
 ```
 
@@ -79,7 +79,7 @@ report_utilization
 
 ```powershell
 subst M: C:\Users\戎择辰\OneDrive\文档\数电实验\MCU
-cd M:\routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
+cd M:\routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
 ```
 
 带 ILA 调试版建议使用 OneDrive 外的输出目录：
@@ -102,7 +102,7 @@ source ../../vivado/run_board_bitstream.tcl
 如需继续比较 v6/v7/v7b/v7c 的高频余量，运行：
 
 ```powershell
-cd routes\speed_v8_route_a_vivado_matrix
+cd routesA\speed_v8_route_a_vivado_matrix
 vivado -mode batch -source vivado\run_route_a_matrix.tcl
 py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_a_matrix.csv
 ```
@@ -131,7 +131,7 @@ assign clk = CLK_50M;
 
 完成 Vivado 调试后，建议回填：
 
-- `routes/speed_v8_route_a_vivado_matrix/results/route_a_matrix.csv`
+- `routesA/speed_v8_route_a_vivado_matrix/results/route_a_matrix.csv`
 - 最终路线的 timing/utilization report
 - 选择最终路线的理由：频率、WNS、资源、DSP 是否为 0、是否带 ILA
 - 若修改 RTL，需要重新跑功能回归并更新对应路线说明

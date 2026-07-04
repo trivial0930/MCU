@@ -13,7 +13,7 @@
 ## 推荐上板路线
 
 ```text
-routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
+routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 ```
 
 已生成文件：
@@ -27,7 +27,7 @@ routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 
 ## 速度榜
 
-完整文件：`routes/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
+完整文件：`routesA/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
 
 | 排名 | 路线 | 最高通过频率 | WNS(ns) | LUT | FF | DSP |
 | ---: | --- | ---: | ---: | ---: | ---: | ---: |
@@ -38,7 +38,7 @@ routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 
 ## 效率榜
 
-完整文件：`routes/speed_v8_route_a_vivado_matrix/results/efficiency_leaderboard.csv`
+完整文件：`routesA/speed_v8_route_a_vivado_matrix/results/efficiency_leaderboard.csv`
 
 | 排名 | 路线 | 目标频率 | WNS(ns) | LUT | MHz/LUT |
 | ---: | --- | ---: | ---: | ---: | ---: |
@@ -57,7 +57,7 @@ routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 ## 路线 B 初步结果
 
 已基于路线 A 当前效率最优的 `speed_v7c_c91_shift_sub` 新建
-`routes/speed_v9_cycle_reduce`，实现第一版低周期优化：
+`routesA/speed_v9_cycle_reduce`，实现第一版低周期优化：
 
 | 路线 | 指令数 | cnt_test | 目标频率 | WNS(ns) | LUT | FF | DSP | 结论 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -70,4 +70,4 @@ routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 路线 A v7c 在 130 MHz 下的 `1.208 us`。
 
 更详细说明见 `docs/上板与交接指南.md` 和
-`routes/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`。
+`routesA/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`。

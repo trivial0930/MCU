@@ -5,11 +5,11 @@
 ## 当前状态
 
 - `materials/` 保存课程资料、K7EDAEVAL 引脚表和官方测试样例。
-- `routes/` 保存路线 A 的多个独立候选版本，便于保留可用版本并隔离失败实验。
+- `routesA/` 保存路线 A 的多个独立候选版本，便于保留可用版本并隔离失败实验。
 - 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
 - `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
 - `RESULTS.md` 汇总当前速度榜、效率榜、推荐路线和上板交付物。
-- `routes/speed_v9_cycle_reduce` 是路线 B 低周期原型，当前功能回归通过，120 MHz 收敛，130 MHz 尚未收敛。
+- `routesA/speed_v9_cycle_reduce` 是路线 B 低周期原型，当前功能回归通过，120 MHz 收敛，130 MHz 尚未收敛。
 
 本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已按课件确认的 `xc7k160tffg676-2` 完成综合、实现、DRC 和 bitstream。
 
@@ -20,7 +20,7 @@
 1. `materials/README.md`：确认资料来源、官方输入输出样例和板卡引脚表。
 2. `RESULTS.md`：查看当前速度榜、效率榜和推荐上板路线。
 3. `docs/上板与交接指南.md`：最新上板状态、bit/ltx 位置、报告摘要、重新生成命令和 ILA 观察步骤。
-4. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
+4. `routesA/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
 5. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
 
 ## 快速功能回归
@@ -28,7 +28,7 @@
 需要安装 Python 与 Icarus Verilog，并确保 `iverilog`、`vvp` 在 PATH 中：
 
 ```powershell
-py routes\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
+py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
 ```
 
 该命令会依次检查四条路线：
@@ -45,7 +45,7 @@ py routes\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
 在安装 Vivado 的 Windows 机器上运行：
 
 ```powershell
-cd routes\speed_v8_route_a_vivado_matrix
+cd routesA\speed_v8_route_a_vivado_matrix
 vivado -mode batch -source vivado\run_route_a_matrix.tcl
 py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_a_matrix.csv
 py scripts\make_leaderboards.py --in-csv results\route_a_matrix.csv
@@ -56,14 +56,14 @@ py scripts\make_leaderboards.py --in-csv results\route_a_matrix.csv
 已生成榜单可直接查看：
 
 - `RESULTS.md`
-- `routes/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`
-- `routes/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
-- `routes/speed_v8_route_a_vivado_matrix/results/efficiency_leaderboard.csv`
+- `routesA/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`
+- `routesA/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
+- `routesA/speed_v8_route_a_vivado_matrix/results/efficiency_leaderboard.csv`
 
 单条推荐路线可以直接跑到 bitstream：
 
 ```powershell
-cd routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
+cd routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
 vivado -mode batch -source ../../vivado/run_board_bitstream.tcl
 ```
 
@@ -74,7 +74,7 @@ vivado -mode batch -source ../../vivado/run_board_bitstream.tcl
 推荐先使用稳定的窄乘法路线：
 
 ```powershell
-cd routes\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
+cd routesA\speed_v7_q7_narrow_mul\mcu_fft_q7_narrow_mul
 vivado
 ```
 
@@ -93,6 +93,6 @@ source ../../vivado/create_board_project.tcl
 
 已生成的首板调试文件位于：
 
-- `routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.bit`
-- `routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.ltx`
-- `routes/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_no_ila.bit`
+- `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.bit`
+- `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.ltx`
+- `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_no_ila.bit`
