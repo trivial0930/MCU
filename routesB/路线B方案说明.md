@@ -57,3 +57,30 @@ B4 的意义是提供一个低风险基线：如果它能保持路线 A 的 130 
 | B4 | 是 | PASS | PASS | 162 | 156 |
 
 结论：B1 到 B4 目前都已具备可运行工程，并且功能上全部行得通。下一步真正需要区分的是 Vivado post-route Fmax。若 B3 或 B2 能稳定通过 130 MHz，它们的实际耗时可能优于只能跑 120 MHz 的 B1；若 B4 继承路线 A 的 130 MHz 时序，它会是最稳妥的上板候选。
+
+## 后续实现和验证闭环
+
+路线 B 现在已经补齐三个层次的验证入口：
+
+1. 功能回归：确认指令生成、ROM 初始化、FFT 输出和随机输入全部正确。
+2. Vivado 矩阵：用同一目标器件和同一综合约束比较 B1 到 B4 的可收敛频率、WNS 和资源。
+3. 单方案 bitstream：对矩阵中表现最好的方案生成上板文件，使用 ILA 做真实板卡波形确认。
+
+对应命令如下：
+
+```powershell
+# 1. 功能回归
+py routesB\scripts\run_routesB_regressions.py --random-cases 20 --seed 2026
+
+# 2. Vivado 矩阵，需在 routesB 目录运行
+cd routesB
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_routesB_matrix.tcl
+py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_b_matrix.csv
+py scripts\make_leaderboards.py --in-csv results\route_b_matrix.csv --summary-csv results\route_b_summary.csv --out-dir results
+
+# 3. 单方案 bitstream，以 B4 为例
+cd B4_schedule_only\mcu_fft_b4_schedule_only
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_board_bitstream.tcl
+```
+
+矩阵脚本默认强制 `max_dsp=0`，并保持 `flatten_hierarchy=none`，符合老师对资源统计和 DSP 禁用方式的要求。后续正式对外汇报时，建议优先给出三张表：可通过最高频率、真实耗时 `cnt_test / Fmax`、资源效率。这样可以避免只用周期数判断路线优劣。

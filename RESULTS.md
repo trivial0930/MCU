@@ -9,6 +9,7 @@
 - DSP 限制：`max_dsp=0`
 - 正式资源/速度统计：关闭 ILA
 - 上板调试：先使用带 ILA bitstream，确认功能后切换无 ILA bitstream
+- 当前实物上板时钟：`130 MHz`，由板载 50 MHz 通过 `PLLE2_BASE` 倍频得到
 
 ## 推荐上板路线
 
@@ -20,12 +21,36 @@ routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 
 | 文件 | 用途 |
 | --- | --- |
-| `results/vivado_board/board_top_ila.bit` | 首次上板调试 |
-| `results/vivado_board/board_top_ila.ltx` | ILA 波形探针 |
-| `results/vivado_board/board_top_no_ila.bit` | 正式资源/速度版本 |
-| `results/vivado_board/board_utilization_hierarchical_no_ila.rpt` | MCU 层级资源统计 |
+| `results/vivado_board/board_top_ila.bit` | 50 MHz 历史调试版本 |
+| `results/vivado_board/board_top_no_ila.bit` | 50 MHz 历史正式版本 |
+| `output/hardware_debug/routeA_130MHz_PLL_20260704/ila/board_top_130pll_ila.bit` | 130 MHz 带 ILA 验证版本，本地交付物 |
+| `output/hardware_debug/routeA_130MHz_PLL_20260704/no_ila/board_top_130pll_no_ila.bit` | 130 MHz 无 ILA 正式上板版本，本地交付物 |
 
-## 速度榜
+## 最新 130 MHz 上板结果
+
+当前已将 `speed_v7_q7_narrow_mul` 的板级顶层从直连 `CLK_50M` 改为：
+
+```text
+CLK_50M -> PLLE2_BASE -> BUFG -> MCU clk
+```
+
+PLL 参数为 `CLKFBOUT_MULT=26`、`CLKOUT0_DIVIDE=10`，因此实际 MCU 时钟为 `50 MHz * 26 / 10 = 130 MHz`。复位逻辑同步加入 `pll_locked` 保护：`rst = ~KEY1 | ~pll_locked`。
+
+| 项目 | 结果 |
+| --- | --- |
+| 实际上板时钟 | 130 MHz |
+| 无 ILA post-route WNS | 0.190 ns |
+| 无 ILA TNS | 0.000 ns |
+| DRC | 0 Error；仅剩 `CFGBVS/CONFIG_VOLTAGE` warning |
+| DSP | 0 |
+| `cnt_test` | 157 |
+| 测试窗口耗时 | `157 / 130 MHz = 1.208 us` |
+| 上板验证 | 带 ILA 抓到 16 次写回，全部与 `FFT_output.coe` 匹配 |
+| 最终板卡状态 | 已切回 130 MHz 无 ILA bitstream，`ilas_after_program=0` |
+
+说明：带 ILA 的 130 MHz 验证版本因为插入调试核，post-route WNS 为 `-0.033 ns`，只用于抓波确认功能；正式速度/资源口径使用无 ILA 版本。
+
+## 路线 A 速度榜
 
 完整文件：`routesA/speed_v8_route_a_vivado_matrix/results/speed_leaderboard.csv`
 
@@ -51,7 +76,7 @@ routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 ## 判断建议
 
 - 若只看资源效率，`speed_v7c_c91_shift_sub` 当前最好。
-- 若更看重语义通用性和上板风险，优先使用 `speed_v7_q7_narrow_mul`。
+- 若更看重语义通用性和上板风险，优先使用 `speed_v7_q7_narrow_mul`；该路线已完成 130 MHz PLL 实物上板验证。
 - `speed_v6_official_sample` 在 `max_dsp=0` 后 95 MHz 已不满足时序，不建议作为最终速度路线。
 
 ## 路线 B 初步结果

@@ -12,6 +12,7 @@ module board_top(
 );
     wire clk;
     wire rst;
+    wire pll_locked;
     wire [7:0] test_rom_addr;
     wire [15:0] test_vector_in;
     wire [4:0] verify_addr;
@@ -21,8 +22,13 @@ module board_top(
     wire done;
     wire [15:0] verify_debug_data;
 
-    assign clk = CLK_50M;
-    assign rst = ~KEY1;
+    clk_130_pll u_clk_130_pll (
+        .clk_in(CLK_50M),
+        .clk_out(clk),
+        .locked(pll_locked)
+    );
+
+    assign rst = ~KEY1 | ~pll_locked;
 
     test_ROM #(
         .INIT_FILE("mem/FFT_input.mem")
@@ -71,4 +77,49 @@ module board_top(
     assign LED6 = cnt_test[12];
     assign LED7 = cnt_test[16];
     assign LED8 = ^verify_debug_data;
+endmodule
+
+module clk_130_pll(
+    input wire clk_in,
+    output wire clk_out,
+    output wire locked
+);
+    wire clkfb;
+    wire clkfb_buf;
+    wire clkout_raw;
+
+    PLLE2_BASE #(
+        .BANDWIDTH("OPTIMIZED"),
+        .CLKIN1_PERIOD(20.000),
+        .DIVCLK_DIVIDE(1),
+        .CLKFBOUT_MULT(26),
+        .CLKFBOUT_PHASE(0.000),
+        .CLKOUT0_DIVIDE(10),
+        .CLKOUT0_PHASE(0.000),
+        .CLKOUT0_DUTY_CYCLE(0.500),
+        .STARTUP_WAIT("FALSE")
+    ) u_plle2_base (
+        .CLKIN1(clk_in),
+        .CLKFBIN(clkfb_buf),
+        .CLKFBOUT(clkfb),
+        .CLKOUT0(clkout_raw),
+        .CLKOUT1(),
+        .CLKOUT2(),
+        .CLKOUT3(),
+        .CLKOUT4(),
+        .CLKOUT5(),
+        .LOCKED(locked),
+        .PWRDWN(1'b0),
+        .RST(1'b0)
+    );
+
+    BUFG u_clkfb_buf (
+        .I(clkfb),
+        .O(clkfb_buf)
+    );
+
+    BUFG u_clkout_buf (
+        .I(clkout_raw),
+        .O(clk_out)
+    );
 endmodule

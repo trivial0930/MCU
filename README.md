@@ -9,9 +9,11 @@
 - 已验证的功能路线集中在 `speed_v6`、`speed_v7`、`speed_v7b`、`speed_v7c`。
 - `speed_v8_high_freq_sweep` 和 `speed_v8_route_a_vivado_matrix` 提供 Vivado 高频时序/资源比较脚本。
 - `RESULTS.md` 汇总当前速度榜、效率榜、推荐路线和上板交付物。
-- `routesA/speed_v9_cycle_reduce` 是路线 B 低周期原型，当前功能回归通过，120 MHz 收敛，130 MHz 尚未收敛。
+- `routesB/` 保存路线 B 的 B1 到 B4 独立候选方案，当前功能回归通过，Vivado 矩阵和排行榜脚本已补齐。
 
 本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已按课件确认的 `xc7k160tffg676-2` 完成综合、实现、DRC 和 bitstream。
+
+最新上板结果：`speed_v7_q7_narrow_mul` 已通过 `PLLE2_BASE` 将板载 50 MHz 倍频到 130 MHz，实物上板验证通过。无 ILA 正式版本 post-route WNS 为 `0.190 ns`，`cnt_test=157`，测试窗口约 `1.208 us`，DSP 为 0。带 ILA 版本仅用于抓波，已确认 16 次写回全部与 `FFT_output.coe` 匹配；最终板卡已切回无 ILA bitstream。
 
 重要更新：课件 `materials/source_docs/Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。仓库脚本默认 part 已改为 `xc7k160tffg676-2`，综合默认 `flatten_hierarchy=none`、`max_dsp=0`，最新无 ILA 和带 ILA 报告中 `DSPs=0`。上板前仍建议核对板卡 FPGA 丝印；若实物确为其他 package，需要重新核对 XDC。
 
@@ -96,3 +98,5 @@ source ../../vivado/create_board_project.tcl
 - `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.bit`
 - `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_ila.ltx`
 - `routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul/results/vivado_board/board_top_no_ila.bit`
+
+130 MHz PLL 实物上板交付物位于本地 `output/hardware_debug/routeA_130MHz_PLL_20260704/`，PDF 报告位于本地 `output/pdf/RouteA_130MHz_PLL_board_report.pdf`。`output/` 目录按仓库规则不提交到 GitHub，GitHub 中保留源码、脚本、报告摘要和 Vivado 文本报告。

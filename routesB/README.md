@@ -43,6 +43,47 @@ py routesB\scripts\run_routesB_regressions.py --random-cases 20 --seed 2026
 
 机器可读汇总见 `results/route_b_summary.csv`。
 
+## Vivado 速度/效率矩阵
+
+路线 B 已补齐统一 Vivado 矩阵脚本，用来在同一个器件、同一套综合设置下比较 B1 到 B4。
+
+默认配置：
+
+- 目标器件：`xc7k160tffg676-2`
+- 综合层级：`flatten_hierarchy=none`
+- DSP 限制：`max_dsp=0`
+- 默认频点：95、100、110、120、130 MHz
+- 输出目录：`routesB/build/vivado_matrix`
+
+运行方式：
+
+```powershell
+cd routesB
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_routesB_matrix.tcl
+py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_b_matrix.csv
+py scripts\make_leaderboards.py --in-csv results\route_b_matrix.csv --summary-csv results\route_b_summary.csv --out-dir results
+```
+
+如果 Vivado 安装路径不同，把第一行命令中的 `D:\vivado\2025.2\Vivado\bin\vivado.bat` 替换成本机实际路径即可。脚本会为每个候选方案和频点生成 post-route timing、utilization、hierarchical utilization、DRC、methodology 和 design analysis 报告。解析后会得到：
+
+- `results/route_b_matrix.csv`：每个方案/频点的 WNS、资源、DSP、BRAM 和实现状态。
+- `results/route_b_speed_leaderboard.csv`：按可通过最高频率排序。
+- `results/route_b_time_leaderboard.csv`：按 `cnt_test / Fmax` 的真实计算时间排序。
+- `results/route_b_efficiency_leaderboard.csv`：按资源效率排序，便于和路线 A 对比。
+
+判断时不要只看 `cnt_test`。路线 B 的最终排名应同时满足功能回归通过、post-route WNS 非负、DSP 为 0，并优先比较 `cnt_test / Fmax`。
+
+## 单方案 bitstream
+
+当某个方案在矩阵中表现较好时，可以进入该方案工程目录生成上板 bitstream：
+
+```powershell
+cd routesB\B4_schedule_only\mcu_fft_b4_schedule_only
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source ..\..\vivado\run_board_bitstream.tcl
+```
+
+推荐顺序仍然是 B4、B3、B2、B1：先确认低风险方案能在目标板卡上稳定工作，再尝试收益更高但关键路径更长的融合方案。首次上板建议打开 ILA；用于最终资源和效率统计时应关闭 ILA，避免调试核影响时序和资源结论。
+
 ## 上板优先级
 
 建议先保留 B4 作为低风险备选，再用 B3、B2、B1 依次尝试 Vivado。B1 当前周期最好，但此前 130 MHz post-route WNS 为负；B3/B2 可能在周期略高的情况下换来更好的时序。若后续需要正式上板，优先比较 `总时间 = cnt_test / Fmax`，不要只看 `cnt_test`。
