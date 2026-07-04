@@ -16,7 +16,7 @@
 
 最新上板结果：`speed_v7_q7_narrow_mul` 已通过 `PLLE2_BASE` 将板载 50 MHz 倍频到 130 MHz，实物上板验证通过。无 ILA 正式版本 post-route WNS 为 `0.190 ns`，`cnt_test=157`，测试窗口约 `1.208 us`，DSP 为 0。带 ILA 版本仅用于抓波，已确认 16 次写回全部与 `FFT_output.coe` 匹配；最终板卡已切回无 ILA bitstream。
 
-Ultra 最新结果：`routes_ultra/V22b_fast_mul2_300` 已在 300 MHz 下完成官方样例 + 20 组随机回归、Vivado 实现、DRC 和 bitstream，`cnt_test=173`，按 300 MHz 推算约 `0.577 us`，post-route WNS 为 `+0.122 ns`，DSP=0。`routes_ultra/V19_pipeline_300` 已完成实物上板验证，仍可作为 300 MHz 稳健保底路线。
+Ultra 最新结果：`routes_ultra/V22b_fast_mul2_300` 已在 300 MHz 下完成官方样例 + 20 组随机回归、Vivado 实现、DRC 和 bitstream，`cnt_test=173`，按 300 MHz 推算约 `0.577 us`，post-route WNS 为 `+0.122 ns`，DSP=0。`routes_ultra/V24_load_forward_300` 已验证为负优化：功能 PASS 但 `cnt_test` 不降且 WNS 为 `-0.005 ns`，不推荐合并。`routes_ultra/V19_pipeline_300` 已完成实物上板验证，仍可作为 300 MHz 稳健保底路线。
 
 重要更新：课件 `materials/source_docs/Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。仓库脚本默认 part 已改为 `xc7k160tffg676-2`，综合默认 `flatten_hierarchy=none`、`max_dsp=0`，最新无 ILA 和带 ILA 报告中 `DSPs=0`。上板前仍建议核对板卡 FPGA 丝印；若实物确为其他 package，需要重新核对 XDC。
 

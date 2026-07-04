@@ -38,8 +38,9 @@ routesA/speed_v7_q7_narrow_mul/mcu_fft_q7_narrow_mul
 | `V21_forward_stable_300` | V20 forward 稳健化 | 197 | 300 MHz | 0.657 us | +0.031 ns | 973 | 675 | 0 |
 | `V20_forward_300` | 早期最快 300 MHz 版，余量极薄 | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
 | `V19_pipeline_300` | 已实物上板验证的 300 MHz 稳健版 | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
+| `V24_load_forward_300` | test_ROM LDR 前递负结果，不推荐 | 173 | 300 MHz | 0.577 us | -0.005 ns | 1106 | 681 | 0 |
 
-以上路线均通过官方样例 + 20 组随机输入回归、Vivado 综合、实现、DRC 和 bitstream 生成，正式统计均关闭 ILA 且 DSP=0。V19 已完成实物上板验证；V22b 是新的速度主线，下一步建议做 V22b ILA 上板验证。
+除 V24 外，以上 Ultra 主线均通过官方样例 + 20 组随机输入回归、Vivado 综合、实现、DRC 和 bitstream 生成，并满足 300 MHz timing-clean；正式统计均关闭 ILA 且 DSP=0。V24 功能回归和 bitstream 生成通过，但 WNS 为负且没有速度收益，作为负结果留档，不建议上板。V19 已完成实物上板验证；V22b 是新的速度主线，下一步建议做 V22b ILA 上板验证。
 
 ## 最新 130 MHz 上板结果
 

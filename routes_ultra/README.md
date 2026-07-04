@@ -27,6 +27,7 @@
 | V21 | `V21_forward_stable_300/mcu_fft_v21_forward_stable_300` | 拆分 EX forward 和 RAW hazard 判定逻辑 | 保持 V20 的 `cnt_test=197`，WNS 提升到 +0.031 ns |
 | V22a | `V22_fast_mul_300/mcu_fft_v22_fast_mul_300` | 通用 Q7 MUL 改为 radix-4，每拍处理 2 bit | `cnt_test=181`，300 MHz timing-clean |
 | V22b | `V22b_fast_mul2_300/mcu_fft_v22b_fast_mul2_300` | 通用 Q7 MUL 改为每拍处理 4 bit，2 拍完成 | 当前最快且最稳的 300 MHz 路线 |
+| V24 | `V24_load_forward_300/mcu_fft_v24_load_forward_300` | 基于 V22b 尝试 test_ROM LDR 前递 | 功能 PASS，但 `cnt_test` 不降且 WNS=-0.005 ns，不推荐 |
 
 ## 当前速度榜
 
@@ -38,6 +39,7 @@
 | 4 | V20_forward_300 | 官方样例 + 20 组随机 PASS | 197 | 300 MHz | 0.657 us | +0.004 ns | 989 | 675 | 0 |
 | 5 | V19_pipeline_300 | 官方样例 + 20 组随机 PASS | 204 | 300 MHz | 0.680 us | +0.121 ns | 860 | 675 | 0 |
 | 6 | V13_addr_decode_slim | 官方样例 + 20 组随机 PASS | 157 | 150 MHz | 1.047 us | +0.198 ns | 874 | 462 | 0 |
+| - | V24_load_forward_300 | 官方样例 + 20 组随机 PASS | 173 | 300 MHz | 0.577 us | -0.005 ns | 1106 | 681 | 0 |
 | - | V10_width_reduce | 官方样例 + 20 组随机 PASS | 157 | 150 MHz | 1.047 us | -0.664 ns | 904 | 448 | 0 |
 | - | V11_2stage_core | 官方样例 + 20 组随机 PASS | 157 | 200 MHz | 0.785 us | -1.319 ns | 902 | 481 | 0 |
 | - | V12_alu_pipe_300 | 官方样例 + 20 组随机 PASS | 161 | 300 MHz | 0.537 us | -4.099 ns | 1139 | 484 | 0 |
@@ -48,6 +50,7 @@
 - 要展示“稳健保底路线”：仍可保留 `V19_pipeline_300`，该路线已经完成实物上板验证。
 - V20 已被 V21/V22/V22b 超过，不再建议作为最终主线；V21 的价值是证明 forward 拆分能提升时序余量。
 - V23 纯汇编调度暂未单独落地：当前 MCU 在 `mul_busy` 期间全局停发，单靠调度无法隐藏乘法等待，真正有效的方向是 V22 系列的通用 MUL 周期优化。
+- V24 已验证为负优化：现有汇编没有紧邻 `LDR -> use` hazard，load forwarding 没有降低 `cnt_test`，同时让 WNS 变为负值，不建议合并。
 
 ## 常用命令
 
@@ -79,4 +82,5 @@ D:/vivado_work/routes_ultra/mcu_fft_v20_forward_300/mcu_fft_board.runs/impl_1/bo
 D:/vivado_work/routes_ultra/mcu_fft_v21_forward_stable_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v22_fast_mul_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v22b_fast_mul2_300/mcu_fft_board.runs/impl_1/board_top.bit
+D:/vivado_work/routes_ultra/mcu_fft_v24_load_forward_300/mcu_fft_board.runs/impl_1/board_top.bit  # timing fail, do not use as final
 ```
