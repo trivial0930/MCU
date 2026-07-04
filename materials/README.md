@@ -6,6 +6,7 @@
 
 | 文件 | 来源名称 | 用途 |
 | --- | --- | --- |
+| `source_docs/Lab1.pdf` | 数字电路实验 Lab1 课件 | 确认实验板 FPGA 实物封装：`XC7K160T-2FFG676-I`，Vivado part：`xc7k160tffg676-2`。 |
 | `source_docs/digital_circuit_mcu.pptx` | 数字电路实验 MCU 课件 | 理解 MCU 实验要求、接口约束和验收目标。 |
 | `source_docs/k7edaeval_pin_map.xlsx` | K7EDAEVAL_PIN 定义 | 核对 `CLK_50M`、`KEY1`、`LED1` 到 `LED8` 的板卡引脚。 |
 | `source_docs/mcu_fft_speed_v5_followup_plan.pdf` | MCU_FFT_speed_v5_followup_plan | 路线 A 后续优化的来源说明。 |
@@ -28,6 +29,7 @@
 - 各路线工程的 `mem/FFT_input.coe`、`mem/FFT_output.coe` 来自本目录官方样例。
 - 回归脚本会把 `FFT_input.coe` 转换为仿真可读的 `FFT_input.mem`。
 - 上板 ROM 默认读取路线工程内的 `mem/FFT_input.mem`，不要直接引用 `materials/` 下的文件。
+- Vivado 上板脚本默认 part 以 `source_docs/Lab1.pdf` 中的 K160/FFG676 说明为准；若实物丝印不同，必须重新核对 XDC。
 
 ## 核对建议
 

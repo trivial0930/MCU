@@ -1,5 +1,0 @@
-route,target_mhz,strategy,wns_ns,lut,ff,dsp,bram,status,notes
-speed_v6_official_sample,,synth_xc7k160tffg676-2,,886,552,4,0,ok,route=speed_v6_official_sample part=xc7k160tffg676-2 xdc=skipped
-speed_v7_q7_narrow_mul,,synth_xc7k160tffg676-2,,864,552,1,0,ok,route=speed_v7_q7_narrow_mul part=xc7k160tffg676-2 xdc=skipped
-speed_v7b_c91_shift_add,,synth_xc7k160tffg676-2,,986,552,0,0,ok,route=speed_v7b_c91_shift_add part=xc7k160tffg676-2 xdc=skipped
-speed_v7c_c91_shift_sub,,synth_xc7k160tffg676-2,,949,552,0,0,ok,route=speed_v7c_c91_shift_sub part=xc7k160tffg676-2 xdc=skipped

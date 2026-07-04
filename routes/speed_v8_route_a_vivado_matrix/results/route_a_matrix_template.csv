@@ -1,5 +1,0 @@
-route,target_mhz,strategy,wns_ns,lut,ff,dsp,bram,status,notes
-speed_v6_official_sample,95,Performance_Explore,,,,,,pending,
-speed_v7_q7_narrow_mul,95,Performance_Explore,,,,,,pending,
-speed_v7b_c91_shift_add,95,Performance_Explore,,,,,,pending,
-speed_v7c_c91_shift_sub,95,Performance_Explore,,,,,,pending,

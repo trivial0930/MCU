@@ -102,7 +102,6 @@ set targets {
 
 set strategies {
     Performance_Explore
-    Performance_ExplorePostRoutePhysOpt
 }
 
 foreach target $targets {

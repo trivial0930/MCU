@@ -19,18 +19,18 @@
 xc7k160tffg676-2
 ```
 
-推荐首板路线 `speed_v7_q7_narrow_mul` 已完成目标 part 下的综合、实现、DRC 和 bitstream。矩阵目录仍用于后续比较路线 A 的高频余量。所有新 Vivado 脚本默认使用 `flatten_hierarchy=none` 和 `max_dsp=0`，以满足老师对层级资源统计和 MCU 不使用 DSP 的要求。
+推荐首板路线 `speed_v7_q7_narrow_mul` 已完成目标 part 下的综合、实现、DRC 和 bitstream。矩阵目录用于比较路线 A 的高频余量。所有新 Vivado 脚本默认使用 `flatten_hierarchy=none` 和 `max_dsp=0`，以满足老师对层级资源统计和 MCU 不使用 DSP 的要求。
 
-早期综合冒烟结果汇总在 `results/synth_smoke_matrix.csv`：
+最新 post-route 榜单在 `results/leaderboard_summary.md`：
 
-| 路线 | LUT | FF | DSP | BRAM | 结论 |
-| --- | ---: | ---: | ---: | ---: | --- |
-| `speed_v6_official_sample` | 886 | 552 | 4 | 0 | 综合通过 |
-| `speed_v7_q7_narrow_mul` | 864 | 552 | 1 | 0 | 综合通过 |
-| `speed_v7b_c91_shift_add` | 986 | 552 | 0 | 0 | 综合通过 |
-| `speed_v7c_c91_shift_sub` | 949 | 552 | 0 | 0 | 综合通过 |
+| 路线 | 最高通过频率 | WNS(ns) | LUT | FF | DSP |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `speed_v7b_c91_shift_add` | 130 MHz | 0.178 | 889 | 549 | 0 |
+| `speed_v7c_c91_shift_sub` | 130 MHz | 0.120 | 855 | 549 | 0 |
+| `speed_v7_q7_narrow_mul` | 130 MHz | 0.027 | 986 | 549 | 0 |
+| `speed_v6_official_sample` | 未通过 95 MHz | -0.162 | 1704 | 549 | 0 |
 
-这些早期数据只用于综合级冒烟和资源趋势判断，已经不作为最终资源成绩。最新 K160 板级实现已强制 `max_dsp=0`，推荐路线 v7 窄乘法在无 ILA 实现中 `DSPs=0`。
+早期 synth-only 冒烟结果已经删除，避免把未加载板级 XDC 或旧 DSP 口径的数据误当正式成绩。
 
 ## 跑最终实现矩阵
 

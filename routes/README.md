@@ -27,7 +27,7 @@
 D:\vivado\2025.2\Vivado\bin\vivado.bat
 ```
 
-目标器件和 license 已可用。根据课件 `Lab1.pdf` 中的实物封装说明，当前上板 part 使用 `xc7k160tffg676-2`。
+目标器件和 license 已可用。根据 `materials/source_docs/Lab1.pdf` 中的实物封装说明，当前上板 part 使用 `xc7k160tffg676-2`。
 
 推荐首板路线 `speed_v7_q7_narrow_mul` 已完成：
 
@@ -67,6 +67,7 @@ py scripts\run_official_regression.py --random-cases 20 --seed 2026
 cd routes\speed_v8_route_a_vivado_matrix
 vivado -mode batch -source vivado\run_route_a_matrix.tcl
 py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_a_matrix.csv
+py scripts\make_leaderboards.py --in-csv results\route_a_matrix.csv
 ```
 
 矩阵默认比较：
@@ -91,3 +92,5 @@ source vivado/run_route_a_matrix.tcl
 3. 若频率相同，优先选择资源更低、结构更通用的路线。
 4. 最终提交成绩时不要把 ILA 资源算入比较结果。
 5. 如果常数 91 专用路线的时序优势不明显，优先保留 `speed_v7_q7_narrow_mul`，因为它的语义更通用、风险更低。
+
+最新榜单已经生成在 `speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`。早期 synth-only 冒烟 CSV 已移除，避免和正式 post-route、`max_dsp=0` 结果混淆。

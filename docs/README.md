@@ -16,4 +16,4 @@
 - 首板调试文件：`board_top_ila.bit` 与 `board_top_ila.ltx` 已生成
 - 老师强调项：`flatten_hierarchy=none`、`max_dsp=0` 已写入 Vivado 脚本，最新报告 `DSPs=0`
 
-注意：课件 `Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。上板前请以实物 FPGA 丝印为准再次确认封装；若不是 FFG676，需要重新核对 XDC。
+注意：课件 `materials/source_docs/Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。上板前请以实物 FPGA 丝印为准再次确认封装；若不是 FFG676，需要重新核对 XDC。

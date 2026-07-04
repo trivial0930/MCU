@@ -12,7 +12,7 @@
 
 本次 Windows 调试已找到 Vivado 2025.2（`D:\vivado\2025.2\Vivado\bin\vivado.bat`），Icarus Verilog 已安装到 `C:\iverilog\bin` 并加入用户 PATH，四条路线的本地 Verilog 回归均已 PASS。Vivado 目标器件和 license 也已补齐，`speed_v7_q7_narrow_mul` 已按课件确认的 `xc7k160tffg676-2` 完成综合、实现、DRC 和 bitstream。
 
-重要更新：课件 `Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。仓库脚本默认 part 已改为 `xc7k160tffg676-2`，综合默认 `flatten_hierarchy=none`、`max_dsp=0`，最新无 ILA 和带 ILA 报告中 `DSPs=0`。上板前仍建议核对板卡 FPGA 丝印；若实物确为其他 package，需要重新核对 XDC。
+重要更新：课件 `materials/source_docs/Lab1.pdf` 写明实验板 FPGA 为 `XC7K160T-2FFG676-I`，Vivado part 为 `xc7k160tffg676-2`。仓库脚本默认 part 已改为 `xc7k160tffg676-2`，综合默认 `flatten_hierarchy=none`、`max_dsp=0`，最新无 ILA 和带 ILA 报告中 `DSPs=0`。上板前仍建议核对板卡 FPGA 丝印；若实物确为其他 package，需要重新核对 XDC。
 
 ## 推荐阅读顺序
 
@@ -20,7 +20,7 @@
 2. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
 3. `docs/上板与交接指南.md`：最新上板状态、bit/ltx 位置、报告摘要、重新生成命令和 ILA 观察步骤。
 4. `WINDOWS_CODEX_HANDOFF.md`：在 Windows + Vivado + Codex 环境继续调试时的操作清单。
-5. `routes/README.md`：理解每条路线的目标、当前验证状态和后续选择标准。
+5. `routes/speed_v8_route_a_vivado_matrix/results/leaderboard_summary.md`：查看最新速度榜和效率榜。
 
 ## 快速功能回归
 
@@ -47,6 +47,7 @@ py routes\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 2026
 cd routes\speed_v8_route_a_vivado_matrix
 vivado -mode batch -source vivado\run_route_a_matrix.tcl
 py scripts\parse_vivado_reports.py --root build\vivado_matrix --out results\route_a_matrix.csv
+py scripts\make_leaderboards.py --in-csv results\route_a_matrix.csv
 ```
 
 比较时先看 `WNS >= 0` 的最高目标频率，再比较 `LUT`、`FF`、`DSP`、`BRAM`。最终成绩建议使用关闭 ILA 的实现结果。
