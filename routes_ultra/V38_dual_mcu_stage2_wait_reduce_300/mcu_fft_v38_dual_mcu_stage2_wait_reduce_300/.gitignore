@@ -1,0 +1,15 @@
+build/
+__pycache__/
+*.pyc
+*.vcd
+.Xil/
+dfx_runtime.txt
+vivado.log
+vivado.jou
+vivado_*.backup.log
+vivado_*.backup.jou
+results/random_*_input.mem
+results/random_*_verify.txt
+results/random_*_expected.txt
+results/random_*_got.txt
+results/sweep_stage2_*_got.txt

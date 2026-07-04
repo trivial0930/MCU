@@ -1,0 +1,7 @@
+stage3_wait=23
+scanned=55..80
+final_addr15_delay=0..16
+min_safe_stage2_wait=68
+best_final_addr15_delay=9
+cnt_test=85
+last_verify_cycle=138

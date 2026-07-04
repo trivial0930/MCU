@@ -8,7 +8,8 @@
 
 | 类别 | 推荐路线 | 状态 | 关键指标 |
 | --- | --- | --- | --- |
-| 当前最快合规路线 | `routes_ultra/V34_dual_mcu_schedule_300` | 官方样例 + 20 随机 PASS，已完成 300 MHz 实物上板验证 | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
+| 当前最快合规实现路线 | `routes_ultra/V38_dual_mcu_stage2_wait_reduce_300` | 官方样例 + 20 随机 PASS，300 MHz no-ILA bitstream 已生成，未上板 | `cnt_test=85`，理论时间约 `0.283 us`，WNS `+0.091 ns`，DSP 0 |
+| 当前最快已上板路线 | `routes_ultra/V34_dual_mcu_schedule_300` | 官方样例 + 20 随机 PASS，已完成 300 MHz 实物上板验证 | `cnt_test=88`，理论时间约 `0.293 us`，WNS `+0.056 ns`，DSP 0 |
 | Core1 参与中间计算证明路线 | `routes_ultra/V33_dual_mcu_compute_split_300` | PASS，300 MHz bitstream 已生成，未上板 | Core1 执行 Stage2 `(5,7,W2)`，`cnt_test=135`，WNS `+0.034 ns`，DSP 0 |
 | 已上板 Ultra 稳定备选 | `routes_ultra/V22b_fast_mul2_300` | 已完成实物验证 | `cnt_test=173`，300 MHz 理论时间约 `0.577 us` |
 | 32 位合规展示备选 | `routes_ultra/V36_arm32_compliance_300` | PASS，300 MHz bitstream 已生成，未上板 | 32-bit 指令字、32-bit RF/ALU/WB，`cnt_test=169`，WNS `+0.157 ns` |
@@ -25,13 +26,27 @@
 | `docs/` | 上板、交接、报告摘要和调试说明。 |
 | `routesA/` | 路线 A 的稳定候选、Vivado 矩阵和 130 MHz 上板资料。 |
 | `routesB/` | 路线 B 的 B1 到 B4 候选方案和中文说明。 |
-| `routes_ultra/` | 300 MHz 极限优化路线，当前重点为 V33/V34/V36/V22b。 |
+| `routes_ultra/` | 300 MHz 极限优化路线，当前重点为 V34/V38/V36/V22b。 |
 | `RESULTS.md` | 当前速度榜、效率榜、推荐路线和风险说明。 |
 | `WINDOWS_CODEX_HANDOFF.md` | Windows + Vivado + Codex 环境继续调试清单。 |
 
 ## 常用复现命令
 
-最快 V34 回归：
+最快 V38 回归：
+
+```powershell
+cd routes_ultra\V38_dual_mcu_stage2_wait_reduce_300\mcu_fft_v38_dual_mcu_stage2_wait_reduce_300
+py scripts\run_official_regression.py --random-cases 20 --seed 2026
+```
+
+V38 no-ILA bitstream：
+
+```powershell
+cd routes_ultra\V38_dual_mcu_stage2_wait_reduce_300\mcu_fft_v38_dual_mcu_stage2_wait_reduce_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v38_stable_no_ila.tcl
+```
+
+最快已上板 V34 回归：
 
 ```powershell
 cd routes_ultra\V34_dual_mcu_schedule_300\mcu_fft_v34_dual_mcu_schedule_300
@@ -60,7 +75,8 @@ py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 202
 
 ## 上板建议
 
-- 想展示“目前最快成绩”：优先使用已上板验证的 `routes_ultra/V34_dual_mcu_schedule_300`。
+- 想展示“目前最快实现成绩”：使用 `routes_ultra/V38_dual_mcu_stage2_wait_reduce_300`，但需要先补上板验证。
+- 想展示“已上板最快成绩”：使用已上板验证的 `routes_ultra/V34_dual_mcu_schedule_300`。
 - 想展示“已经上过板、风险最低”：使用 `routes_ultra/V22b_fast_mul2_300`。
 - 想回应老师“32 位机器码和架构位宽”检查：使用 `routes_ultra/V36_arm32_compliance_300`，或说明 V33/V34 也已恢复 32-bit RF/ALU/WB 数据通路。
 - 不建议作为最终展示路线：V24、V27a、V27b，因为 300 MHz timing 未通过或风险明显。
@@ -78,6 +94,7 @@ py routesA\scripts\run_route_a_local_regressions.py --random-cases 20 --seed 202
 - `RESULTS.md`
 - `routes_ultra/README.md`
 - `routes_ultra/results/ultra_summary.csv`
+- `routes_ultra/V38_dual_mcu_stage2_wait_reduce_300/mcu_fft_v38_dual_mcu_stage2_wait_reduce_300/ROUTE_NOTES.md`
 - `routes_ultra/V34_dual_mcu_schedule_300/mcu_fft_v34_dual_mcu_schedule_300/ROUTE_NOTES.md`
 - `routes_ultra/V33_dual_mcu_compute_split_300/mcu_fft_v33_dual_mcu_compute_split_300/results/core_timeline.md`
 
