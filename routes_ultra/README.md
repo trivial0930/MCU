@@ -4,64 +4,55 @@
 
 ## 最新结论
 
-- 当前最快 no-ILA 合规路线：`V54_octa_output_owner_300`，`cnt_test=59`，300 MHz 理论时间 `0.197 us`，WNS `+0.095 ns`，DSP 0，已上板验证 PASS。
-- 当前双核已上板备份路线：`V45_stage2_wait_reduce_300`，`cnt_test=85`，300 MHz no-ILA timing-clean，实物验证 PASS。
-- 四核路线：`V53_quad_output_owner_300`，`cnt_test=72`，已被 V54 超过。
-- 稳定回退路线：`V42_v34_board_verified_300`，`cnt_test=88`，已固化 V34 上板证据。
-- 32-bit 合规展示路线：`V36_arm32_compliance_300`。
+- 当前最快 no-ILA 候选：`V59_octa_fast_stop_300`，`cnt_test=49`，300 MHz 理论时间 `0.163 us`，WNS `+0.095 ns`，DSP 0，bitstream 已生成。
+- 当前最快已上板路线：`V54_octa_output_owner_300`，`cnt_test=59`，300 MHz 理论时间 `0.197 us`，已完成板上 ILA 抓取和输出比对。
+- 当前双核已上板备份：`V45_stage2_wait_reduce_300`，`cnt_test=85`。
 
 ## 速度榜
 
 | 排名 | 路线 | 状态 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | V54_octa_output_owner_300 | PASS，已上板 | 59 | 300 MHz | 0.197 us | +0.095 ns | 8733 | 6476 | 0 |
-| 2 | V53_quad_output_owner_300 | PASS，待上板 | 72 | 300 MHz | 0.240 us | +0.089 ns | 5002 | 3718 | 0 |
-| 3 | V45_stage2_wait_reduce_300 | PASS，已上板 | 85 | 300 MHz | 0.283 us | +0.091 ns | 2228 | 1619 | 0 |
-| 3 | V46_stage1_split_dual_mcu_300 | PASS，无速度收益 | 85 | 300 MHz | 0.283 us | +0.029 ns | 2231 | 1629 | 0 |
-| 5 | V42_v34_board_verified_300 | PASS，已上板证据固化 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2228 | 1615 | 0 |
-| 6 | V33_dual_mcu_compute_split_300 | PASS，未上板 | 135 | 300 MHz | 0.450 us | +0.034 ns | 2228 | 1616 | 0 |
-| 7 | V30_dual_mcu_real_300 | PASS，未上板 | 149 | 300 MHz | 0.497 us | +0.021 ns | 2076 | 1318 | 0 |
-| 8 | V31_single_core_final_tune_300 | PASS，未上板 | 169 | 300 MHz | 0.563 us | +0.181 ns | 1053 | 675 | 0 |
-| 8 | V36_arm32_compliance_300 | PASS，合规展示 | 169 | 300 MHz | 0.563 us | +0.157 ns | 1213 | 822 | 0 |
-| 10 | V22b_fast_mul2_300 | PASS，已上板 | 173 | 300 MHz | 0.577 us | +0.122 ns | 1053 | 675 | 0 |
+| 1 | V59_octa_fast_stop_300 | PASS，bitstream 已生成，待上板 | 49 | 300 MHz | 0.163 us | +0.095 ns | 8677 | 6451 | 0 |
+| 2 | V58_octa_pairfold_balanced_300 | PASS，功能候选 | 50 | 300 MHz | 0.167 us | - | - | - | 0 |
+| 3 | V57_octa_memory_bank_pairfold_300 | PASS，功能候选 | 52 | 300 MHz | 0.173 us | - | - | - | 0 |
+| 4 | V56_octa_bucketed_output_owner_300 | PASS，功能候选 | 54 | 300 MHz | 0.180 us | - | - | - | 0 |
+| 5 | V54_octa_output_owner_300 | PASS，已上板 | 59 | 300 MHz | 0.197 us | +0.095 ns | 8733 | 6476 | 0 |
+| 6 | V53_quad_output_owner_300 | PASS，待上板 | 72 | 300 MHz | 0.240 us | +0.089 ns | 5002 | 3718 | 0 |
+| 7 | V45_stage2_wait_reduce_300 | PASS，已上板 | 85 | 300 MHz | 0.283 us | +0.091 ns | 2228 | 1619 | 0 |
+| 8 | V42_v34_board_verified_300 | PASS，已上板证据固化 | 88 | 300 MHz | 0.293 us | +0.056 ns | 2228 | 1615 | 0 |
 
-完整 CSV 见 `results/ultra_summary.csv`。
+完整 CSV 见 `results/ultra_summary.csv`。本轮 V56-V59 的局部迭代榜见 `results/v56_v59_iteration_summary.csv`。
 
-## 路线说明
+## 本轮路线说明
 
 | 路线 | 工程目录 | 主要改动 | 当前结论 |
 | --- | --- | --- | --- |
-| V22b | `V22b_fast_mul2_300/mcu_fft_v22b_fast_mul2_300` | 每拍处理 4 bit multiplier | 已上板低风险保底 |
-| V30 | `V30_dual_mcu_real_300/mcu_fft_v30_dual_mcu_real_300` | Core1 写后半 verify 输出 | `cnt_test=149`，旧双核路线 |
-| V31 | `V31_single_core_final_tune_300/mcu_fft_v31_single_core_final_tune_300` | 单核 W2 蝶形直接改写 | `cnt_test=169`，最快单核 |
-| V33 | `V33_dual_mcu_compute_split_300/mcu_fft_v33_dual_mcu_compute_split_300` | Core1 计算 Stage2 `(5,7,W2)` | `cnt_test=135` |
-| V42 | `V42_v34_board_verified_300/mcu_fft_v42_v34_board_verified_300` | 固化 V34 上板证据 | `cnt_test=88`，稳定回退 |
-| V45 | `V45_stage2_wait_reduce_300/mcu_fft_v45_stage2_wait_reduce_300` | Stage2 wait reduce + final addr15 delay | `cnt_test=85`，双核已上板备份 |
-| V46 | `V46_stage1_split_dual_mcu_300/mcu_fft_v46_stage1_split_dual_mcu_300` | Core1 迁移 Stage1 下半支路 | `cnt_test=85`，负结果保留 |
-| V53 | `V53_quad_output_owner_300/mcu_fft_v53_quad_output_owner_300` | 四核输出归属、verify RAM bank 化 | `cnt_test=72` |
-| V54 | `V54_octa_output_owner_300/mcu_fft_v54_octa_output_owner_300` | 八核输出归属、ROM 复制、verify RAM 8-bank、停表路径加固 | `cnt_test=59`，当前最快已上板路线 |
+| V56 | `V56_octa_bucketed_output_owner_300/mcu_fft_v56_octa_bucketed_output_owner_300` | 奇数输出核把 `±91` 项按 real/imag bucket 聚合，只保留两次普通 `MUL` | `cnt_test=54` |
+| V57 | `V57_octa_memory_bank_pairfold_300/mcu_fft_v57_octa_memory_bank_pairfold_300` | 对 `±91` 的两组输入 pair 做 fold，减少 add/sub | `cnt_test=52` |
+| V58 | `V58_octa_pairfold_balanced_300/mcu_fft_v58_octa_pairfold_balanced_300` | 配平 `X3/X5`，去掉额外取负路径 | `cnt_test=50` |
+| V59 | `V59_octa_fast_stop_300/mcu_fft_v59_octa_fast_stop_300` | 在 V58 基础上使用同拍 owner-complete 停表 | `cnt_test=49`，300 MHz timing clean |
 
-## V54 常用命令
+## V59 常用命令
 
 功能回归：
 
 ```powershell
-cd routes_ultra\V54_octa_output_owner_300\mcu_fft_v54_octa_output_owner_300
+cd routes_ultra\V59_octa_fast_stop_300\mcu_fft_v59_octa_fast_stop_300
 py scripts\run_official_regression.py --random-cases 20 --seed 2026
 ```
 
 300 MHz no-ILA Vivado：
 
 ```powershell
-cd routes_ultra\V54_octa_output_owner_300\mcu_fft_v54_octa_output_owner_300
-D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v54_no_ila.tcl
+cd routes_ultra\V59_octa_fast_stop_300\mcu_fft_v59_octa_fast_stop_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v59_no_ila.tcl -tclargs 300
 ```
 
 ## Bitstream 位置
 
 ```text
+D:/vivado_work/routes_ultra/mcu_fft_v59_octa_fast_stop_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v54_octa_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v53_quad_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v45_stage2_wait_reduce_300_stable/mcu_fft_board.runs/impl_1/board_top.bit
-D:/vivado_work/routes_ultra/mcu_fft_v42_v34_board_verified_300/mcu_fft_board.runs/impl_1/board_top.bit
 ```

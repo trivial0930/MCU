@@ -1,0 +1,3 @@
+cnt_test=50
+core_count=8
+conclusion=OCTA_FULL_MCU_COMPLIANCE_AUDIT_PASS

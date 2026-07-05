@@ -1,0 +1,5 @@
+route,source,main_change,cnt_test,total_time_us_300mhz,official_plus_20_random,instruction_total,vivado_300mhz,wns_ns,tns_ns,whs_ns,ths_ns,lut,ff,dsp,bram,status
+V56_octa_bucketed_output_owner_300,V54,"odd cores bucket q91 real/imag terms; two ordinary MUL per odd core",54,0.180,PASS,356,not_run,,,,,,,0,0,functional_superseded
+V57_octa_memory_bank_pairfold_300,V56,"pair-fold q91 input pairs to reduce add/sub in odd cores",52,0.173,PASS,346,not_run,,,,,,,0,0,functional_superseded
+V58_octa_pairfold_balanced_300,V57,"balance X3/X5 sign path; all odd cores 46 instructions",50,0.167,PASS,340,not_run,,,,,,,0,0,functional_baseline_for_v59
+V59_octa_fast_stop_300,V58,"same-cycle owner-complete stop pulse; compute program unchanged from V58",49,0.163,PASS,340,bitstream_ok,0.095,0.000,0.074,0.000,8677,6451,0,0,fastest_no_ila_candidate

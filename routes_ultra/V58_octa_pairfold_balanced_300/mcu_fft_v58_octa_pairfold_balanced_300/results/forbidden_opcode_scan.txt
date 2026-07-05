@@ -1,0 +1,1 @@
+PASS: no forbidden BFY/FFT_STAGE/BUTTERFLY/CMUL/CADD/CSUB opcodes found
