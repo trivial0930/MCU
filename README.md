@@ -8,6 +8,9 @@
 
 | 项目 | 当前结论 |
 | --- | --- |
+| 当前最快已实现 bitstream 路线 | `routes_ultra/V60_component_owner_300/mcu_fft_v60_component_owner_300` |
+| V60 性能 | `cnt_test=38`，300 MHz 理论时间约 `0.127 us` |
+| V60 no-ILA Vivado | WNS/TNS = `+0.014 ns / 0.000 ns`，bitstream 已生成，尚未上板 |
 | 当前最快已上板路线 | `routes_ultra/V59_octa_fast_stop_300/mcu_fft_v59_octa_fast_stop_300` |
 | V59 性能 | `cnt_test=49`，300 MHz 理论时间约 `0.163 us` |
 | V59 no-ILA Vivado | WNS/TNS = `+0.095 ns / 0.000 ns`，bitstream 已生成 |
@@ -17,7 +20,7 @@
 | 稳定回退路线 | `V54_octa_output_owner_300`，`cnt_test=59`，已上板验证 |
 | 低资源双核备份 | `V45_stage2_wait_reduce_300`，`cnt_test=85`，已上板验证 |
 
-V59 是当前主推展示路线。它的速度提升来自八个完整 MCU core 的输出归属拆分、普通指令调度和同拍 owner-complete 停表口径，并没有新增 FFT engine、butterfly unit、DMA、协处理器或专用 FFT 指令。
+V60 是当前最快实现候选；V59 是当前主推上板展示路线。V60 的速度提升来自 16 个完整 MCU core 的 real/imag component-owner 拆分；V59 的速度提升来自八个完整 MCU core 的输出归属拆分、普通指令调度和同拍 owner-complete 停表口径。两者都没有新增 FFT engine、butterfly unit、DMA、协处理器或专用 FFT 指令。
 
 ## 合规边界
 
@@ -38,11 +41,27 @@ V59 是当前主推展示路线。它的速度提升来自八个完整 MCU core 
 | `docs/` | 上板、交接、报告摘要和调试说明 |
 | `routesA/` | 路线 A 稳定候选、Vivado 矩阵和 130 MHz 上板资料 |
 | `routesB/` | 路线 B 的 B1 到 B4 候选方案和中文说明 |
-| `routes_ultra/` | 300 MHz 极限优化路线，当前主线为 V59 |
+| `routes_ultra/` | 300 MHz 极限优化路线，当前最快实现为 V60，当前最快上板路线为 V59 |
 | `RESULTS.md` | 当前速度榜、效率榜、推荐路线和风险说明 |
 | `WINDOWS_CODEX_HANDOFF.md` | Windows + Vivado + Codex 环境继续调试清单 |
 
-## V59 常用复现命令
+## V60 常用复现命令
+
+功能回归：
+
+```powershell
+cd routes_ultra\V60_component_owner_300\mcu_fft_v60_component_owner_300
+py scripts\run_official_regression.py --random-cases 20 --seed 2026
+```
+
+300 MHz no-ILA 实现：
+
+```powershell
+cd routes_ultra\V60_component_owner_300\mcu_fft_v60_component_owner_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v60_no_ila.tcl -tclargs 300
+```
+
+## V59 上板复现命令
 
 功能回归：
 
@@ -75,6 +94,8 @@ D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\prog
 - `routes_ultra/README.md`
 - `routes_ultra/results/ultra_summary.csv`
 - `routes_ultra/results/v56_v59_iteration_summary.csv`
+- `routes_ultra/V60_component_owner_300/mcu_fft_v60_component_owner_300/ROUTE_NOTES.md`
+- `routes_ultra/V60_component_owner_300/mcu_fft_v60_component_owner_300/COMPLIANCE_REPORT.md`
 - `routes_ultra/V59_octa_fast_stop_300/mcu_fft_v59_octa_fast_stop_300/ROUTE_NOTES.md`
 - `routes_ultra/V59_octa_fast_stop_300/mcu_fft_v59_octa_fast_stop_300/board_validation/FAST_STOP_PROOF.md`
 - `routes_ultra/V59_octa_fast_stop_300/mcu_fft_v59_octa_fast_stop_300/OCTA_MCU_COMPLIANCE_REPORT.md`

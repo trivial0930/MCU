@@ -1,0 +1,2 @@
+route,source,core_count,target_mhz,cnt_test,theoretical_time_us,official_random,wns_ns,tns_ns,whs_ns,ths_ns,lut,ff,dsp,bram,drc,bitstream,board_status
+V60_component_owner_300,V59_octa_fast_stop_300,16,300,38,0.127,PASS,+0.014,0.000,+0.064,0.000,16970,13203,0,0,0 checks found,D:/vivado_work/routes_ultra/mcu_fft_v60_component_owner_300/mcu_fft_board.runs/impl_1/board_top.bit,not_board_tested
