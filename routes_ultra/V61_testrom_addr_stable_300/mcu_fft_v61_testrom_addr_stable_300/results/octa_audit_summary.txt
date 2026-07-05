@@ -1,0 +1,3 @@
+cnt_test=38
+core_count=16
+conclusion=COMPONENT_OWNER_FULL_MCU_COMPLIANCE_AUDIT_PASS

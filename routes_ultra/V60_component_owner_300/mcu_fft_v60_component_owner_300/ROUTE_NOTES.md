@@ -4,12 +4,10 @@
 
 本轮在 V60 到 V65 的候选中，优先选择 V60。原因是 V60 的 real/imag component-owner 拆分不需要跨核合并 partial sum，合规解释最直接，速度收益也最大。
 
-优先级判断如下：
-
 | 路线 | 判断 |
 | --- | --- |
-| V60 16 核 component-owner | 优先实现，已完成，成为当前最快 bitstream 路线 |
-| V65 多核 cluster / routing | 暂不单独开线；V60 已 300 MHz timing clean，后续若上板余量不足再做布线稳定版 |
+| V60 16 核 component-owner | 已完成，已上板，成为当前最快路线 |
+| V65 多核 cluster / routing | 暂不单独开线；V60 已 300 MHz timing clean |
 | V61 12 核 helper | helper 需要 shared-RAM 同步，预计不如 V60 直接 |
 | V62 16 核 partial-sum | 需要 partial-sum 合并，容易引入等待和合规解释成本 |
 | V63 16 核 verify/output helper | verify helper 会增加交接，不如 owner core 直接 `STR` 清晰 |
@@ -24,7 +22,7 @@ V60 从 `V59_octa_fast_stop_300` 复制而来，主要变化如下：
 - 每个 core 有独立指令 ROM：`mem/instr_core0.mem` 到 `mem/instr_core15.mem`。
 - 新增 `scripts/gen_fft8_component_asm.py`，根据 `mem/FFT_input.coe` 生成 16 个 component-owner 汇编程序。
 - `tb/tb_mcu_fft8.v` 扩展为 16 core trace，记录每个 core 的输入读取和 verify 写回。
-- `verify_RAM_component16` 用于板上 debug 数据保持，计算仍完全由各 MCU core 的普通指令完成。
+- `verify_RAM_component16` 仅用于板上 debug 数据保持；FFT 计算仍完全由各 MCU core 的普通指令完成。
 
 ## 3. Core 分工
 
@@ -49,7 +47,7 @@ V60 从 `V59_octa_fast_stop_300` 复制而来，主要变化如下：
 
 ## 4. 程序优化
 
-每个 core 只读取自己计算该分量需要的输入对，并通过普通 `ADD/SUB/MUL` 累加。程序生成器还去掉了显式的 `MOVI R12,#0` 和 `MOVI R14,#0`，因为寄存器堆在 reset 时已经清零。这一改动没有改变 `cnt_test`，但把总指令数从 592 降到 560。
+每个 core 只读取自己计算该分量需要的输入对，并通过普通 `ADD/SUB/MUL` 累加。程序生成器还去掉了显式的 `MOVI R12,#0` 和 `MOVI R14,#0`，因为寄存器堆在 reset 时已经清零。这个改动没有改变 `cnt_test`，但把总指令数从 592 降到 560。
 
 最终指令统计：
 
@@ -61,19 +59,22 @@ V60 从 `V59_octa_fast_stop_300` 复制而来，主要变化如下：
 | 禁用 opcode | 0 |
 | 禁用模块 | 0 |
 
-## 5. verify 和停表口径
+## 5. verify 和停表路径
 
 V60 的 `cnt_test` 停在 16 个 verify 地址全部完成之后：
 
-- 偶数地址在仿真 trace 的 cycle 33 写入。
-- 奇数地址在仿真 trace 的 cycle 41 写入。
+- 偶数地址在 ILA sample 23 写入，写使能掩码 `0x5555`。
+- 奇数地址在 ILA sample 31 写入，写使能掩码 `0xaaaa`。
 - addr15 与最后一批写入同周期出现。
-- `verify_done_mask=ffff`。
-- `cnt_test=38`。
+- `fast_stop_pulse_dbg` 在 sample 32 触发。
+- `verify_done_mask_q=ffff`，`verify_done_mask_next=ffff`。
+- `done` 在 sample 33 变为 1，稳定 `cnt_test=38`。
 
-trace 文件：`results/verify_writer_trace.csv`。
+证明文件见 `board_validation/v60_fast_stop_proof.csv` 和 `board_validation/v60_hw_compare_status.txt`。
 
 ## 6. Vivado 结果
+
+正式 no-ILA 版本：
 
 | 项目 | 结果 |
 | --- | ---: |
@@ -88,6 +89,21 @@ trace 文件：`results/verify_writer_trace.csv`。
 | BRAM | 0 |
 | DRC | 0 checks found |
 
+ILA 证明版：
+
+| 项目 | 结果 |
+| --- | ---: |
+| 频率 | 300 MHz |
+| WNS | +0.007 ns |
+| TNS | 0.000 ns |
+| WHS | +0.013 ns |
+| THS | 0.000 ns |
+| LUT | 19126 |
+| FF | 17060 |
+| DSP | 0 |
+| BRAM | 12 |
+| DRC | 只有 dbg_hub/ILA 相关 warning，无 error |
+
 bitstream：
 
 ```text
@@ -96,5 +112,4 @@ D:/vivado_work/routes_ultra/mcu_fft_v60_component_owner_300/mcu_fft_board.runs/i
 
 ## 7. 当前建议
 
-V60 建议作为新的“最快实现候选”。由于它尚未上板，课堂展示主线仍建议保留 V59；如果后续要追求最高速度展示，应先给 V60 做 no-ILA 上板，再补 ILA 证明，重点证明 16 个 verify 地址均已写入后才停止计数。
-
+V60 建议作为新的最快主线。验收展示时使用无 ILA bitstream 进行正式测速，必要时切换到 ILA 证明版展示 fast-stop 未提前：16 个 verify 地址已经全部写入，且 `verify_done_mask_q/next` 均为 `0xffff` 后才停表。

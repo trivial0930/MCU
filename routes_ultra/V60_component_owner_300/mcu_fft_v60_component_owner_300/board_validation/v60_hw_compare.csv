@@ -1,0 +1,17 @@
+addr,captured_hex,expected_hex,cnt_test_at_write,sample,writer_core,we_mask,done,status
+0,f280,f280,28,23,0,0x5555,0,PASS
+1,e80a,e80a,36,31,1,0xaaaa,0,PASS
+2,1a80,1a80,28,23,2,0x5555,0,PASS
+3,fea2,fea2,36,31,3,0xaaaa,0,PASS
+4,e080,e080,28,23,4,0x5555,0,PASS
+5,16f6,16f6,36,31,5,0xaaaa,0,PASS
+6,e680,e680,28,23,6,0x5555,0,PASS
+7,fa5e,fa5e,36,31,7,0xaaaa,0,PASS
+8,e900,e900,28,23,8,0x5555,0,PASS
+9,317c,317c,36,31,9,0xaaaa,0,PASS
+10,2c00,2c00,28,23,10,0x5555,0,PASS
+11,1f8c,1f8c,36,31,11,0xaaaa,0,PASS
+12,0b00,0b00,28,23,12,0x5555,0,PASS
+13,0c84,0c84,36,31,13,0xaaaa,0,PASS
+14,1600,1600,28,23,14,0x5555,0,PASS
+15,d874,d874,36,31,15,0xaaaa,0,PASS
