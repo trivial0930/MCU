@@ -63,6 +63,11 @@ module board_top #(
     wire [19:0] cnt_test;
     wire done;
     wire [15:0] verify_debug_data;
+`ifdef ENABLE_ILA
+    wire [7:0] owner_seen_dbg;
+    wire [7:0] owner_done_dbg;
+    wire fast_stop_pulse_dbg;
+`endif
 
     clk_ultra_pll #(
         .PLL_CLKFBOUT_MULT(PLL_CLKFBOUT_MULT),
@@ -152,6 +157,12 @@ module board_top #(
         .verify_done_mask(verify_done_mask),
         .cnt_test(cnt_test),
         .done(done)
+`ifdef ENABLE_ILA
+        ,
+        .owner_seen_dbg(owner_seen_dbg),
+        .owner_done_dbg(owner_done_dbg),
+        .fast_stop_pulse_dbg(fast_stop_pulse_dbg)
+`endif
     );
 
     verify_RAM_oct u_verify_RAM_oct (
@@ -189,7 +200,11 @@ module board_top #(
         .verify_addr_all({
             verify_addr7, verify_addr6, verify_addr5, verify_addr4,
             verify_addr3, verify_addr2, verify_addr1, verify_addr0
-        })
+        }),
+        .verify_done_mask(verify_done_mask),
+        .owner_seen_dbg(owner_seen_dbg),
+        .owner_done_dbg(owner_done_dbg),
+        .fast_stop_pulse_dbg(fast_stop_pulse_dbg)
 `endif
     );
 

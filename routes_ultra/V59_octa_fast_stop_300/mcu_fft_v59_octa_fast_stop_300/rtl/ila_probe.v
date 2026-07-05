@@ -10,7 +10,11 @@ module ila_probe(
     ,
     input wire [127:0] verify_vector_out_all,
     input wire [7:0] verify_we_all,
-    input wire [39:0] verify_addr_all
+    input wire [39:0] verify_addr_all,
+    input wire [15:0] verify_done_mask,
+    input wire [7:0] owner_seen_dbg,
+    input wire [7:0] owner_done_dbg,
+    input wire fast_stop_pulse_dbg
 `endif
 );
 `ifdef ENABLE_ILA
@@ -21,7 +25,11 @@ module ila_probe(
         .probe2(verify_we_all),
         .probe3(verify_addr_all),
         .probe4(cnt_test),
-        .probe5(done)
+        .probe5(done),
+        .probe6(verify_done_mask),
+        .probe7(owner_seen_dbg),
+        .probe8(owner_done_dbg),
+        .probe9(fast_stop_pulse_dbg)
     );
 `endif
 endmodule

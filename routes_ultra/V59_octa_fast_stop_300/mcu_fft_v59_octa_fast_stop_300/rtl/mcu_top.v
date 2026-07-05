@@ -47,6 +47,12 @@ module mcu_top(
     output wire [15:0] verify_done_mask,
     output wire [19:0] cnt_test,
     output wire done
+`ifdef ENABLE_ILA
+    ,
+    output wire [7:0] owner_seen_dbg,
+    output wire [7:0] owner_done_dbg,
+    output wire fast_stop_pulse_dbg
+`endif
 );
     wire [15:0] instr_addr [0:7];
     wire [31:0] instr [0:7];
@@ -213,6 +219,11 @@ module mcu_top(
     end
 
     assign verify_done_mask = done_mask_q;
+`ifdef ENABLE_ILA
+    assign owner_seen_dbg = owner_seen_q;
+    assign owner_done_dbg = owner_done_q;
+    assign fast_stop_pulse_dbg = verify_complete_pulse_raw;
+`endif
     assign verify_we = |verify_we_i;
     assign verify_addr =
         verify_we_i[7] ? verify_addr_i[7] :

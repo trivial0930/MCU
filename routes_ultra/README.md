@@ -4,15 +4,16 @@
 
 ## 最新结论
 
-- 当前最快 no-ILA 候选：`V59_octa_fast_stop_300`，`cnt_test=49`，300 MHz 理论时间 `0.163 us`，WNS `+0.095 ns`，DSP 0，bitstream 已生成。
-- 当前最快已上板路线：`V54_octa_output_owner_300`，`cnt_test=59`，300 MHz 理论时间 `0.197 us`，已完成板上 ILA 抓取和输出比对。
-- 当前双核已上板备份：`V45_stage2_wait_reduce_300`，`cnt_test=85`。
+- 当前最快已上板路线：`V59_octa_fast_stop_300`，`cnt_test=49`，300 MHz 理论时间 `0.163 us`，no-ILA WNS `+0.095 ns`，DSP 0。
+- V59 已完成 ILA fast-stop 证明：首次 `fast_stop_pulse_dbg` 出现时，16 个 verify 地址已经全部可信写入，输出比对 PASS。
+- 当前稳定回退路线：`V54_octa_output_owner_300`，`cnt_test=59`，300 MHz 理论时间 `0.197 us`，已完成板上 ILA 捕获和输出比对。
+- 当前双核低资源备份：`V45_stage2_wait_reduce_300`，`cnt_test=85`，已上板。
 
 ## 速度榜
 
 | 排名 | 路线 | 状态 | `cnt_test` | MCU 频率 | 理论时间 | WNS | LUT | FF | DSP |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | V59_octa_fast_stop_300 | PASS，bitstream 已生成，待上板 | 49 | 300 MHz | 0.163 us | +0.095 ns | 8677 | 6451 | 0 |
+| 1 | V59_octa_fast_stop_300 | PASS，已上板，fast-stop 证明通过 | 49 | 300 MHz | 0.163 us | +0.095 ns | 8677 | 6451 | 0 |
 | 2 | V58_octa_pairfold_balanced_300 | PASS，功能候选 | 50 | 300 MHz | 0.167 us | - | - | - | 0 |
 | 3 | V57_octa_memory_bank_pairfold_300 | PASS，功能候选 | 52 | 300 MHz | 0.173 us | - | - | - | 0 |
 | 4 | V56_octa_bucketed_output_owner_300 | PASS，功能候选 | 54 | 300 MHz | 0.180 us | - | - | - | 0 |
@@ -30,7 +31,7 @@
 | V56 | `V56_octa_bucketed_output_owner_300/mcu_fft_v56_octa_bucketed_output_owner_300` | 奇数输出核把 `±91` 项按 real/imag bucket 聚合，只保留两次普通 `MUL` | `cnt_test=54` |
 | V57 | `V57_octa_memory_bank_pairfold_300/mcu_fft_v57_octa_memory_bank_pairfold_300` | 对 `±91` 的两组输入 pair 做 fold，减少 add/sub | `cnt_test=52` |
 | V58 | `V58_octa_pairfold_balanced_300/mcu_fft_v58_octa_pairfold_balanced_300` | 配平 `X3/X5`，去掉额外取负路径 | `cnt_test=50` |
-| V59 | `V59_octa_fast_stop_300/mcu_fft_v59_octa_fast_stop_300` | 在 V58 基础上使用同拍 owner-complete 停表 | `cnt_test=49`，300 MHz timing clean |
+| V59 | `V59_octa_fast_stop_300/mcu_fft_v59_octa_fast_stop_300` | 在 V58 基础上使用同拍 owner-complete 停表，并用 ILA 证明不是提前停表 | `cnt_test=49`，300 MHz timing clean，已上板 |
 
 ## V59 常用命令
 
@@ -48,10 +49,22 @@ cd routes_ultra\V59_octa_fast_stop_300\mcu_fft_v59_octa_fast_stop_300
 D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source vivado\run_v59_no_ila.tcl -tclargs 300
 ```
 
+V59 上板和 ILA fast-stop 证明：
+
+```powershell
+cd routes_ultra\V59_octa_fast_stop_300\mcu_fft_v59_octa_fast_stop_300
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\program_v59_no_ila.tcl
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\build_v59_ila_bitstream.tcl
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\capture_v59_ila_fast_stop.tcl
+py board_validation\compare_v59_ila_capture.py
+D:\vivado\2025.2\Vivado\bin\vivado.bat -mode batch -source board_validation\program_v59_no_ila.tcl
+```
+
 ## Bitstream 位置
 
 ```text
 D:/vivado_work/routes_ultra/mcu_fft_v59_octa_fast_stop_300/mcu_fft_board.runs/impl_1/board_top.bit
+D:/vivado_work/routes_ultra/mcu_fft_v59_octa_fast_stop_300_ila/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v54_octa_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v53_quad_output_owner_300/mcu_fft_board.runs/impl_1/board_top.bit
 D:/vivado_work/routes_ultra/mcu_fft_v45_stage2_wait_reduce_300_stable/mcu_fft_board.runs/impl_1/board_top.bit
