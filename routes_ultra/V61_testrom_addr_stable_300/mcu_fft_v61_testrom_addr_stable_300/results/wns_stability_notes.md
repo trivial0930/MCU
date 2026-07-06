@@ -73,5 +73,4 @@ V61 的最差 setup path 已经转移到普通 MCU 乘法累加路径：
 | FF | 13203 | 13140 |
 | DSP | 0 | 0 |
 
-结论：V61 保持 V60 的最快速度，同时显著增加 300 MHz 时序余量。下一步如果要把它作为最终展示版本，需要补做 no-ILA 上板下载和 ILA fast-stop 证明。
-
+结论：V61 保持 V60 的最快速度，同时显著增加 300 MHz no-ILA 时序余量。V61 已补做 no-ILA 上板下载和 ILA fast-stop 证明，最后也已恢复 no-ILA bitstream，因此可以作为新的最快主展示版本。

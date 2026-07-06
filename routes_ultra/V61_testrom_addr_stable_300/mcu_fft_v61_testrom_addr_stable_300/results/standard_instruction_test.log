@@ -1,0 +1,3 @@
+﻿Loading instruction memory: mem\instr_standard.mem
+STANDARD_INSTRUCTION_TEST PASS cycles=31
+tb\tb_standard_instruction.v:117: $finish called at 375 (1s)

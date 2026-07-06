@@ -1,9 +1,11 @@
 external/
 output/
 build/
+tmp/
 __pycache__/
 .DS_Store
 *.pyc
+*.bak_*
 *.vcd
 .Xil/
 dfx_runtime.txt

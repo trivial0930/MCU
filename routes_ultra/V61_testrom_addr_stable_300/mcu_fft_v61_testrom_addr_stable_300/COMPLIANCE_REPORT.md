@@ -69,7 +69,26 @@ wb_wdata <= ex_is_test_rom ? test_rom_read_data : internal_read_data;
 | DRC | 0 checks found |
 | Methodology | 0 checks found |
 | bitstream | 已生成 |
-| 上板 | 尚未执行 |
+| 上板 | 已完成，no-ILA 下载 PASS，ILA fast-stop 证明 PASS |
+
+## 上板合规证明
+
+V61 ILA 证明版只用于抓取调试信号，不参与正式资源和速度计分。正式计分仍使用 no-ILA 版本。
+
+ILA 抓取得到：
+
+- `write_count=16`
+- `unique_addr_count=16`
+- `last_write_addr=15`
+- `first_fast_stop_cnt_test=37`
+- `first_done_cnt_test=38`
+- `verify_done_mask_q_at_first_fast_stop=0xffff`
+- `verify_done_mask_next_at_first_fast_stop=0xffff`
+- `fast_stop_not_early=PASS`
+- `compare_status=PASS`
+- `overall_status=PASS`
+
+这说明 fast-stop 没有通过少写 verify 或提前写 addr15 制造假加速；16 个 verify 地址已经全部由普通 `STR` 指令写入后，才进入可信停表状态。
 
 ## 面向验收的回答要点
 
@@ -78,5 +97,4 @@ wb_wdata <= ex_is_test_rom ? test_rom_read_data : internal_read_data;
 - 机器码和反汇编证据在 `mem/` 与 `results/core*_disasm.txt`。
 - 普通指令统计在 `results/opcode_summary_all.csv`。
 - 禁用专用硬件和专用 opcode 的扫描结果在 `results/forbidden_module_scan.txt` 与 `results/forbidden_opcode_scan.txt`。
-- `cnt_test=38` 来自功能回归和硬件计数逻辑，没有因为少写 verify 或提前停表制造假加速。
-
+- `cnt_test=38` 来自功能回归和硬件计数逻辑，V61 已用 ILA 证明没有因为少写 verify 或提前停表制造假加速。

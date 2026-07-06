@@ -1,0 +1,9 @@
+program_status=ok
+device=xc7k160t_0
+ila=hw_ila_1
+armed_for=fast_stop_pulse_dbg_eq_1
+trigger_position=32
+proof_goal=fast_stop_pulse must appear only after all 16 verify STR writes are visible
+auto_reset_delay=debug build holds reset after configuration so capture can arm
+capture_status=ok
+csv=board_validation/v61_ila_fast_stop_capture.csv

@@ -84,11 +84,11 @@ assign test_rom_addr = test_offset;
 - 禁用模块扫描 PASS。
 - 禁用 opcode 扫描 PASS。
 - 300 MHz no-ILA Vivado synthesis、implementation、DRC、methodology、bitstream 全部完成。
-
-尚未完成：
-
-- V61 尚未下载上板。
-- V61 尚未抓 ILA fast-stop 证明。该证明可以沿用 V60 的验证方法，在需要把 V61 替换成正式上板版本时补做。
+- no-ILA 正式版已下载到 `xc7k160t_0`，下载后 `ilas_after_no_ila_program=0`。
+- ILA 证明版已构建并下载，300 MHz timing clean，WNS/TNS = `+0.008 ns / 0.000 ns`。
+- ILA 已触发 `fast_stop_pulse_dbg` 并导出 `board_validation/v61_ila_fast_stop_capture.csv`。
+- `compare_v61_ila_capture.py` 输出 `overall_status=PASS`。
+- 完成 ILA 证明后已重新下载 no-ILA 正式版。
 
 ## 6. Vivado 结果
 
@@ -114,7 +114,36 @@ bitstream：
 D:/vivado_work/routes_ultra/mcu_fft_v61_testrom_addr_stable_300/mcu_fft_board.runs/impl_1/board_top.bit
 ```
 
+ILA 证明版本：
+
+| 项目 | 结果 |
+| --- | ---: |
+| 频率 | 300 MHz |
+| WNS | +0.008 ns |
+| TNS | 0.000 ns |
+| WHS | +0.048 ns |
+| THS | 0.000 ns |
+| LUT | 18899 |
+| FF | 17070 |
+| DSP | 0 |
+| BRAM | 12 |
+| DRC | 仅 dbg_hub/ILA 相关 warning，无 error |
+| Methodology | 仅 dbg_hub/ILA 相关 warning，无 error |
+
+上板证明：
+
+| 项目 | 结果 |
+| --- | --- |
+| no-ILA 下载 | PASS |
+| ILA 触发 | `fast_stop_pulse_dbg` |
+| verify 写回次数 | 16 |
+| 唯一 verify 地址数 | 16 |
+| 最后写回地址 | 15 |
+| fast-stop 当拍 done mask | `verify_done_mask_q=0xffff`, `verify_done_mask_next=0xffff` |
+| 输出比对 | PASS |
+| 是否提前停表 | PASS，未提前 |
+| 最终板上状态 | 已恢复 no-ILA |
+
 ## 7. 建议
 
-V61 建议作为新的 no-ILA 上板候选版本。若明天验收只需要最稳妥的已证明版本，仍优先使用 V60；若希望降低 WNS 贴边风险，则先给 V61 补一次上板下载和 ILA fast-stop 证明，再把 V61 升为主展示版本。
-
+V61 建议作为新的最快主展示版本。它保持 V60 的 `cnt_test=38`，同时 no-ILA WNS 更大，并且已经完成上板和 ILA fast-stop 证明。

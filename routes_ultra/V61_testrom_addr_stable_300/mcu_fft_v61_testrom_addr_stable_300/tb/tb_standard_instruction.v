@@ -26,7 +26,7 @@ module tb_standard_instruction;
 
     assign test_vector_in = test_rom[test_rom_addr];
 
-    instr_rom #(.INIT_FILE("mem/instr_standard.mem")) u_instr_rom (
+    instr_rom #(.INIT_FILE("instr_standard.mem")) u_instr_rom (
         .addr(instr_addr),
         .instr(instr)
     );
